@@ -1,0 +1,35 @@
+{
+  "name": "kamboja",
+  "version": "1.0.0",
+  "description": "KambojaJS core functions",
+  "main": "lib/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kambojajs/kamboja.git"
+  },
+  "keywords": [],
+  "author": "Ketut Sandiarsa <ktutnik@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kambojajs/kamboja/issues"
+  },
+  "homepage": "https://github.com/kambojajs/kamboja#readme",
+  "dependencies": {
+    "babylon": "^6.14.1",
+    "kenanga": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/babylon": "^6.7.15",
+    "@types/chai": "^3.4.34",
+    "@types/mocha": "^2.2.37",
+    "coveralls": "^2.11.15",
+    "mocha": "^3.2.0",
+    "typescript": "^2.1.4"
+  }
+}
