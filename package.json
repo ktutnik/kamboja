@@ -1,6 +1,6 @@
 {
   "name": "kamboja",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "KambojaJS core functions",
   "main": "lib/index.js",
   "directories": {
@@ -22,14 +22,22 @@
   "homepage": "https://github.com/kambojajs/kamboja#readme",
   "dependencies": {
     "babylon": "^6.14.1",
-    "kenanga": "^1.0.2"
+    "kenanga": "^1.0.2",
+    "reflect-metadata": "^0.1.9",
+    "validator": "^6.2.1"
   },
   "devDependencies": {
     "@types/babylon": "^6.7.15",
     "@types/chai": "^3.4.34",
     "@types/mocha": "^2.2.37",
+    "@types/node": "^6.0.59",
     "coveralls": "^2.11.15",
+    "gulp": "^3.9.1",
+    "gulp-istanbul": "^1.1.1",
+    "gulp-mocha": "^3.0.1",
+    "gulp-typescript": "^3.1.4",
     "mocha": "^3.2.0",
+    "run-sequence": "^1.2.2",
     "typescript": "^2.1.4"
   }
 }
