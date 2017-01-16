@@ -17,11 +17,11 @@ gulp.task("build-source", function() {
     return gulp.src([
         "src/**/**.ts"
     ])
-    .pipe(tsTestProject())
+    .pipe(tsProject())
     .on("error", function (err) {
         process.exit(1);
     })
-    .pipe(gulp.dest("src/"));
+    .pipe(gulp.dest("lib/"));
 });
 
 var tsTestProject = tsc.createProject("tsconfig.json", {

@@ -1,5 +1,5 @@
 
-type HttpMethodType = "GET" | "POST" | "PUT" | "DELETE"
+export type HttpMethodType = "GET" | "POST" | "PUT" | "DELETE"
 
 export interface HttpMethodMetaData{
     method:HttpMethodType,

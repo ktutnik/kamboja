@@ -1,6 +1,8 @@
-import "reflect-metadata"
-import {HttpMethod} from "./http-method"
 
-interface DependencyResolver {
-    resolve<T>(symbol: symbol);
+
+export interface HttpRequest{
+    header:{[key:string]:string}
+    cookie:{[key:string]:string}
+    getHeader(key:string):string;
+    getCookie(key:string):string
 }
