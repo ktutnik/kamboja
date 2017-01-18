@@ -80,6 +80,7 @@ export class RouteGenerator implements Core.Generator {
                     return [result.result];
                 case "NextWithAnalysis":
                     analysis = analysis.concat(result.result.analysis)
+                    break;
                 case "Exit":
                     return null;
             }

@@ -58,26 +58,10 @@ export class DefaultMethodVisitor extends MethodVisitorBase implements MethodVis
 }
 
 export class MethodWithInternalDecoratorVisitor extends MethodVisitorBase implements MethodVisitor {
+    private decorators: Array<DecoratorType> = ["get", "put", "post", "delete", "internal"]
     constructor(generator: Generator) {
         super(generator)
     }
-    visit(meta: MetaData, parent: string) {
-        if (meta.decorators && meta.decorators.length > 0) {
-            for (let decorator of meta.decorators) {
-                let name = <DecoratorType>decorator.name;
-                if (name == "internal") return this.exit()
-            }
-        }
-        return this.next();
-    }
-}
-
-export class MethodWithHttpDecoratorVisitor extends MethodVisitorBase implements MethodVisitor {
-    private decorators: Array<DecoratorType> = ["get", "put", "post", "delete"]
-    constructor(generator: Generator) {
-        super(generator)
-    }
-
     visit(meta: MetaData, parent: string) {
         if (meta.decorators && meta.decorators.length > 0) {
             let decorators = meta.decorators.filter(x => this.decorators.some(y => y == x.name))
@@ -89,8 +73,28 @@ export class MethodWithHttpDecoratorVisitor extends MethodVisitorBase implements
                 })
                 return this.nextWithAnalysis(analysis);
             }
+            
+            for (let decorator of meta.decorators) {
+                let name = <DecoratorType>decorator.name;
+                if (name == "internal") return this.exit()
+            }
+        }
+        return this.next();
+    }
+}
 
+export class MethodWithHttpDecoratorVisitor extends MethodVisitorBase implements MethodVisitor {
+    private decorators: Array<DecoratorType> = ["get", "put", "post", "delete"]
+
+    constructor(generator: Generator) {
+        super(generator)
+    }
+
+    visit(meta: MetaData, parent: string) {
+        if (meta.decorators && meta.decorators.length > 0) {
             //analyse if provided has associated parameter
+            let analysis: RouteAnalysis[] = [];
+            let decorators = meta.decorators.filter(x => this.decorators.some(y => y == x.name))
             let route = decorators[0].children[0].name;
             let method = <HttpMethod>decorators[0].name.toUpperCase();
             let parameters = meta.children.map(x => x.name);
