@@ -5,7 +5,7 @@ import * as Kenanga from "kenanga"
 import * as Chai from "chai"
 
 describe("Route Generator", () => {
-    describe("General function", () => {
+    describe.only("General function", () => {
         it("Should generate route with nested module", () => {
             let ast = Babylon.parse(`
                 var ParentModule;

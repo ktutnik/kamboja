@@ -1,3 +1,7 @@
+import { MetaData } from "kenanga";
+
+export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
+export type VisitStatus = "Complete" | "NextWithAnalysis" | "Next" | "Exit"
 
 export class Decorator {
     internal() { return (...keys: any[]) => { }; }
@@ -10,10 +14,6 @@ export class HttpDecorator {
     delete(route?: string) { return (...keys: any[]) => { }; }
 }
 
-export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
-export const internal = new Decorator().internal;
-export const http = new HttpDecorator();
-
 export class RouteAnalysis {
     type: "Error" | "Warning"
     message: string;
@@ -25,6 +25,25 @@ export interface RouteInfo {
     parameters: string[]
     className: string
     analysis: RouteAnalysis[]
+}
+
+export interface MethodVisitor {
+    visit(meta: MetaData, parent: string): MethodVisitorResult;
+}
+
+export interface MethodVisitorResult {
+    status: VisitStatus
+    result?: RouteInfo
+}
+
+export interface ClassVisitor {
+    visit(meta: MetaData, parent: string): RouteInfo[]
+}
+
+export interface Generator {
+    fileName: string,
+    traverseArray(children: MetaData[], parent: string): RouteInfo[];
+    traverseMeta(meta: MetaData, parent: string): RouteInfo[];
 }
 
 export interface GeneratorOption {
@@ -40,3 +59,6 @@ export interface HttpRequest {
     getHeader(key: string): string;
     getCookie(key: string): string
 }
+
+export const internal = new Decorator().internal;
+export const http = new HttpDecorator();

@@ -1,158 +1,9 @@
-import { MetaData, AnalysisType } from "kenanga"
-import { Decorator, HttpDecorator, RouteInfo, GeneratorOption, RouteAnalysis, HttpMethod } from "./core"
-
+import { Generator, HttpMethod, RouteAnalysis, MethodVisitorResult, MethodVisitor, Decorator, HttpDecorator } from "../core"
+import { MetaData } from "kenanga"
 import * as Path from "path"
 
 export type DecoratorType = keyof Decorator | keyof HttpDecorator;
-
-export interface MethodVisitor {
-    visit(meta: MetaData, parent: string): MethodVisitorResult;
-}
-
-export type VisitStatus = "Complete" | "NextWithAnalysis" | "Next" | "Exit"
-
-export interface MethodVisitorResult {
-    status: VisitStatus
-    result?: RouteInfo
-}
-
-export interface ClassVisitor {
-    visit(meta: MetaData, parent: string): RouteInfo[]
-}
-
-export interface Generator {
-    fileName: string,
-    traverseArray(children: MetaData[], parent: string): RouteInfo[];
-    traverseMeta(meta: MetaData, parent: string): RouteInfo[];
-}
-
-export class RouteGenerator implements Generator {
-    private classVisitors: Array<ClassVisitor> = []
-    private methodVisitors: Array<MethodVisitor> = []
-    fileName: string;
-
-    constructor(private meta: MetaData, option?: GeneratorOption) {
-        let opt = this.getOption(option);
-        this.fileName = meta.name;
-        if (opt.stripeController)
-            this.classVisitors.push(new ControllerStriperVisitor(this))
-        this.classVisitors.push(new ClassVisitor(this))
-        //visitor order, the most important put it at the top
-        if (opt.internalDecorator)
-            this.methodVisitors.push(new MethodWithInternalDecoratorVisitor(this))
-        if (opt.httMethodDecorator)
-            this.methodVisitors.push(new MethodWithHttpDecoratorVisitor(this))
-        if (opt.apiConvention)
-            this.methodVisitors.push(new ConventionOverConfigurationMethodVisitor(this))
-        this.methodVisitors.push(new DefaultMethodVisitor(this))
-    }
-
-    private getOption(opt: GeneratorOption): GeneratorOption {
-        let defaultOpt: GeneratorOption = {
-            stripeController: true,
-            internalDecorator: true,
-            httMethodDecorator: true,
-            apiConvention: false
-        }
-        for (let key in opt) {
-            defaultOpt[key] = opt[key]
-        }
-        return defaultOpt;
-    }
-
-
-    traverseArray(children: MetaData[], parent: string) {
-        let result: RouteInfo[] = [];
-        for (let child of children) {
-            let traverseResult = this.traverseMeta(child, parent)
-            if (traverseResult && traverseResult.length > 0)
-                result = result.concat(traverseResult)
-        }
-        return result;
-    }
-
-    traverseMeta(meta: MetaData, parent: string) {
-        if ((meta.analysis & AnalysisType.Valid) != AnalysisType.Valid)
-            return null;
-
-        switch (meta.type) {
-            case "Class":
-            case "Module":
-                return this.classVisitorAggregate(meta, parent);
-            case "Method":
-                return this.methodVisitorAggregate(meta, parent);
-            default:
-                return this.traverseArray(meta.children, parent);
-        }
-    }
-
-    private classVisitorAggregate(meta: MetaData, parent: string) {
-        for (let visitor of this.classVisitors) {
-            let result = visitor.visit(meta, parent)
-            if (result) return result;
-        }
-    }
-
-    private methodVisitorAggregate(meta: MetaData, parent: string) {
-        let analysis: RouteAnalysis[] = []
-        for (let visitor of this.methodVisitors) {
-            let result = visitor.visit(meta, parent)
-            switch (result.status) {
-                case "Complete":
-                    result.result.analysis = analysis.concat(result.result.analysis)
-                    return [result.result];
-                case "NextWithAnalysis":
-                    analysis = analysis.concat(result.result.analysis)
-                case "Exit":
-                    return null;
-            }
-        }
-    }
-
-    getRoutes() {
-        return this.traverseMeta(this.meta, "")
-    }
-}
-
-
-export class ClassVisitorBase {
-    constructor(public generator: Generator) { }
-    traverseAndFixClassName(meta: MetaData, route) {
-        let result = this.generator.traverseArray(meta.children, route);
-        result.forEach(x => {
-            if (x.className.charAt(0) == ",")
-                x.className = meta.name + x.className;
-            else
-                x.className = meta.name + "." + x.className;
-        })
-        return result;
-    }
-}
-
-export class ControllerStriperVisitor extends ClassVisitorBase implements ClassVisitor {
-    constructor(generator: Generator) {
-        super(generator)
-    }
-    visit(meta: MetaData, parent: string) {
-        let ctlLocation = meta.name.toLowerCase().lastIndexOf("controller");
-        if (ctlLocation > -1) {
-            let name = meta.name.substr(0, ctlLocation);
-            parent += "/" + name.toLowerCase();
-            return this.traverseAndFixClassName(meta, parent);
-        }
-        else return null;
-    }
-}
-
-export class ClassVisitor extends ClassVisitorBase implements ClassVisitor {
-    constructor(generator: Generator) {
-        super(generator)
-    }
-    visit(meta: MetaData, parent: string) {
-        parent += "/" + meta.name.toLowerCase();
-        return this.traverseAndFixClassName(meta, parent);
-    }
-}
+export type MethodConventionType = "getByPage" | "get" | "add" | "modify" | "delete"
 
 export class MethodVisitorBase {
     constructor(public generator: Generator) { }
@@ -263,7 +114,6 @@ export class MethodWithHttpDecoratorVisitor extends MethodVisitorBase implements
     }
 }
 
-export type MethodConventionType = "getByPage" | "get" | "add" | "modify" | "delete"
 
 export class ConventionOverConfigurationMethodVisitor extends MethodVisitorBase implements MethodVisitor {
     private conventions: Array<MethodConventionType> = ["getByPage", "get", "add", "modify", "delete"]
@@ -324,4 +174,3 @@ export class ConventionOverConfigurationMethodVisitor extends MethodVisitorBase 
         return this.complete(meta, parent, "POST");
     }
 }
-
