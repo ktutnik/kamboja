@@ -6,8 +6,8 @@
         "noImplicitAny": false,
         "sourceMap": false,
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
-        //"importHelpers": true
+        "emitDecoratorMetadata": true,
+        "importHelpers": false
     },
     "exclude": [
         "node_modules"

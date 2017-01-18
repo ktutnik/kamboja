@@ -10,7 +10,8 @@ var gulp        = require("gulp"),
 //******** BUILD *************
 
 var tsProject = tsc.createProject("tsconfig.json", {
-    declaration: true
+    declaration: true,
+    typescript: require("typescript") 
 });
 
 gulp.task("build-source", function() {
