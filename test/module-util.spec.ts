@@ -1,7 +1,7 @@
 import * as Utils from "../src/module-utils"
 import * as Chai from "chai"
 
-describe.only("Module Utils", () => {
+describe("Module Utils", () => {
     describe("getInstance", () => {
 
         it("Should load class properly", () => {
