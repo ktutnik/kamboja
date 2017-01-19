@@ -63,18 +63,16 @@ describe("Route Generator", () => {
         })
     })
 
-    describe("Decorator function", () => {
+    describe("Decorator", () => {
         it("Should not include @internal method", () => {
             let ast = Babylon.parse(`
-            var tslib_1 = require("tslib");
-            var core_1 = require("../../../src/core");
             var ProductController = (function () {
                 function ProductController() {
                 }
                 ProductController.prototype.privateMethod = function () { };
                 return ProductController;
             }());
-            tslib_1.__decorate([
+            __decorate([
                 core_1.internal(),
             ], ProductController.prototype, "privateMethod", null);
             exports.ProductController = ProductController;
@@ -160,6 +158,52 @@ describe("Route Generator", () => {
             let result = dummy.getRoutes();
             Chai.expect(result[0].analysis[0].type).eq("Error")
             Chai.expect(result[0].analysis[0].message).contain("doesn't have associated parameter")
+            //fall back to default route
+            Chai.expect(result[0].route).eq("/product/getproductbyid/:id")
+        })
+
+        it("Should identify if method doesn't have parameters but route contain parameter", () => {
+            let ast = Babylon.parse(`
+                var core_1 = require("../../../src/core");
+                var ProductController = (function () {
+                    function ProductController() {
+                    }
+                    ProductController.prototype.getProductById = function () { };
+                    return ProductController;
+                }());
+                __decorate([
+                    core_1.http.get("/product/:notId"),
+                ], ProductController.prototype, "getProductById", null);
+                exports.ProductController = ProductController;         
+            `)
+            let meta = Kenanga.transform(ast, "./controller/product-controller.js");
+            let dummy = new RouteGenerator(meta, { apiConvention: true });
+            let result = dummy.getRoutes();
+            Chai.expect(result[0].analysis[0].type).eq("Error")
+            Chai.expect(result[0].analysis[0].message).contain("route contains parameters but getProductById method doesn't")
+            //fall back to default route
+            Chai.expect(result[0].route).eq("/product/getproductbyid")
+        })
+
+        it("Should identify if in GET, if route doesn't have parameters but method contain parameter", () => {
+            let ast = Babylon.parse(`
+                var core_1 = require("../../../src/core");
+                var ProductController = (function () {
+                    function ProductController() {
+                    }
+                    ProductController.prototype.getProductById = function (id) { };
+                    return ProductController;
+                }());
+                __decorate([
+                    core_1.http.get("/product/get/product"),
+                ], ProductController.prototype, "getProductById", null);
+                exports.ProductController = ProductController;         
+            `)
+            let meta = Kenanga.transform(ast, "./controller/product-controller.js");
+            let dummy = new RouteGenerator(meta, { apiConvention: true });
+            let result = dummy.getRoutes();
+            Chai.expect(result[0].analysis[0].type).eq("Error")
+            Chai.expect(result[0].analysis[0].message).contain("method getProductById contains parameters but route doesn't")
             //fall back to default route
             Chai.expect(result[0].route).eq("/product/getproductbyid/:id")
         })
@@ -281,6 +325,34 @@ describe("Route Generator", () => {
                 analysis: [],
                 className: "ProductController, ./controller/product-controller",
                 parameters: []
+            }])
+        })
+    })
+
+    describe("Priority", () => {
+        it("Should prioritized decorated method vs api convention", () => {
+            let ast = Babylon.parse(`
+                var ProductController = (function () {
+                    function ProductController() {
+                    }
+                    ProductController.prototype.get = function (id) { };
+                    return ProductController;
+                }());
+                __decorate([
+                    core_1.http.get("/product/get/by/:id"),
+                ], ProductController.prototype, "get", null);
+                exports.ProductController = ProductController;    
+            `)
+            let meta = Kenanga.transform(ast, "./controller/product-controller.js");
+            let dummy = new RouteGenerator(meta, { apiConvention: true });
+            let result = dummy.getRoutes();
+            //fall back to default route
+            Chai.expect(result).to.deep.eq([<RouteInfo>{
+                route: "/product/get/by/:id",
+                method: "GET",
+                analysis: [],
+                className: "ProductController, ./controller/product-controller",
+                parameters: ["id"]
             }])
         })
     })

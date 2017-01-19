@@ -32,7 +32,7 @@ export class MethodVisitorBase {
                 method: "GET",
                 className: "",
                 parameters: [],
-                analysis: analysis 
+                analysis: analysis
             }
         }
     }
@@ -92,27 +92,61 @@ export class MethodWithHttpDecoratorVisitor extends MethodVisitorBase implements
         if (meta.decorators && meta.decorators.length > 0) {
             let decorators = meta.decorators.filter(x => this.decorators.some(y => y == x.name))
             let route = decorators[0].children[0].name;
+            let method = <HttpMethod>decorators[0].name.toUpperCase();
+
+            let routeAnalysis = this.checkIfRouteHasParamsButMethodDoesNot(meta, route)
+            if (routeAnalysis) return this.nextWithAnalysis([routeAnalysis])
+
+            routeAnalysis = this.checkIfMethodHasParamsButRouteDoesNot(meta, route, method)
+            if (routeAnalysis) return this.nextWithAnalysis([routeAnalysis])
+
             let analysis = this.checkParameterAssociation(meta, route);
             if (analysis.length > 0) return this.nextWithAnalysis(analysis);
-            return this.complete(meta, route, <HttpMethod>decorators[0].name.toUpperCase());
+
+            return this.complete(meta, route, method);
         }
         else return this.next()
+    }
+
+    private checkIfRouteHasParamsButMethodDoesNot(meta: MetaData, route: string) {
+        //analyse if route contains parameter but method without parameter
+        let analysis: RouteAnalysis[] = [];
+        let routeParameters = route.split("/").filter(x => x.charAt(0) == ":");
+        if (routeParameters.length > 0 && meta.children.length == 0) {
+            return <RouteAnalysis>{
+                type: "Error",
+                message: `Error ${this.generator.fileName} line ${meta.location.line}: route contains parameters but ${meta.name} method doesn't`
+            }
+        }
+        return null;
+    }
+
+    private checkIfMethodHasParamsButRouteDoesNot(meta: MetaData, route: string, method:string) {
+        //analyse if method contains parameter but route without parameter
+        //this check only work for GET method, because other method can pass a BODY to the parameter
+        let analysis: RouteAnalysis[] = [];
+        let routeParameters = route.split("/").filter(x => x.charAt(0) == ":");
+        if (method == "GET" && routeParameters.length == 0 && meta.children.length > 0) {
+            return <RouteAnalysis>{
+                type: "Error",
+                message: `Error ${this.generator.fileName} line ${meta.location.line}: method ${meta.name} contains parameters but route doesn't`
+            }
+        }
+        return null;
     }
 
     private checkParameterAssociation(meta: MetaData, route: string) {
         //analyse if provided has associated parameter
         let analysis: RouteAnalysis[] = [];
         let parameters = meta.children.map(x => x.name);
-        let tokens = route.split("/");
-        for (let x of tokens) {
-            if (x && x.charAt(0) == ":") {
-                let parName = x.substring(1);
-                if (!parameters.some(y => y == parName)) {
-                    analysis.push({
-                        type: "Error",
-                        message: `Error ${this.generator.fileName} line ${meta.location.line}: route parameter ${parName} in ${route} doesn't have associated parameter in method ${meta.name}`
-                    })
-                }
+        let routeParameters = route.split("/").filter(x => x.charAt(0) == ":");
+        for (let x of routeParameters) {
+            let parName = x.substring(1);
+            if (!parameters.some(y => y == parName)) {
+                analysis.push({
+                    type: "Error",
+                    message: `Error ${this.generator.fileName} line ${meta.location.line}: route parameter ${parName} in ${route} doesn't have associated parameter in method ${meta.name}`
+                })
             }
         }
         return analysis;

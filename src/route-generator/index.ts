@@ -9,12 +9,12 @@ export class RouteGenerator implements Core.Generator {
     fileName: string;
 
     constructor(private meta: MetaData, option?: Core.GeneratorOption) {
+        //visitor order is important
         let opt = this.getOption(option);
         this.fileName = meta.name;
         if (opt.stripeController)
             this.classVisitors.push(new ControllerStriperVisitor(this))
         this.classVisitors.push(new ModuleOrClassVisitor(this))
-        //visitor order, the most important put it at the top
         if (opt.internalDecorator)
             this.methodVisitors.push(new MethodVisitor.MethodWithInternalDecoratorVisitor(this))
         if (opt.httMethodDecorator)

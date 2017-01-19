@@ -4,14 +4,14 @@ export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 export type VisitStatus = "Complete" | "NextWithAnalysis" | "Next" | "Exit"
 
 export class Decorator {
-    internal() { return (...keys: any[]) => { }; }
+    internal() { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
 }
 
 export class HttpDecorator {
-    get(route?: string) { return (...keys: any[]) => { }; }
-    post(route?: string) { return (...keys: any[]) => { }; }
-    put(route?: string) { return (...keys: any[]) => { }; }
-    delete(route?: string) { return (...keys: any[]) => { }; }
+    get(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+    post(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+    put(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+    delete(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
 }
 
 export class RouteAnalysis {
