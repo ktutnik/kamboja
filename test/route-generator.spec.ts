@@ -23,7 +23,7 @@ describe("Route Generator", () => {
                     })(ChildModule = ParentModule.ChildModule || (ParentModule.ChildModule = {}));
                 })(ParentModule = exports.ParentModule || (exports.ParentModule = {}));
             `)
-            let meta = Kenanga.transform(ast, "./controller/example.js");
+            let meta = Kenanga.transform(ast, "./controller/example");
             let dummy = new RouteGenerator(meta);
             let result = dummy.getRoutes();
             Chai.expect(result.length).eq(2);
@@ -190,7 +190,7 @@ describe("Route Generator", () => {
     })
 
     describe("API convention", () => {
-        it.only("Should return route properly", () => {
+        it("Should return route properly", () => {
             let ast = Babylon.parse(`
                 var ProductController = (function () {
                     function ProductController() {
@@ -207,7 +207,7 @@ describe("Route Generator", () => {
                 exports.ProductController = ProductController;
             `)
             let meta = Kenanga.transform(ast, "./controller/product-controller.js");
-            let dummy = new RouteGenerator(meta, { apiConvention:true });
+            let dummy = new RouteGenerator(meta, { apiConvention: true });
             let result = dummy.getRoutes();
             Chai.expect(result).to.deep.eq(<RouteInfo[]>[{
                 analysis: [],
@@ -239,6 +239,48 @@ describe("Route Generator", () => {
                 route: "/product/:id",
                 className: "ProductController, ./controller/product-controller",
                 parameters: ["id"]
+            }])
+        })
+
+        it("Should identify missing parameter", () => {
+            let ast = Babylon.parse(`
+                var ProductController = (function () {
+                    function ProductController() {
+                    }
+                    ProductController.prototype.get = function () { };
+                    return ProductController;
+                }());
+                exports.ProductController = ProductController;       
+            `)
+            let meta = Kenanga.transform(ast, "./controller/product-controller.js");
+            let dummy = new RouteGenerator(meta, { apiConvention: true });
+            let result = dummy.getRoutes();
+            Chai.expect(result[0].analysis[0].type).eq("Warning")
+            Chai.expect(result[0].analysis[0].message).contain("no parameters found")
+            //fall back to default route
+            Chai.expect(result[0].route).eq("/product/get")
+        })
+
+        it("Should fall back to default route when method name doesn't match the naming convention", () => {
+            let ast = Babylon.parse(`
+                var ProductController = (function () {
+                    function ProductController() {
+                    }
+                    ProductController.prototype.dummy = function () { };
+                    return ProductController;
+                }());
+                exports.ProductController = ProductController;       
+            `)
+            let meta = Kenanga.transform(ast, "./controller/product-controller.js");
+            let dummy = new RouteGenerator(meta, { apiConvention: true });
+            let result = dummy.getRoutes();
+            //fall back to default route
+            Chai.expect(result).to.deep.eq([<RouteInfo>{
+                route: "/product/dummy",
+                method: "GET",
+                analysis: [],
+                className: "ProductController, ./controller/product-controller",
+                parameters: []
             }])
         })
     })

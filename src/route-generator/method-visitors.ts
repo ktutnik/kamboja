@@ -32,7 +32,7 @@ export class MethodVisitorBase {
                 method: "GET",
                 className: "",
                 parameters: [],
-                analysis: analysis || []
+                analysis: analysis 
             }
         }
     }
@@ -65,15 +65,13 @@ export class MethodWithInternalDecoratorVisitor extends MethodVisitorBase implem
     visit(meta: MetaData, parent: string) {
         if (meta.decorators && meta.decorators.length > 0) {
             let decorators = meta.decorators.filter(x => this.decorators.some(y => y == x.name))
-            let analysis: RouteAnalysis[] = [];
             if (decorators.length != 1) {
-                analysis.push({
+                return this.nextWithAnalysis([{
                     type: "Error",
                     message: `Error ${this.generator.fileName} line ${meta.location.line}: method ${meta.name} contains multiple decorators`
-                })
-                return this.nextWithAnalysis(analysis);
+                }]);
             }
-            
+
             for (let decorator of meta.decorators) {
                 let name = <DecoratorType>decorator.name;
                 if (name == "internal") return this.exit()
@@ -92,29 +90,32 @@ export class MethodWithHttpDecoratorVisitor extends MethodVisitorBase implements
 
     visit(meta: MetaData, parent: string) {
         if (meta.decorators && meta.decorators.length > 0) {
-            //analyse if provided has associated parameter
-            let analysis: RouteAnalysis[] = [];
             let decorators = meta.decorators.filter(x => this.decorators.some(y => y == x.name))
             let route = decorators[0].children[0].name;
-            let method = <HttpMethod>decorators[0].name.toUpperCase();
-            let parameters = meta.children.map(x => x.name);
-            let tokens = route.split("/");
-            for (let x of tokens) {
-                if (x && x.charAt(0) == ":") {
-                    let parName = x.substring(1);
-                    if (!parameters.some(y => y == parName)) {
-                        analysis.push({
-                            type: "Error",
-                            message: `Error ${this.generator.fileName} line ${meta.location.line}: route parameter ${parName} in ${route} doesn't have associated parameter in method ${meta.name}`
-                        })
-                        return this.nextWithAnalysis(analysis);
-                    }
-                }
-            }
-
-            return this.complete(meta, route, method, analysis);
+            let analysis = this.checkParameterAssociation(meta, route);
+            if (analysis.length > 0) return this.nextWithAnalysis(analysis);
+            return this.complete(meta, route, <HttpMethod>decorators[0].name.toUpperCase());
         }
         else return this.next()
+    }
+
+    private checkParameterAssociation(meta: MetaData, route: string) {
+        //analyse if provided has associated parameter
+        let analysis: RouteAnalysis[] = [];
+        let parameters = meta.children.map(x => x.name);
+        let tokens = route.split("/");
+        for (let x of tokens) {
+            if (x && x.charAt(0) == ":") {
+                let parName = x.substring(1);
+                if (!parameters.some(y => y == parName)) {
+                    analysis.push({
+                        type: "Error",
+                        message: `Error ${this.generator.fileName} line ${meta.location.line}: route parameter ${parName} in ${route} doesn't have associated parameter in method ${meta.name}`
+                    })
+                }
+            }
+        }
+        return analysis;
     }
 }
 
@@ -128,8 +129,13 @@ export class ConventionOverConfigurationMethodVisitor extends MethodVisitorBase 
 
     visit(meta: MetaData, parent: string) {
         if (this.conventions.some(x => x == meta.name)) {
-            let name = <MethodConventionType>meta.name;
-            switch (name) {
+            if (meta.children.length < 1) {
+                return this.nextWithAnalysis([{
+                    type: "Warning",
+                    message: `Warning ${this.generator.fileName} line ${meta.location.line}: Convention fail, no parameters found on ${meta.name} method`
+                }]);
+            }
+            switch (<MethodConventionType>meta.name) {
                 case "getByPage":
                     return this.getByPage(meta, parent);
                 case "get":
@@ -146,31 +152,14 @@ export class ConventionOverConfigurationMethodVisitor extends MethodVisitorBase 
     }
 
     private getByPage(meta: MetaData, parent: string) {
-        let analysis: RouteAnalysis[] = []
-        if (meta.children.length < 1) {
-            analysis.push({
-                type: "Warning",
-                message: `Warning ${this.generator.fileName} line ${meta.location.line}: Convention fail, no parameters found on getByPage method`
-            })
-            return this.nextWithAnalysis(analysis);
-        }
-        else {
-            parent += "/page";
-            meta.children.forEach(x => parent += `/:${x.name}`)
-            return this.complete(meta, parent, "GET");
-        }
+        parent += "/page";
+        meta.children.forEach(x => parent += `/:${x.name}`)
+        return this.complete(meta, parent, "GET");
     }
 
+
     private singleParam(meta: MetaData, parent: string, method: HttpMethod) {
-        let analysis: RouteAnalysis[] = []
-        if (meta.children.length < 1) {
-            analysis.push({
-                type: "Warning",
-                message: `Warning ${this.generator.fileName} line ${meta.location.line}: Convention fail, no parameters found on ${meta.name} method`
-            })
-            return this.nextWithAnalysis(analysis);
-        }
-        meta.children.forEach(x => parent += `/:${x.name}`)
+        parent += "/:" + meta.children[0].name;
         return this.complete(meta, parent, method);
     }
 
