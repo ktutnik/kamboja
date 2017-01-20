@@ -1,4 +1,4 @@
-import { Generator, HttpMethod, RouteAnalysis, MethodVisitorResult, MethodVisitor, Decorator, HttpDecorator } from "../core"
+import { Generator, HttpMethod, RouteAnalysis, MethodVisitorResult, MethodVisitor, Decorator, HttpDecorator, GeneratingMethod } from "../core"
 import { MetaData } from "kenanga"
 import * as Path from "path"
 
@@ -7,7 +7,7 @@ export type MethodConventionType = "getByPage" | "get" | "add" | "modify" | "del
 
 export class MethodVisitorBase {
     constructor(public generator: Generator) { }
-    complete(meta: MetaData, route, method: HttpMethod, analysis?: RouteAnalysis[]): MethodVisitorResult {
+    complete(meta: MetaData, route, method: HttpMethod, visitType:GeneratingMethod, analysis?: RouteAnalysis[]): MethodVisitorResult {
         let fileName = this.generator.fileName;
         if (Path.extname(fileName) == ".js") {
             fileName = fileName.slice(0, -3);
@@ -16,8 +16,10 @@ export class MethodVisitorBase {
             status: "Complete",
             result: {
                 route: route,
-                method: method,
+                httpMethod: method,
                 className: `, ${fileName}`,
+                methodName: meta.name,
+                generatingMethod:visitType,
                 parameters: meta.children.map(x => x.name),
                 analysis: analysis || []
             }
@@ -27,13 +29,7 @@ export class MethodVisitorBase {
     nextWithAnalysis(analysis: RouteAnalysis[]): MethodVisitorResult {
         return {
             status: "NextWithAnalysis",
-            result: {
-                route: "",
-                method: "GET",
-                className: "",
-                parameters: [],
-                analysis: analysis
-            }
+            result: { analysis: analysis }
         }
     }
 
@@ -53,7 +49,7 @@ export class DefaultMethodVisitor extends MethodVisitorBase implements MethodVis
     visit(meta: MetaData, parent: string) {
         parent += "/" + meta.name.toLowerCase();
         meta.children.forEach(x => parent += `/:${x.name}`)
-        return this.complete(meta, parent, "GET");
+        return this.complete(meta, parent, "GET", "Default");
     }
 }
 
@@ -103,7 +99,7 @@ export class MethodWithHttpDecoratorVisitor extends MethodVisitorBase implements
             let analysis = this.checkParameterAssociation(meta, route);
             if (analysis.length > 0) return this.nextWithAnalysis(analysis);
 
-            return this.complete(meta, route, method);
+            return this.complete(meta, route, method, "HttpMethodDecorator");
         }
         else return this.next()
     }
@@ -121,7 +117,7 @@ export class MethodWithHttpDecoratorVisitor extends MethodVisitorBase implements
         return null;
     }
 
-    private checkIfMethodHasParamsButRouteDoesNot(meta: MetaData, route: string, method:string) {
+    private checkIfMethodHasParamsButRouteDoesNot(meta: MetaData, route: string, method: string) {
         //analyse if method contains parameter but route without parameter
         //this check only work for GET method, because other method can pass a BODY to the parameter
         let analysis: RouteAnalysis[] = [];
@@ -188,16 +184,16 @@ export class ConventionOverConfigurationMethodVisitor extends MethodVisitorBase 
     private getByPage(meta: MetaData, parent: string) {
         parent += "/page";
         meta.children.forEach(x => parent += `/:${x.name}`)
-        return this.complete(meta, parent, "GET");
+        return this.complete(meta, parent, "GET", "ApiConvention");
     }
 
 
     private singleParam(meta: MetaData, parent: string, method: HttpMethod) {
         parent += "/:" + meta.children[0].name;
-        return this.complete(meta, parent, method);
+        return this.complete(meta, parent, method, "ApiConvention");
     }
 
     private add(meta: MetaData, parent: string) {
-        return this.complete(meta, parent, "POST");
+        return this.complete(meta, parent, "POST", "ApiConvention");
     }
 }

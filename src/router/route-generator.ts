@@ -1,4 +1,5 @@
 import * as Core from "../core"
+import * as Utils from "../utils"
 import * as MethodVisitor from "./method-visitors"
 import { MetaData, AnalysisType } from "kenanga"
 import { ControllerStriperVisitor, ModuleOrClassVisitor  } from "./class-visitors"
@@ -10,7 +11,13 @@ export class RouteGenerator implements Core.Generator {
 
     constructor(private meta: MetaData, option?: Core.GeneratorOption) {
         //visitor order is important
-        let opt = this.getOption(option);
+        let opt = Utils.override(option, {
+            stripeController: true,
+            internalDecorator: true,
+            httMethodDecorator: true,
+            apiConvention: false
+        });
+        
         this.fileName = meta.name;
         if (opt.stripeController)
             this.classVisitors.push(new ControllerStriperVisitor(this))
@@ -23,20 +30,6 @@ export class RouteGenerator implements Core.Generator {
             this.methodVisitors.push(new MethodVisitor.ConventionOverConfigurationMethodVisitor(this))
         this.methodVisitors.push(new MethodVisitor.DefaultMethodVisitor(this))
     }
-
-    private getOption(opt: Core.GeneratorOption): Core.GeneratorOption {
-        let defaultOpt: Core.GeneratorOption = {
-            stripeController: true,
-            internalDecorator: true,
-            httMethodDecorator: true,
-            apiConvention: false
-        }
-        for (let key in opt) {
-            defaultOpt[key] = opt[key]
-        }
-        return defaultOpt;
-    }
-
 
     traverseArray(children: MetaData[], parent: string) {
         let result: Core.RouteInfo[] = [];

@@ -6,12 +6,19 @@ import * as path from "path"
  * example: 
  * "MyModule.InnerModule.MyClass, ./controller/my-class"
  */
-export function getInstance<T>(qualifiedClassName:string){
+export function getInstance<T>(qualifiedClassName: string) {
     let parts = qualifiedClassName.split(",")
-    if(parts.length != 2) throw new Error("Provided class name is not qualified")
+    if (parts.length != 2) throw new Error("Provided class name is not qualified")
     let classParts = parts[0].trim().split(".")
     let modulePath = parts[1].trim()
     let instance = require(path.join(process.cwd(), modulePath))
     classParts.forEach(x => instance = instance[x])
     return <T>new instance();
+}
+
+export function override(override, defaultOptions) {
+    for (let key in override) {
+        defaultOptions[key] = override[key]
+    }
+    return defaultOptions;
 }

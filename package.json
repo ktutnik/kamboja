@@ -22,7 +22,7 @@
   "homepage": "https://github.com/kambojajs/kamboja#readme",
   "dependencies": {
     "babylon": "^6.14.1",
-    "kenanga": "^1.0.5",
+    "kenanga": "^1.0.6",
     "reflect-metadata": "^0.1.9",
     "tslib": "^1.5.0",
     "validator": "^6.2.1"
@@ -33,6 +33,7 @@
     "@types/express": "^4.0.34",
     "@types/mocha": "^2.2.37",
     "@types/node": "^6.0.59",
+    "@types/validator": "^5.7.35",
     "chai": "^3.5.0",
     "coveralls": "^2.11.15",
     "gulp": "^3.9.1",

@@ -1,4 +1,4 @@
-import { RouteGenerator } from "../src/route-generator"
+import { RouteGenerator } from "../src/router/route-generator"
 import { RouteInfo } from "../src/core"
 import * as Babylon from "babylon"
 import * as Kenanga from "kenanga"
@@ -27,15 +27,19 @@ describe("Route Generator", () => {
             let dummy = new RouteGenerator(meta);
             let result = dummy.getRoutes();
             Chai.expect(result.length).eq(2);
-            Chai.expect(result).to.deep.eq(<RouteInfo[]>[{
+            Chai.expect(result).to.deep.eq([<RouteInfo>{
                 analysis: [],
-                method: "GET",
+                httpMethod: "GET",
+                methodName: "myMethod",
+                generatingMethod: "Default",
                 route: "/parentmodule/childmodule/myclass/mymethod/:par1/:par2",
                 className: "ParentModule.ChildModule.MyClass, ./controller/example",
                 parameters: ["par1", "par2"]
-            }, {
+            }, <RouteInfo>{
                 analysis: [],
-                method: "GET",
+                httpMethod: "GET",
+                generatingMethod: "Default",
+                methodName: "myMethodWoParams",
                 route: "/parentmodule/childmodule/myclass/mymethodwoparams",
                 className: "ParentModule.ChildModule.MyClass, ./controller/example",
                 parameters: []
@@ -112,27 +116,35 @@ describe("Route Generator", () => {
             let meta = Kenanga.transform(ast, "./controller/product-controller.js");
             let dummy = new RouteGenerator(meta);
             let result = dummy.getRoutes();
-            Chai.expect(result).to.deep.eq(<RouteInfo[]>[{
+            Chai.expect(result).to.deep.eq([<RouteInfo>{
                 analysis: [],
-                method: "GET",
+                httpMethod: "GET",
+                generatingMethod: "HttpMethodDecorator",
+                methodName: "getProductById",
                 route: "/product/:id",
                 className: "ProductController, ./controller/product-controller",
                 parameters: ["id"]
-            }, {
+            }, <RouteInfo>{
                 analysis: [],
-                method: "POST",
+                httpMethod: "POST",
+                generatingMethod: "HttpMethodDecorator",
+                methodName: "saveProduct",
                 route: "/product/",
                 className: "ProductController, ./controller/product-controller",
                 parameters: ["model"]
-            }, {
+            }, <RouteInfo>{
                 analysis: [],
-                method: "DELETE",
+                httpMethod: "DELETE",
+                generatingMethod: "HttpMethodDecorator",
+                methodName: "deleteProduct",
                 route: "/product/:id",
                 className: "ProductController, ./controller/product-controller",
                 parameters: ["id"]
-            }, {
+            }, <RouteInfo>{
                 analysis: [],
-                method: "PUT",
+                httpMethod: "PUT",
+                generatingMethod: "HttpMethodDecorator",
+                methodName: "updateProduct",
                 route: "/product/:id",
                 className: "ProductController, ./controller/product-controller",
                 parameters: ["id", "model"]
@@ -253,33 +265,43 @@ describe("Route Generator", () => {
             let meta = Kenanga.transform(ast, "./controller/product-controller.js");
             let dummy = new RouteGenerator(meta, { apiConvention: true });
             let result = dummy.getRoutes();
-            Chai.expect(result).to.deep.eq(<RouteInfo[]>[{
+            Chai.expect(result).to.deep.eq([<RouteInfo>{
                 analysis: [],
-                method: "GET",
+                httpMethod: "GET",
+                generatingMethod: "ApiConvention",
+                methodName: "getByPage",
                 route: "/product/page/:offset/:pageWidth",
                 className: "ProductController, ./controller/product-controller",
                 parameters: ["offset", "pageWidth"]
-            }, {
+            }, <RouteInfo>{
                 analysis: [],
-                method: "GET",
+                httpMethod: "GET",
+                generatingMethod: "ApiConvention",
+                methodName: "get",
                 route: "/product/:id",
                 className: "ProductController, ./controller/product-controller",
                 parameters: ["id"]
-            }, {
+            }, <RouteInfo>{
                 analysis: [],
-                method: "POST",
+                httpMethod: "POST",
+                generatingMethod: "ApiConvention",
+                methodName: "add",
                 route: "/product",
                 className: "ProductController, ./controller/product-controller",
                 parameters: ["model"]
-            }, {
+            }, <RouteInfo>{
                 analysis: [],
-                method: "PUT",
+                httpMethod: "PUT",
+                generatingMethod: "ApiConvention",
+                methodName: "modify",
                 route: "/product/:id",
                 className: "ProductController, ./controller/product-controller",
                 parameters: ["id", "model"]
-            }, {
+            }, <RouteInfo>{
                 analysis: [],
-                method: "DELETE",
+                httpMethod: "DELETE",
+                generatingMethod: "ApiConvention",
+                methodName: "delete",
                 route: "/product/:id",
                 className: "ProductController, ./controller/product-controller",
                 parameters: ["id"]
@@ -321,7 +343,9 @@ describe("Route Generator", () => {
             //fall back to default route
             Chai.expect(result).to.deep.eq([<RouteInfo>{
                 route: "/product/dummy",
-                method: "GET",
+                httpMethod: "GET",
+                generatingMethod: "Default",
+                methodName: "dummy",
                 analysis: [],
                 className: "ProductController, ./controller/product-controller",
                 parameters: []
@@ -349,7 +373,9 @@ describe("Route Generator", () => {
             //fall back to default route
             Chai.expect(result).to.deep.eq([<RouteInfo>{
                 route: "/product/get/by/:id",
-                method: "GET",
+                httpMethod: "GET",
+                generatingMethod: "HttpMethodDecorator",
+                methodName: "get",
                 analysis: [],
                 className: "ProductController, ./controller/product-controller",
                 parameters: ["id"]

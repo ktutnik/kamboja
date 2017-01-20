@@ -2,6 +2,7 @@ import { MetaData } from "kenanga";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 export type VisitStatus = "Complete" | "NextWithAnalysis" | "Next" | "Exit"
+export type GeneratingMethod = "Default" | "HttpMethodDecorator" | "ApiConvention"
 
 export class Decorator {
     internal() { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
@@ -14,17 +15,24 @@ export class HttpDecorator {
     delete(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
 }
 
+export class Validator {
+    string(required = false, length?: number) { }
+}
+
 export class RouteAnalysis {
     type: "Error" | "Warning"
     message: string;
 }
 
 export interface RouteInfo {
-    route: string;
-    method: HttpMethod
-    parameters: string[]
-    className: string
-    analysis: RouteAnalysis[]
+    generatingMethod?: GeneratingMethod
+    route?: string;
+    httpMethod?: HttpMethod
+    parameters?: string[]
+    className?: string
+    methodName?: string
+    classId?: any
+    analysis?: RouteAnalysis[]
 }
 
 export interface MethodVisitor {
@@ -53,12 +61,39 @@ export interface GeneratorOption {
     apiConvention?: boolean
 }
 
+export interface RequestHandler {
+    routeInfo: RouteInfo
+    onRequest(request: HttpRequest, response:HttpResponse);
+}
+
+export interface Engine {
+    register(handler: RequestHandler):Engine;
+    listen(port:number)
+}
+
 export interface HttpRequest {
-    header: { [key: string]: string }
-    cookie: { [key: string]: string }
-    getHeader(key: string): string;
+    headers: { [key: string]: string }
+    cookies: { [key: string]: string }
+    params: { [key: string]: string }
+    body: any
+    referrer: string
+    url: string
+    getHeader(key: string): string
     getCookie(key: string): string
+    getParam(key: string): string
+}
+
+export interface HttpResponse {
+    status: string
+    type: string
+    write(obj)
+}
+
+export interface DependencyResolver {
+    resolve<T>(qualifiedClassName: string);
+    getClassId(qualifiedClassName: string, objectInstance: any)
 }
 
 export const internal = new Decorator().internal;
 export const http = new HttpDecorator();
+export const val = new Validator();
