@@ -1,5 +1,7 @@
 import * as Core from "../core"
 import * as Express from "express"
+import { RequestAdapter } from "./request-adapter"
+import { ResponseAdapter } from "./response-adapter"
 
 export class ExpressEngine implements Core.Engine {
     app: Express.Application;
@@ -31,40 +33,16 @@ export class ExpressEngine implements Core.Engine {
         return this;
     }
 
-    listen(port?:number) {
+    listen(port?: number) {
         this.app.listen(port);
     }
 
     createMiddleware(handler: Core.RequestHandler): Express.RequestHandler {
         return (req, resp, next) => {
-            handler.onRequest(new ExpressRequest(req), new ExpressResponse(resp))
+            handler.onRequest(new RequestAdapter(req), new ResponseAdapter(resp))
         };
     }
 }
 
-export class ExpressRequest implements Core.HttpRequest {
-    headers: { [key: string]: string }
-    cookies: { [key: string]: string }
-    params: { [key: string]: string }
-    body: any
-    referrer: string
-    url: string
-
-    constructor(request: Express.Request) { }
-
-    getHeader(key: string): string { return null; }
-    getCookie(key: string): string { return null }
-    getParam(key: string): string { return null }
-}
-
-export class ExpressResponse implements Core.HttpResponse {
-    status: string
-    type: string
-
-    constructor(response: Express.Response) {
-    }
-
-    write(obj) { }
-}
 
 

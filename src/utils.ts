@@ -22,3 +22,10 @@ export function override(override, defaultOptions) {
     }
     return defaultOptions;
 }
+
+export function copy(source, destination, lowerCaseKey = true) {
+    for (let key in source) {
+        if(lowerCaseKey)key = key.toLowerCase()
+        destination[key] = source[key]
+    }
+}

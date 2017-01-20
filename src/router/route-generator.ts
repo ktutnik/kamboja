@@ -10,7 +10,6 @@ export class RouteGenerator implements Core.Generator {
     fileName: string;
 
     constructor(private meta: MetaData, option?: Core.GeneratorOption) {
-        //visitor order is important
         let opt = Utils.override(option, {
             stripeController: true,
             internalDecorator: true,
@@ -19,6 +18,7 @@ export class RouteGenerator implements Core.Generator {
         });
         
         this.fileName = meta.name;
+        //visitor order is important
         if (opt.stripeController)
             this.classVisitors.push(new ControllerStriperVisitor(this))
         this.classVisitors.push(new ModuleOrClassVisitor(this))

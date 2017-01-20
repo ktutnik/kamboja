@@ -5,7 +5,7 @@ import {DefaultResolver} from "./resolver"
 export interface KambojaOption{
     engine?:Core.Engine,
     controllerPath?: string,
-    apiControllerPath:string,
+    onAppSetup?:(app) => void
 }
 
 export class Kamboja{
@@ -20,10 +20,10 @@ export class Kamboja{
 
 
     constructor(option?:KambojaOption){
-        this.option = Utils.override(option, {
+        this.option = Utils.override(option,<KambojaOption> {
             engine: this.createDefaultEngine(),
             controllerPath: "./controller",
-            apiControllerPath: "./api"
+            onAppSetup: (app):void => {}
         })
     }
 

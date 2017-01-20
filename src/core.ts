@@ -72,26 +72,49 @@ export interface Engine {
 }
 
 export interface HttpRequest {
+    httpVersion:string
+    httpMethod:HttpMethod
     headers: { [key: string]: string }
     cookies: { [key: string]: string }
-    params: { [key: string]: string }
+    queries: { [key: string]: string }
     body: any
     referrer: string
     url: string
     getHeader(key: string): string
     getCookie(key: string): string
-    getParam(key: string): string
+    getQuery(key: string): string
+}
+
+
+export interface CookieOptions {
+    maxAge?: number;
+    signed?: boolean;
+    expires?: Date | boolean;
+    httpOnly?: boolean;
+    path?: string;
+    domain?: string;
+    secure?: boolean | 'auto';
 }
 
 export interface HttpResponse {
-    status: string
-    type: string
-    write(obj)
+    setCookie(key:string, value:string, option?:CookieOptions)
+
+    json(body, status?:number)
+
+     jsonp(body, status?:number)
+
+     view(name, model?)
 }
 
 export interface DependencyResolver {
     resolve<T>(qualifiedClassName: string);
     getClassId(qualifiedClassName: string, objectInstance: any)
+}
+
+export interface Controller{
+    request:HttpRequest
+    response:HttpResponse
+    view(viewName, model?);
 }
 
 export const internal = new Decorator().internal;
