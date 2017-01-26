@@ -37,6 +37,7 @@
     "@types/validator": "^5.7.35",
     "chai": "^3.5.0",
     "coveralls": "^2.11.15",
+    "del": "^2.2.2",
     "gulp": "^3.9.1",
     "gulp-istanbul": "^1.1.1",
     "gulp-mocha": "^3.0.1",

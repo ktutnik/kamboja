@@ -3,9 +3,37 @@
 
 var gulp        = require("gulp"),
     tsc         = require("gulp-typescript"),
+    del         = require("del"),
     runSequence = require("run-sequence"),
     mocha       = require("gulp-mocha"),
     istanbul    = require("gulp-istanbul");
+
+//******** CLEAN *************
+gulp.task("clean-source", function(cb){
+    return del([
+        "./src/**/*.js",
+        "./src/**/*.d.ts",
+        "./src/**/*.js.map"], cb)
+})
+
+gulp.task("clean-test", function(cb){
+    return del([
+        "./test/**/*.js",
+        "./test/**/*.d.ts",
+        "./test/**/*.js.map"], cb)
+})
+
+gulp.task("clean-lib", function(cb){
+    return del([
+        "./lib/**/*.js",
+        "./lib/**/*.d.ts",
+        "./lib/**/*.js.map"], cb)
+})
+
+
+gulp.task("clean", function(cb) {
+  runSequence("clean-source", "clean-test", "clean-lib", cb);
+});
 
 //******** BUILD *************
 
