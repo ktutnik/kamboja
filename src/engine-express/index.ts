@@ -1,46 +1,38 @@
 import * as Core from "../core"
 import * as Express from "express"
+import * as Utils from "../utils"
 import { RequestAdapter } from "./request-adapter"
 import { ResponseAdapter } from "./response-adapter"
+import { RequestHandler } from "../request-handler"
+import * as Http from "http";
+
+export interface ExpressEngineOptions {
+    onAppSetup?: (app) => void
+    app?: Express.Application
+}
 
 export class ExpressEngine implements Core.Engine {
     app: Express.Application;
-    constructor(app?: Express.Application) {
-        if (!app) {
-            this.app = Express();
-            //setup body parser etc
-        }
-        else {
-            this.app = app
-        }
+    constructor(private resolver: Core.DependencyResolver, options?: ExpressEngineOptions) {
+        let opts = Utils.override(options, {
+            onAppSetup: (app) => { },
+            app: Express()
+        })
     }
 
-    register(handler: Core.RequestHandler) {
-        switch (handler.routeInfo.httpMethod) {
-            case "GET":
-                this.app.get(handler.routeInfo.route, this.createMiddleware(handler))
-                break;
-            case "POST":
-                this.app.post(handler.routeInfo.route, this.createMiddleware(handler))
-                break;
-            case "PUT":
-                this.app.put(handler.routeInfo.route, this.createMiddleware(handler))
-                break;
-            case "DELETE":
-                this.app.delete(handler.routeInfo.route, this.createMiddleware(handler))
-                break;
+    setRoutes(routes: Core.RouteInfo[]) {
+        for (let route of routes) {
+            let method = route.route.toLowerCase();
+            this.app[method](route.route, (req, resp, next) => {
+                let handler = new RequestHandler(route, this.resolver)
+                handler.onRequest(new RequestAdapter(req), new ResponseAdapter(resp))
+            })
         }
         return this;
     }
 
-    listen(port?: number) {
-        this.app.listen(port);
-    }
-
-    createMiddleware(handler: Core.RequestHandler): Express.RequestHandler {
-        return (req, resp, next) => {
-            handler.onRequest(new RequestAdapter(req), new ResponseAdapter(resp))
-        };
+    getApp() {
+        return this.app;
     }
 }
 

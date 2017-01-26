@@ -16,7 +16,7 @@ export function getInstance<T>(qualifiedClassName: string) {
     return <T>new instance();
 }
 
-export function override(override, defaultOptions) {
+export function override<T>(override:T, defaultOptions:T):T {
     for (let key in override) {
         defaultOptions[key] = override[key]
     }

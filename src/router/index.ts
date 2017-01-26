@@ -1,8 +1,7 @@
 import * as Core from "../core"
 import * as Path from "path"
 import * as Fs from "fs"
-import { RouteGenerator } from "./route-generator"
-import * as Kenanga from "kenanga"
+import * as Kenanga from "kecubung"
 import * as Babylon from "babylon"
 import * as Utils from "../utils"
 
@@ -25,13 +24,13 @@ export class Router {
             let ast = Babylon.parse(code)
             let fileName = Path.relative(process.cwd(), file);
             let meta = Kenanga.transform(ast, fileName)
-            let generator = new RouteGenerator(meta)
+            /*let generator = new RouteGenerator(meta)
             let route = generator.getRoutes()
             route.forEach(x => {
                 let instance = Utils.getInstance(x.className)
                 x.classId = this.resolver.getClassId(x.className, instance)
             })
-            routes = routes.concat(route)
+            routes = routes.concat(route)*/
         }
         return routes;
     }

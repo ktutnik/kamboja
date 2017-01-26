@@ -1,51 +1,35 @@
 import * as Core from "./core"
 import * as Utils from "./utils"
-import {DefaultResolver} from "./resolver"
+import { DefaultResolver } from "./resolver"
+import { ExpressEngine } from "./engine-express"
+import { Router } from "./router"
 
-export interface KambojaOption{
-    engine?:Core.Engine,
-    controllerPath?: string,
-    onAppSetup?:(app) => void
-}
 
-export class Kamboja{
-    engine:Core.Engine;
-    option:KambojaOption;
+export class Kamboja {
+    engine: Core.Engine;
+    option: Core.KambojaOption;
 
-    private static resolver:Core.DependencyResolver = new DefaultResolver();
+    private static resolver: Core.DependencyResolver = new DefaultResolver();
 
-    static registerResolver(resolver:Core.DependencyResolver){
+    static registerResolver(resolver: Core.DependencyResolver) {
         Kamboja.resolver = resolver;
     }
 
-
-    constructor(option?:KambojaOption){
-        this.option = Utils.override(option,<KambojaOption> {
-            engine: this.createDefaultEngine(),
+    constructor(option?: Core.KambojaOption) {
+        this.option = Utils.override(option, <Core.KambojaOption>{
             controllerPath: "./controller",
-            onAppSetup: (app):void => {}
+            onAppSetup: (app): void => { }
         })
+        if (!this.option.engine) {
+            this.engine = new ExpressEngine(Kamboja.resolver, {
+                onAppSetup: this.option.onAppSetup
+            })
+        }
+        let router = new Router(this.option.controllerPath, Kamboja.resolver);
+        this.engine.setRoutes(router.getRoutes())
     }
 
-    private init(){
-
-    }
-
-    private createDefaultEngine():Core.Engine{
-        return null;
-    }
-    
-
-
-    listen(port:number){
-        this.engine.listen(port)
-    }
-}
-
-export class RouteInfoLoader{
-    constructor(private path:string, private resolver:Core.DependencyResolver){}
-    
-    load(){
-        
+    getApp() {
+        return this.engine.getApp();
     }
 }

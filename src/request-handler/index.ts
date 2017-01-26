@@ -2,7 +2,7 @@ import * as Core from "../core"
 import {Binder} from "./binder"
 import {Executor} from "./executor"
 
-export class RequestHandlerImpl implements Core.RequestHandler {
+export class RequestHandler implements Core.RequestHandler {
     constructor(public routeInfo: Core.RouteInfo, private resolver: Core.DependencyResolver) { }
 
     onRequest(request: Core.HttpRequest, response:Core.HttpResponse) {
