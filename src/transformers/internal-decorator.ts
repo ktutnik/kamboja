@@ -1,10 +1,10 @@
 import * as Kecubung from "kecubung"
 import * as Core from "../core"
-import { TransformerBase } from "./transformer"
+import { TransformerBase } from "./transformer-base"
 
 export class InternalDecoratorTransformer extends TransformerBase {
     private decorators: Array<Core.DecoratorType> = ["get", "put", "post", "delete", "internal"]
-    transform(meta: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.VisitResult {
+    transform(meta: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
         if (prevResult) {
             this.next(prevResult)
         }
@@ -13,7 +13,7 @@ export class InternalDecoratorTransformer extends TransformerBase {
 
             //decorator conflict with internal
             if ((decorators.some(x => <Core.DecoratorType>x.name == "internal")
-                && decorators.length != 1)) {
+                && decorators.length > 1)) {
 
                 return this.next([<Core.RouteInfo>{
                     analysis: [Core.RouteAnalysisCode.ConflictDecorators],

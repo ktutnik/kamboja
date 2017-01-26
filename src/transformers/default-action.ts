@@ -1,18 +1,17 @@
 import * as Kecubung from "kecubung"
 import * as Core from "../core"
-import { TransformerBase } from "./transformer"
+import { TransformerBase } from "./transformer-base"
 
 export class DefaultActionTransformer extends TransformerBase {
-    transform(method: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.VisitResult {
+    transform(method: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
+        parent += "/" + method.name.toLowerCase()
         method.parameters.forEach(x => {
             parent += `/:${x.name}`
         })
         if (prevResult) {
             prevResult.forEach(x => {
-                if (!x.route) {
-                    x.route = parent;
-                    x.generatingMethod += ",Default"
-                }
+                x.route = parent;
+                x.generatingMethod = "Default"
             })
             return this.exit(prevResult);
         }

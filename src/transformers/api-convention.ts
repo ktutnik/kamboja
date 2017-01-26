@@ -1,12 +1,12 @@
 import * as Kecubung from "kecubung"
 import * as Core from "../core"
-import { TransformerBase } from "./transformer"
+import { TransformerBase } from "./transformer-base"
 
 export type MethodConventionType = "getByPage" | "get" | "add" | "modify" | "delete"
 
 export class ApiConventionTransformer extends TransformerBase {
     private conventions: Array<MethodConventionType> = ["getByPage", "get", "add", "modify", "delete"]
-    transform(meta: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.VisitResult {
+    transform(meta: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
         if (prevResult) {
             return this.next(prevResult);
         }

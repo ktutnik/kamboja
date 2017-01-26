@@ -1,7 +1,7 @@
 import { MetaData } from "kecubung";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
-export type VisitStatus = "ExitWithResult" | "NextWithResult" | "Next" | "Exit"
+export type TransformStatus = "ExitWithResult" | "NextWithResult" | "Next" | "Exit"
 export type GeneratingMethod = "Default" | "HttpMethodDecorator" | "ApiConvention"
 
 export class Decorator {
@@ -63,31 +63,13 @@ export interface RouteInfo {
     analysis?: number[]
 }
 
-/*remove*/
-export interface MethodVisitor {
-    visit(meta: MetaData, parent: string): VisitResult;
-}
-
-export interface VisitResult {
-    status: VisitStatus
-    result?: RouteInfo[]
+export interface TransformResult {
+    status: TransformStatus
+    info?: RouteInfo[]
 }
 
 export interface ClassVisitor {
     visit(meta: MetaData, parent: string): RouteInfo[]
-}
-
-export interface Generator {
-    fileName: string,
-    traverseArray(children: MetaData[], parent: string): RouteInfo[];
-    traverseMeta(meta: MetaData, parent: string): RouteInfo[];
-}
-
-export interface GeneratorOption {
-    stripeController?: boolean
-    internalDecorator?: boolean
-    httMethodDecorator?: boolean
-    apiConvention?: boolean
 }
 
 export interface RequestHandler {

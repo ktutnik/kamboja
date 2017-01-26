@@ -4,7 +4,7 @@ import * as Core from "../core"
 export abstract class TransformerBase {
     transformers: TransformerBase[];
 
-    abstract transform(meta: Kecubung.MetaData, parent: string, prevResult: Core.RouteInfo[]): Core.VisitResult
+    abstract transform(meta: Kecubung.MetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult
 
     protected traverse(children: Kecubung.MetaData[], parent: string) {
         let result: Core.RouteInfo[] = []
@@ -17,30 +17,30 @@ export abstract class TransformerBase {
 
     protected next(result?: Core.RouteInfo[]) {
         if (result)
-            return <Core.VisitResult>{
+            return <Core.TransformResult>{
                 status: "NextWithResult",
-                result: result
+                info: result
             };
         else
-            return <Core.VisitResult>{ status: "Next" };
+            return <Core.TransformResult>{ status: "Next" };
     }
 
     protected exit(result?: Core.RouteInfo[]) {
-        if (result) return <Core.VisitResult>{
+        if (result) return <Core.TransformResult>{
             status: "ExitWithResult",
-            result: result
+            info: result
         };
-        return <Core.VisitResult>{ status: "Exit" };
+        return <Core.TransformResult>{ status: "Exit" };
     }
 
     private executeByPriority(child: Kecubung.MetaData, parent: string) {
         let trans = this.transformers.filter(x => Core.getWhen(x, "transform") == child.type)
-        let lastResult: Core.VisitResult;
+        let lastResult: Core.TransformResult;
         for (let transformer of trans) {
-            let result = transformer.transform(child, parent, lastResult.result)
+            let result = transformer.transform(child, parent, lastResult.info)
             switch (result.status) {
                 case "ExitWithResult":
-                    return result.result;
+                    return result.info;
                 case "NextWithResult":
                     lastResult = result;
                 case "Exit":
