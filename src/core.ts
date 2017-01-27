@@ -1,8 +1,8 @@
-import { MetaData } from "kecubung";
+import { MetaData, MetadataType } from "kecubung";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
-export type TransformStatus = "ExitWithResult" | "NextWithResult" | "Next" | "Exit"
-export type GeneratingMethod = "Default" | "HttpMethodDecorator" | "ApiConvention"
+export type TransformStatus = "ExitWithResult" | "Next" | "Exit"
+export type TransformerName = "DefaultAction" | "HttpMethodDecorator" | "ApiConvention" | "InternalDecorator" | "Controller" | "Module"
 
 export class Decorator {
     internal() { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
@@ -52,8 +52,29 @@ export module RouteAnalysisCode{
     export const ConventionFail = 5;
 }
 
+/**
+ * ask the next transformer to override each of field if possible
+ */
+export enum OverrideRequest{
+    Route = 1,
+    HttpMethod = 2,
+}
+
 export interface RouteInfo {
-    generatingMethod?: GeneratingMethod
+    /**
+     * Transformer initiate the info
+     */
+    initiator?: TransformerName
+
+    /**
+     * Transformer collaborate to change the info
+     */
+    collaborator?: TransformerName[]
+
+    /**
+     * Message for next transformer to override specific field
+     */
+    overrideRequest?:OverrideRequest
     route?: string;
     httpMethod?: HttpMethod
     parameters?: string[]
@@ -118,6 +139,8 @@ export interface HttpResponse {
     json(body, status?: number)
     jsonp(body, status?: number)
     view(name, model?)
+    redirect(url:string)
+    file(path:string)
 }
 
 export interface DependencyResolver {
@@ -137,14 +160,14 @@ export class Controller {
 }
 
 const META_DATA_KEY = "kamboja:Call.when";
-export function when(kind: string) {
+export function when(kind: MetadataType) {
     return function (target, method, descriptor) {
         Reflect.defineMetadata(META_DATA_KEY, kind, target, method);
     }
 }
 
 export function getWhen(target, methodName: string) {
-    return <string>Reflect.getMetadata(META_DATA_KEY, target, methodName);
+    return <MetadataType>Reflect.getMetadata(META_DATA_KEY, target, methodName);
 }
 
 export const internal = new Decorator().internal;

@@ -8,26 +8,30 @@ import { InternalDecoratorTransformer } from "./internal-decorator"
 
 export class ControllerTransformer extends TransformerBase {
 
+    @Core.when("Class")
     transform(meta: Kecubung.ClassMetaData,
         parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
         this.installChildTransformer(meta)
+        if(!Kecubung.flag(meta.analysis, Kecubung.AnalysisType.Valid)) return this.exit();
 
         let ctlLocation = meta.name.toLowerCase().lastIndexOf("controller");
-        if (ctlLocation > -1) {
+        if (ctlLocation > 0) {
             let name = meta.name.substr(0, ctlLocation);
             parent += "/" + name.toLowerCase();
         }
         else {
             parent += "/" + meta.name.toLowerCase();
         }
-        let result = this.traverse(meta.methods, parent)
+        let result = this.transformChildren(meta.methods, parent)
         result.forEach(x => {
             x.className = meta.name
+            if (!x.collaborator) x.collaborator = []
+            x.collaborator.push("Controller")
         })
         return this.exit(result)
     }
 
-    private installChildTransformer(meta:Kecubung.ClassMetaData){
+    private installChildTransformer(meta: Kecubung.ClassMetaData) {
         //highest priority transformer should stay on top of another
         if (meta.baseClass == "ApiController") {
             this.transformers = [

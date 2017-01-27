@@ -80,14 +80,14 @@ gulp.task("build", function (cb) {
 //******** TEST *************
 gulp.task("mocha", function () {
     return gulp.src([
-        "test/**/**.js"
+        "test/**/*.js"
     ])
         .pipe(mocha({ ui: "bdd" }))
         .pipe(istanbul.writeReports());
 });
 
 gulp.task("istanbul:hook", function () {
-    return gulp.src(["src/**/**.js"])
+    return gulp.src(["src/**/*.js"])
         // Covering files
         .pipe(istanbul())
         // Force `require` to return covered files
@@ -107,18 +107,18 @@ gulp.task("build-lib", function () {
 var tsDtsProject = tsc.createProject("tsconfig.json", {
     declaration: true,
     noResolve: false,
-    typescript: require("typescript") 
+    typescript: require("typescript")
 });
 
-gulp.task("build-dts", function() {
+gulp.task("build-dts", function () {
     return gulp.src([
         "src/**/*.ts"
     ])
-    .pipe(tsDtsProject())
-    .on("error", function (err) {
-        process.exit(1);
-    })
-    .dts.pipe(gulp.dest("lib/dts"));
+        .pipe(tsDtsProject())
+        .on("error", function (err) {
+            process.exit(1);
+        })
+        .dts.pipe(gulp.dest("lib/dts"));
 });
 
 gulp.task("dist", function (cb) {

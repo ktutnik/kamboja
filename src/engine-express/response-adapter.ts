@@ -26,4 +26,12 @@ export class ResponseAdapter implements Core.HttpResponse {
      view(name, model?){
          this.response.render(name, model)
      }
+
+     file(path:string){
+         this.response.sendFile(path)
+     }
+
+     redirect(url:string){
+         this.redirect(url)
+     }
 }

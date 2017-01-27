@@ -6,10 +6,10 @@ import { ModuleTransformer } from "./module"
 
 export class FileTransformer extends TransformerBase {
 
+    @Core.when("File")
     transform(meta: Kecubung.ParentMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
         this.installChildTransformer()
-        parent += "/" + meta.name.toLowerCase();
-        let result = this.traverse(meta.children, parent)
+        let result = this.transformChildren(meta.children, parent)
         result.forEach(x => x.className += `, ${meta.name}`)
         return this.exit(result)
     }

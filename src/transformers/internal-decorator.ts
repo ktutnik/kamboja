@@ -4,6 +4,8 @@ import { TransformerBase } from "./transformer-base"
 
 export class InternalDecoratorTransformer extends TransformerBase {
     private decorators: Array<Core.DecoratorType> = ["get", "put", "post", "delete", "internal"]
+
+    @Core.when("Method")
     transform(meta: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
         if (prevResult) {
             this.next(prevResult)
@@ -15,13 +17,13 @@ export class InternalDecoratorTransformer extends TransformerBase {
             if ((decorators.some(x => <Core.DecoratorType>x.name == "internal")
                 && decorators.length > 1)) {
 
-                return this.next([<Core.RouteInfo>{
+                return this.next(<Core.RouteInfo>{
                     analysis: [Core.RouteAnalysisCode.ConflictDecorators],
                     methodName: meta.name,
                     parameters: meta.parameters.map(x => x.name),
                     httpMethod: "GET",
-                    generatingMethod: "HttpMethodDecorator"
-                }]);
+                    initiator: "InternalDecorator"
+                });
             }
 
             for (let decorator of meta.decorators) {

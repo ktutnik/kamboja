@@ -5,8 +5,10 @@ import { TransformerBase } from "./transformer-base"
 
 export class HttpDecoratorTransformer extends TransformerBase {
     decorators: Core.DecoratorType[] = ["get", "post", "put", "delete"]
+
+    @Core.when("Method")
     transform(meta: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
-        if(prevResult){
+        if (prevResult) {
             //too complex to handle,
             //just past previous result
             return this.next(prevResult);
@@ -20,7 +22,7 @@ export class HttpDecoratorTransformer extends TransformerBase {
                 let info = this.createInfo(meta, decorator);
                 result.push(info);
             }
-            //pass to the default action generator to fill the missing route (decorator without parameter)
+            //pass to the default action generator to fill decorator without parameter
             return this.next(result)
         }
         else return this.next()
@@ -32,15 +34,16 @@ export class HttpDecoratorTransformer extends TransformerBase {
         //left the url empty and pass to the next transformer
         if (!decorator.parameters || decorator.parameters.length == 0) {
             return <Core.RouteInfo>{
-                generatingMethod: "HttpMethodDecorator",
+                initiator: "HttpMethodDecorator",
                 httpMethod: method,
                 methodName: meta.name,
-                parameters: meta.parameters.map(x => x.name)
+                parameters: meta.parameters.map(x => x.name),
+                overrideRequest: Core.OverrideRequest.Route
             };
         }
         else {
             let route = decorator.parameters[0].name;
-            let analysis:number[] = []
+            let analysis: number[] = []
 
             let routeAnalysis = this.checkMissingActionParameters(meta, route)
             if (routeAnalysis) analysis.push(routeAnalysis)
@@ -48,15 +51,15 @@ export class HttpDecoratorTransformer extends TransformerBase {
             routeAnalysis = this.checkMissingRouteParameters(meta, route, method)
             if (routeAnalysis) analysis.push(routeAnalysis)
 
-            routeAnalysis = this.checkUnassociatedParameters(meta, route);
-            if (routeAnalysis) return analysis.push(routeAnalysis)
+            routeAnalysis = this.checkUnAssociatedParameters(meta, route);
+            if (routeAnalysis) analysis.push(routeAnalysis)
             return <Core.RouteInfo>{
-                generatingMethod: "HttpMethodDecorator",
+                initiator: "HttpMethodDecorator",
                 httpMethod: method,
                 methodName: meta.name,
                 route: route,
                 parameters: meta.parameters.map(x => x.name),
-                analysis:analysis
+                analysis: analysis
             };
         }
 
@@ -81,7 +84,7 @@ export class HttpDecoratorTransformer extends TransformerBase {
         return;
     }
 
-    private checkUnassociatedParameters(meta: Kecubung.MethodMetaData, route: string) {
+    private checkUnAssociatedParameters(meta: Kecubung.MethodMetaData, route: string) {
         //analyse if provided has associated parameter
         let parameters = meta.parameters.map(x => x.name);
         let routeParameters = route.split("/").filter(x => x.charAt(0) == ":");
