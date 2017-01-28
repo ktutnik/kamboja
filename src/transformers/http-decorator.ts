@@ -36,8 +36,7 @@ export class HttpDecoratorTransformer extends TransformerBase {
             return <Core.RouteInfo>{
                 initiator: "HttpMethodDecorator",
                 httpMethod: method,
-                methodName: meta.name,
-                parameters: meta.parameters.map(x => x.name),
+                methodMetaData:meta,
                 overrideRequest: Core.OverrideRequest.Route
             };
         }
@@ -53,14 +52,15 @@ export class HttpDecoratorTransformer extends TransformerBase {
 
             routeAnalysis = this.checkUnAssociatedParameters(meta, route);
             if (routeAnalysis) analysis.push(routeAnalysis)
-            return <Core.RouteInfo>{
+            
+            let result = <Core.RouteInfo>{
                 initiator: "HttpMethodDecorator",
                 httpMethod: method,
-                methodName: meta.name,
+                methodMetaData: meta,
                 route: route,
-                parameters: meta.parameters.map(x => x.name),
-                analysis: analysis
             };
+            if(analysis.length > 0) result.analysis = analysis
+            return result;
         }
 
     }

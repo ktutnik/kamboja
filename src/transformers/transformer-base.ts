@@ -13,16 +13,20 @@ export abstract class TransformerBase {
             let trans = this.transformers.filter(x => Core.getWhen(x, "transform") == child.type)
             for (let transformer of trans) {
                 let tempResult = transformer.transform(child, parent, lastResult ? lastResult.info : undefined)
+                let exit = false;
                 switch (tempResult.status) {
                     case "ExitWithResult":
                         result = result.concat(tempResult.info);
+                        exit = true;
                         break;
                     case "Next":
                         lastResult = tempResult;
                         break;
                     case "Exit":
+                        exit = true;
                         break;
                 }
+                if (exit) break;
             }
         }
         return result;

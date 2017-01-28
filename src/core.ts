@@ -1,4 +1,4 @@
-import { MetaData, MetadataType } from "kecubung";
+import { MetaData, MetadataType, MethodMetaData } from "kecubung";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 export type TransformStatus = "ExitWithResult" | "Next" | "Exit"
@@ -77,9 +77,8 @@ export interface RouteInfo {
     overrideRequest?:OverrideRequest
     route?: string;
     httpMethod?: HttpMethod
-    parameters?: string[]
+    methodMetaData?:MethodMetaData
     className?: string
-    methodName?: string
     classId?: any
     analysis?: number[]
 }

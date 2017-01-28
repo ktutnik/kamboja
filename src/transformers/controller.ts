@@ -11,8 +11,9 @@ export class ControllerTransformer extends TransformerBase {
     @Core.when("Class")
     transform(meta: Kecubung.ClassMetaData,
         parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
+        if (!meta.baseClass) return this.exit();
         this.installChildTransformer(meta)
-        if(!Kecubung.flag(meta.analysis, Kecubung.AnalysisType.Valid)) return this.exit();
+        if (!Kecubung.flag(meta.analysis, Kecubung.AnalysisType.Valid)) return this.exit();
 
         let ctlLocation = meta.name.toLowerCase().lastIndexOf("controller");
         if (ctlLocation > 0) {
@@ -41,7 +42,7 @@ export class ControllerTransformer extends TransformerBase {
                 new DefaultActionTransformer()
             ]
         }
-        else if (meta.baseClass == "Controller") {
+        else {
             this.transformers = [
                 new InternalDecoratorTransformer(),
                 new HttpDecoratorTransformer(),

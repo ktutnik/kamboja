@@ -12,7 +12,6 @@ export class ModuleTransformer extends TransformerBase {
         parent += "/" + meta.name.toLowerCase();
         let result = this.transformChildren(meta.children, parent)
         result.forEach(x => {
-            if (!x.collaborator) x.collaborator = []
             x.collaborator.push("Module")
         })
         return this.exit(result)

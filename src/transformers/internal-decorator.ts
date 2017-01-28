@@ -19,8 +19,7 @@ export class InternalDecoratorTransformer extends TransformerBase {
 
                 return this.next(<Core.RouteInfo>{
                     analysis: [Core.RouteAnalysisCode.ConflictDecorators],
-                    methodName: meta.name,
-                    parameters: meta.parameters.map(x => x.name),
+                    methodMetaData: meta,
                     httpMethod: "GET",
                     initiator: "InternalDecorator"
                 });

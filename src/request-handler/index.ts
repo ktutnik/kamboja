@@ -15,7 +15,7 @@ export class RequestHandler implements Core.RequestHandler {
 
         let binder = new Binder(this.routeInfo, request)
         let parameters = binder.getParameters();
-        let executor = new Executor(controller, this.routeInfo.methodName, response)
+        let executor = new Executor(controller, this.routeInfo.methodMetaData.name, response)
         executor.execute()
     }
 }

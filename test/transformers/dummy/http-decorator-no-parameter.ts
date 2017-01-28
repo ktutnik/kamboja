@@ -6,7 +6,7 @@ export class SimpleController extends Controller {
     getMethod(){}
 
     @http.post()
-    postMethod(){}
+    postMethod(params){}
 
     @http.put()
     putMethod(){}

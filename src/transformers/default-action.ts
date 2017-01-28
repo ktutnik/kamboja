@@ -24,8 +24,7 @@ export class DefaultActionTransformer extends TransformerBase {
                 initiator: "DefaultAction",
                 route: parent,
                 httpMethod: "GET",
-                methodName: method.name,
-                parameters: method.parameters.map(x => x.name)
+                methodMetaData: method
             }]);
         }
     }

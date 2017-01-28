@@ -13,12 +13,12 @@ export class ApiConventionTransformer extends TransformerBase {
             return this.next(prevResult);
         }
         if (this.conventions.some(x => x == meta.name)) {
+            //if it doesn't contain parameter pass to other transformer
             if (meta.parameters.length < 1) {
                 return this.next(<Core.RouteInfo>{
                     analysis: [Core.RouteAnalysisCode.ConventionFail],
                     initiator: "ApiConvention",
-                    methodName: meta.name,
-                    parameters: meta.parameters.map(x => x.name),
+                    methodMetaData:meta,
                     overrideRequest: Core.OverrideRequest.Route,
                     httpMethod: "GET"
                 });
@@ -46,8 +46,7 @@ export class ApiConventionTransformer extends TransformerBase {
         return this.exit({
             httpMethod: "GET",
             initiator: "ApiConvention",
-            parameters: meta.parameters.map(x => x.name),
-            methodName: meta.name,
+            methodMetaData: meta,
             route: parent
         });
     }
@@ -58,8 +57,7 @@ export class ApiConventionTransformer extends TransformerBase {
         return this.exit({
             httpMethod: method,
             initiator: "ApiConvention",
-            parameters: meta.parameters.map(x => x.name),
-            methodName: meta.name,
+            methodMetaData: meta,
             route: parent
         });
     }
@@ -68,8 +66,7 @@ export class ApiConventionTransformer extends TransformerBase {
         return this.exit({
             httpMethod: "POST",
             initiator: "ApiConvention",
-            parameters: meta.parameters.map(x => x.name),
-            methodName: meta.name,
+            methodMetaData: meta,
             route: parent
         });
     }
