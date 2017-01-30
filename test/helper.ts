@@ -6,7 +6,11 @@ import * as Fs from "fs"
 export function fromFile(filePath:string){
     let path = Path.join(process.cwd(), filePath)
     let code = Fs.readFileSync(path).toString()
-    let ast = Babylon.parse(code);
+    return fromCode(code, filePath)
+}
+
+export function fromCode(code, filePath:string = ""){
+let ast = Babylon.parse(code);
     return Kecubung.transform("ASTree", ast, filePath);
 }
 

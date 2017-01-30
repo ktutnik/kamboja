@@ -11,11 +11,24 @@ export class ControllerTransformer extends TransformerBase {
     @Core.when("Class")
     transform(meta: Kecubung.ClassMetaData,
         parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
-        if (!meta.baseClass || 
-            !(meta.baseClass == "Controller" 
-                || meta.baseClass == "ApiController")) return this.exit();
+        //check if class inherrited from Controler or ApiController
+        if (!meta.baseClass ||
+            !(meta.baseClass == "Controller"
+                || meta.baseClass == "ApiController"))
+            return this.exit(<Core.RouteInfo>{
+                analysis: [Core.RouteAnalysisCode.ClassNotInherritedFromController],
+                className: meta.name,
+                initiator: "Controller"
+            });
+        //check if class is valid (exported)
+        if (!Kecubung.flag(meta.analysis, Kecubung.AnalysisType.Valid))
+            return this.exit(<Core.RouteInfo>{
+                analysis: [Core.RouteAnalysisCode.ClassNotExported],
+                className: meta.name,
+                initiator: "Controller"
+            });
+
         this.installChildTransformer(meta)
-        if (!Kecubung.flag(meta.analysis, Kecubung.AnalysisType.Valid)) return this.exit();
 
         let ctlLocation = meta.name.toLowerCase().lastIndexOf("controller");
         if (ctlLocation > 0) {

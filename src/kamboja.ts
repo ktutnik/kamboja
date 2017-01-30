@@ -3,7 +3,7 @@ import { DefaultDependencyResolver } from "./resolver/dependency-resolver"
 import { DefaultIdentifierResolver } from "./resolver/identifier-resolver"
 import * as Lodash from "lodash"
 import { ExpressEngine } from "./engine-express"
-import { Router } from "./router"
+import { Router } from "./router/router"
 
 
 export class Kamboja {

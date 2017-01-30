@@ -50,6 +50,15 @@ export module RouteAnalysisCode{
      * method naming convention but the method doesn't have parameters
      */
     export const ConventionFail = 5;
+
+    export const ClassNotInherritedFromController = 6
+
+    export const ClassNotExported = 7
+}
+
+export interface RouteAnalysis {
+    type: "Error" | "Warning"
+    message: string
 }
 
 /**

@@ -4,10 +4,13 @@ import * as Fs from "fs"
 import * as Kenanga from "kecubung"
 import * as Babylon from "babylon"
 import * as Transformer from "../transformers"
+import * as Analyzer from "../analyzer"
 import {PathResolver} from "../resolver/path-resolver"
 
 export class Router {
     private pathResolver:PathResolver;
+    private routes:Core.RouteInfo[];
+
     constructor(private path: string, private identifier: Core.IdentifierResolver) {
         this.pathResolver = new PathResolver()
      }
@@ -43,12 +46,13 @@ export class Router {
         return routeInfos;
     }
 
-    getRoutes() {
+    async getRoutes() {
         let files = this.getFiles();
         let promises:Promise<Core.RouteInfo>[] = []
         for (let file of files) {
             promises.push(this.createInfo(file))
         }
-        return Promise.all(promises);
+        this.routes = await Promise.all(promises);
+        return this.routes;
     }
 }

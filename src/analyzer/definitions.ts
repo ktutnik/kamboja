@@ -1,9 +1,5 @@
-import { RouteInfo } from "../core"
+import { RouteInfo, RouteAnalysis } from "../core"
 
-export interface RouteAnalysis {
-    type: "Error" | "Warning"
-    message: string
-}
 
 export interface AnalyzerCommand {
     analyse(route: RouteInfo): RouteAnalysis[];
