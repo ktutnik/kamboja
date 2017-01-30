@@ -15,16 +15,3 @@ export class RouteAnalyzer {
         return result;
     }
 }
-
-export class DuplicateAnalyzer implements AnalyzerCommand {
-    routes: RouteInfo[] = []
-    analyse(route: RouteInfo): RouteAnalysis[] {
-        let dupe = this.routes.filter(x => x.route == route.route);
-        if (dupe.length > 0) {
-            let message = `Error: duplicate`
-        }
-        else {
-            this.routes.push(route);
-        }
-    }
-}
