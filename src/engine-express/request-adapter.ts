@@ -1,6 +1,6 @@
 import * as Core from "../core"
 import * as Express from "express"
-import * as Utils from "../utils"
+import * as Lodash from "lodash"
 
 
 export class RequestAdapter implements Core.HttpRequest {
@@ -8,16 +8,15 @@ export class RequestAdapter implements Core.HttpRequest {
     httpMethod:Core.HttpMethod
     headers: { [key: string]: string }
     cookies: { [key: string]: string }
-    queries: { [key: string]: string }
+    params: { [key: string]: string }
     body: any
     referrer: string
     url: string
 
     constructor(request: Express.Request) { 
-        Utils.copy(request.header, this.headers)
-        Utils.copy(request.cookies, this.cookies)
-        Utils.copy(request.params, this.queries)
-        Utils.copy(request.query, this.queries)
+        this.headers = Lodash.assign(this.headers, request.headers)
+        this.cookies = Lodash.assign(this.cookies, request.cookies)
+        this.params = Lodash.assign(this.params, request.params)
         this.body = request.body;
         this.httpVersion = request.httpVersion;
         this.httpMethod = <Core.HttpMethod>request.method;
@@ -27,5 +26,5 @@ export class RequestAdapter implements Core.HttpRequest {
 
     getHeader(key: string): string { return this.headers[key.toLowerCase()]; }
     getCookie(key: string): string { return this.cookies[key.toLowerCase()]; }
-    getQuery(key: string): string { return this.queries[key.toLowerCase()]; }
+    getParam(key: string): string { return this.params[key.toLowerCase()]; }
 }

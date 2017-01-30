@@ -1,10 +1,11 @@
 import * as Core from "../core"
 import * as Express from "express"
-import * as Utils from "../utils"
 import { RequestAdapter } from "./request-adapter"
 import { ResponseAdapter } from "./response-adapter"
 import { RequestHandler } from "../request-handler"
 import * as Http from "http";
+import * as Lodash from "lodash"
+
 
 export interface ExpressEngineOptions {
     onAppSetup?: (app) => void
@@ -14,7 +15,7 @@ export interface ExpressEngineOptions {
 export class ExpressEngine implements Core.Engine {
     app: Express.Application;
     constructor(private resolver: Core.DependencyResolver, options?: ExpressEngineOptions) {
-        let opts = Utils.override(options, {
+        let opts = Lodash.assign(options, {
             onAppSetup: (app) => { },
             app: Express()
         })

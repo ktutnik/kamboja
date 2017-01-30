@@ -98,9 +98,11 @@ export interface RequestHandler {
 }
 
 export interface KambojaOption {
-    engine?: Engine,
-    controllerPath?: string,
+    engine?: Engine
     onAppSetup?: (app) => void
+    controllerPath?: string
+    dependencyResolver?:DependencyResolver
+    identifierResolver?:IdentifierResolver
 }
 
 export interface Engine {
@@ -113,13 +115,13 @@ export interface HttpRequest {
     httpMethod: HttpMethod
     headers: { [key: string]: string }
     cookies: { [key: string]: string }
-    queries: { [key: string]: string }
+    params: { [key: string]: string }
     body: any
     referrer: string
     url: string
     getHeader(key: string): string
     getCookie(key: string): string
-    getQuery(key: string): string
+    getParam(key: string): string
 }
 
 
@@ -144,7 +146,10 @@ export interface HttpResponse {
 
 export interface DependencyResolver {
     resolve<T>(qualifiedClassName: string);
-    getClassId(qualifiedClassName: string, objectInstance: any)
+}
+
+export interface IdentifierResolver{
+    getClassId(qualifiedClassName: string)
 }
 
 export class ApiController{

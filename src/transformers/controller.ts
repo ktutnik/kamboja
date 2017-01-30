@@ -11,7 +11,9 @@ export class ControllerTransformer extends TransformerBase {
     @Core.when("Class")
     transform(meta: Kecubung.ClassMetaData,
         parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
-        if (!meta.baseClass) return this.exit();
+        if (!meta.baseClass || 
+            !(meta.baseClass == "Controller" 
+                || meta.baseClass == "ApiController")) return this.exit();
         this.installChildTransformer(meta)
         if (!Kecubung.flag(meta.analysis, Kecubung.AnalysisType.Valid)) return this.exit();
 

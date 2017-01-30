@@ -7,6 +7,6 @@ export function fromFile(filePath:string){
     let path = Path.join(process.cwd(), filePath)
     let code = Fs.readFileSync(path).toString()
     let ast = Babylon.parse(code);
-    return Kecubung.transform(ast, filePath);
+    return Kecubung.transform("ASTree", ast, filePath);
 }
 

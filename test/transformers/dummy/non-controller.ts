@@ -1,6 +1,10 @@
 import { ApiController, Controller } from "../../../src/core"
 
-export class SimpleController {
+class BaseClass {
+    theMethod(){}
+}
+
+export class SimpleController extends BaseClass {
     myGetAction(par1, par2) { }
     myOtherGetAction(par1) { }
     myActionWithoutParameter() { }
