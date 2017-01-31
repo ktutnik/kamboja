@@ -32,6 +32,11 @@ export class ResponseAdapter implements Core.HttpResponse {
      }
 
      redirect(url:string){
-         this.redirect(url)
+         this.response.redirect(url)
+     }
+
+     status(status:number, message?:string){
+         let resp = this.response.status(status)
+         if(message) resp.send(message)
      }
 }

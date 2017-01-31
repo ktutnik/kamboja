@@ -98,28 +98,29 @@ export interface TransformResult {
     info?: RouteInfo[]
 }
 
-export interface ClassVisitor {
-    visit(meta: MetaData, parent: string): RouteInfo[]
-}
-
 export interface RequestHandler {
     routeInfo: RouteInfo
     onRequest(request: HttpRequest, response: HttpResponse);
 }
 
 export interface KambojaOption {
+    verbose: boolean,
     engine?: Engine
     onAppSetup?: (app) => void
     controllerPaths?: string[],
     viewPath?: string,
+    viewEngine?:string,
     staticFilePath?: string,
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
 }
 
+export interface ExecutorCommand{
+    execute(parameters:any[]):Promise<void>
+}
+
 export interface Engine {
-    setRoutes(routes: RouteInfo[]): Engine;
-    getApp(): any;
+    init(routes: RouteInfo[]):any;
 }
 
 export interface HttpRequest {
@@ -136,7 +137,6 @@ export interface HttpRequest {
     getParam(key: string): string
 }
 
-
 export interface CookieOptions {
     maxAge?: number;
     signed?: boolean;
@@ -149,6 +149,7 @@ export interface CookieOptions {
 
 export interface HttpResponse {
     setCookie(key: string, value: string, option?: CookieOptions)
+    status(status:number, message?:string)
     json(body, status?: number)
     jsonp(body, status?: number)
     view(name, model?)
@@ -164,22 +165,11 @@ export interface IdentifierResolver {
     getClassId(qualifiedClassName: string)
 }
 
-
 export interface ActionResult{
     execute(response:HttpResponse);
-}
-
-const META_DATA_KEY = "kamboja:Call.when";
-export function when(kind: MetadataType) {
-    return function (target, method, descriptor) {
-        Reflect.defineMetadata(META_DATA_KEY, kind, target, method);
-    }
-}
-
-export function getWhen(target, methodName: string) {
-    return <MetadataType>Reflect.getMetadata(META_DATA_KEY, target, methodName);
 }
 
 export const internal = new Decorator().internal;
 export const http = new HttpDecorator();
 export const val = new Validator();
+export {ApiController, Controller} from "./controller"

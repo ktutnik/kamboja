@@ -1,6 +1,6 @@
-import * as Analyzer from "../../src/analyzer"
+import * as Analyzer from "../../src/router/analyzer"
 import * as H from "../helper"
-import * as Transformer from "../../src/transformers"
+import * as Transformer from "../../src/router/transformers"
 import * as Chai from "chai"
 
 describe("Analyzer", () => {

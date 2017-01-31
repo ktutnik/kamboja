@@ -7,8 +7,9 @@ describe("Router", () => {
     it("Should load routes from controllers properly", async () => {
         let test = new Router(["test/router/api", "test/router/controller"], new DefaultIdentifierResolver())
         let routes = await test.getRoutes()
-        let clean = H.cleanUp(routes)
+        let clean = H.cleanUp(routes.result)
         Chai.expect(clean).deep.eq([{
+            baseClass: "ApiController",
             initiator: 'ApiConvention',
             route: '/dummyapi/page/:offset/:pageSize',
             httpMethod: 'GET',
@@ -17,6 +18,7 @@ describe("Router", () => {
             collaborator: ['Controller']
         },
         {
+            baseClass: "Controller",
             initiator: 'DefaultAction',
             route: '/dummy/getdata/:offset/:pageSize',
             httpMethod: 'GET',

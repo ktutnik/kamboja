@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "gulp",
+    "test": "mocha --recursive",
     "preversion": "gulp",
     "postversion": "git push && git push --tags"
   },
@@ -23,9 +23,15 @@
   },
   "homepage": "https://github.com/kambojajs/kamboja#readme",
   "dependencies": {
+    "@types/body-parser": "0.0.33",
+    "@types/cookie-parser": "^1.3.30",
+    "@types/morgan": "^1.7.32",
     "babylon": "^6.14.1",
-    "express": "^4.14.0",
+    "body-parser": "^1.16.0",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.1",
     "kecubung": "0.0.3",
+    "morgan": "^1.7.0",
     "reflect-metadata": "^0.1.9",
     "tslib": "^1.5.0",
     "validator": "^6.2.1"
@@ -37,6 +43,8 @@
     "@types/lodash": "^4.14.43",
     "@types/mocha": "^2.2.37",
     "@types/node": "^6.0.59",
+    "@types/sinon": "^1.16.34",
+    "@types/supertest": "^2.0.0",
     "@types/validator": "^5.7.35",
     "chai": "^3.5.0",
     "coveralls": "^2.11.15",
@@ -47,6 +55,7 @@
     "gulp-typescript": "^3.1.4",
     "mocha": "^3.2.0",
     "run-sequence": "^1.2.2",
+    "sinon": "^1.17.7",
     "supertest": "^2.0.1",
     "typescript": "^2.1.1"
   }

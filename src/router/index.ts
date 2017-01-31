@@ -3,8 +3,8 @@ import * as Path from "path"
 import * as Fs from "fs"
 import * as Kenanga from "kecubung"
 import * as Babylon from "babylon"
-import * as Transformer from "../transformers"
-import * as Analyzer from "../analyzer"
+import * as Transformer from "./transformers"
+import * as Analyzer from "./analyzer"
 import { PathResolver } from "../resolver/path-resolver"
 
 export class Router {
@@ -39,7 +39,7 @@ export class Router {
         });
     }
 
-    private async createInfo(filePath: string):Promise<Core.RouteInfo[]> {
+    private async createInfo(filePath: string): Promise<Core.RouteInfo[]> {
         let code = await this.readFile(filePath)
         let ast = Babylon.parse(code)
         let fileName = this.pathResolver.relative(filePath);
@@ -58,10 +58,11 @@ export class Router {
             promises.push(this.createInfo(file))
         }
         this.routes = await Promise.all(promises);
-        let result:Core.RouteInfo[] = []
-        for(let route of this.routes){
+        let result: Core.RouteInfo[] = []
+        for (let route of this.routes) {
             result = result.concat(route)
         }
-        return result;
+        let analysis = Analyzer.analyze(result)
+        return { analysis: analysis, result: result };
     }
 }

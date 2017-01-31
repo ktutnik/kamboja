@@ -2,7 +2,7 @@ import * as Chai from "chai"
 import * as Kecubung from "kecubung"
 import * as Core from "../../src/core"
 import * as H from "../helper"
-import * as Transformer from "../../src/transformers"
+import * as Transformer from "../../src/router/transformers"
 import * as Util from "util"
 import * as Dash from "lodash"
 
@@ -16,6 +16,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
+                baseClass: "Controller",
                 route: '/simple/mygetaction/:par1/:par2',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myGetAction' },
@@ -24,6 +25,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'DefaultAction',
+                baseClass: "Controller",
                 route: '/simple/myothergetaction/:par1',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myOtherGetAction' },
@@ -32,6 +34,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'DefaultAction',
+                baseClass: "Controller",
                 route: '/simple/myactionwithoutparameter',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myActionWithoutParameter' },
@@ -54,6 +57,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
+                baseClass: "Controller",
                 route: '/parentmodule/simple/myothergetaction/:par1',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myOtherGetAction' },
@@ -62,6 +66,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'DefaultAction',
+                baseClass: "Controller",
                 route: '/parentmodule/innermodule/simple/myactionwithoutparameter',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myActionWithoutParameter' },
@@ -76,6 +81,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
+                baseClass: "Controller",
                 route: '/controllerwithoutprefix/mygetaction/:par1',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myGetAction' },
@@ -90,6 +96,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'Controller',
+                baseClass: undefined,
                 route: undefined,
                 httpMethod: undefined,
                 methodMetaData: { name: '' },
@@ -99,6 +106,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'DefaultAction',
+                baseClass: "Controller",
                 route: '/simple/myothergetaction/:par1',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myOtherGetAction' },
@@ -113,6 +121,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
+                baseClass: "Controller",
                 route: '/parentmodule/simple/myothergetaction/:par1',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myOtherGetAction' },
@@ -121,6 +130,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'DefaultAction',
+                baseClass: "Controller",
                 route: '/parentmodule/innermodule/simple/myactionwithoutparameter',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myActionWithoutParameter' },
@@ -138,6 +148,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
+                baseClass: "Controller",
                 route: '/simple/publicmethod/:par1',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'publicMethod' },
@@ -152,6 +163,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'InternalDecorator',
+                baseClass: "Controller",
                 route: undefined,
                 httpMethod: 'GET',
                 methodMetaData: { name: 'privateMethod' },
@@ -161,6 +173,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'DefaultAction',
+                baseClass: "Controller",
                 route: '/simple/publicmethod/:par1',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'publicMethod' },
@@ -178,6 +191,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'this/get/got/different',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'getMethod' },
@@ -186,6 +200,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'this/post/got/different',
                 httpMethod: 'POST',
                 methodMetaData: { name: 'postMethod' },
@@ -194,6 +209,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'this/put/got/different',
                 httpMethod: 'PUT',
                 methodMetaData: { name: 'putMethod' },
@@ -202,6 +218,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'this/delete/got/different',
                 httpMethod: 'DELETE',
                 methodMetaData: { name: 'deleteMethod' },
@@ -216,6 +233,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'route/got/:parameter',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'actionHaveNoParameter' },
@@ -228,6 +246,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'route/:associated/:notAssociated',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'postMethod' },
@@ -237,6 +256,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'route/have/no/parameter',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'actionHaveParameter' },
@@ -252,6 +272,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'this/is/the/first/route',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'actionHaveNoParameter' },
@@ -260,6 +281,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'this/is/the/other/route',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'actionHaveNoParameter' },
@@ -268,6 +290,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'this/is/:parameter',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'actionWithParameter' },
@@ -276,6 +299,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'the/:parameter/in/the/middle',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'actionWithParameter' },
@@ -290,6 +314,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: '/simple/getmethod',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'getMethod' },
@@ -298,6 +323,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: '/simple/postmethod/:params',
                 httpMethod: 'POST',
                 methodMetaData: { name: 'postMethod' },
@@ -306,6 +332,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: '/simple/putmethod',
                 httpMethod: 'PUT',
                 methodMetaData: { name: 'putMethod' },
@@ -314,6 +341,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: '/simple/deletemethod',
                 httpMethod: 'DELETE',
                 methodMetaData: { name: 'deleteMethod' },
@@ -328,6 +356,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'this/is/the/first/route/:nonPar',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'actionHaveNoParameter' },
@@ -337,6 +366,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'HttpMethodDecorator',
+                baseClass: "Controller",
                 route: 'this/is/the/:nonPar/route',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'actionHaveNoParameter' },
@@ -354,6 +384,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'ApiConvention',
+                baseClass: "ApiController",
                 route: '/simple/page/:offset/:pageWidth',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'getByPage' },
@@ -362,6 +393,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'ApiConvention',
+                baseClass: "ApiController",
                 route: '/simple/:id',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'get' },
@@ -370,6 +402,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'ApiConvention',
+                baseClass: "ApiController",
                 route: '/simple',
                 httpMethod: 'POST',
                 methodMetaData: { name: 'add' },
@@ -378,6 +411,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'ApiConvention',
+                baseClass: "ApiController",
                 route: '/simple/:id',
                 httpMethod: 'PUT',
                 methodMetaData: { name: 'modify' },
@@ -386,6 +420,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'ApiConvention',
+                baseClass: "ApiController",
                 route: '/simple/:id',
                 httpMethod: 'DELETE',
                 methodMetaData: { name: 'delete' },
@@ -401,6 +436,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'ApiConvention',
+                baseClass: "ApiController",
                 route: '/simple/getbypage',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'getByPage' },
@@ -410,6 +446,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'ApiConvention',
+                baseClass: "ApiController",
                 route: '/simple/get',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'get' },
@@ -419,6 +456,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'ApiConvention',
+                baseClass: "ApiController",
                 route: '/simple/add',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'add' },
@@ -428,6 +466,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'ApiConvention',
+                baseClass: "ApiController",
                 route: '/simple/modify',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'modify' },
@@ -437,6 +476,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'ApiConvention',
+                baseClass: "ApiController",
                 route: '/simple/delete',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'delete' },
@@ -452,6 +492,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
+                baseClass: "ApiController",
                 route: '/simple/thisisfreeactionname/:offset/:pageWidth',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'thisIsFreeActionName' },
@@ -466,6 +507,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'ApiConvention',
+                baseClass: "ApiController",
                 route: '/simple/:id',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'get' },
@@ -480,6 +522,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'HttpMethodDecorator',
+                baseClass: "ApiController",
                 route: '/simple/getbypage/:offset/:pageWidth',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'getByPage' },

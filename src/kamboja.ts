@@ -11,6 +11,7 @@ export class Kamboja {
 
     constructor(option?: Core.KambojaOption) {
         this.option = Lodash.assign(option, <Core.KambojaOption>{
+            verbose:true,
             controllerPaths: ["controller"],
             viewPath: "view",
             staticFilePath: "public",
@@ -28,7 +29,25 @@ export class Kamboja {
     async setup() {
         let router = new Router(this.option.controllerPaths, this.option.identifierResolver);
         let routes = await router.getRoutes()
-        this.engine.setRoutes(routes)
-        return this.engine.getApp();
+        if(routes.analysis.length > 0){
+            this.printAnalysis(routes.analysis);
+        }
+        if(routes.analysis.some(x => x.type == "Error")){
+            console.log("[Kamboja] Info: Error found, quiting..")
+            process.exit()
+        }
+        
+        return this.engine.init(routes.result)
+    }
+
+    private printAnalysis(analysis:Core.RouteAnalysis[]){
+        for(let item of analysis){
+            if(item.type == "Warning" && this.option.verbose){
+                console.log("[Kamboja] Warning: " + item.message);
+            }
+            else if(item.type == "Error"){
+                console.log("[Kamboja] Error: " + item.message);
+            }
+        }
     }
 }
