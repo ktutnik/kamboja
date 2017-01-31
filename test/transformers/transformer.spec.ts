@@ -2,7 +2,7 @@ import * as Chai from "chai"
 import * as Kecubung from "kecubung"
 import * as Core from "../../src/core"
 import * as H from "../helper"
-import * as Transformer from "../../src/router/transformers"
+import * as Transformer from "../../src/route-generator/transformers"
 import * as Util from "util"
 import * as Dash from "lodash"
 

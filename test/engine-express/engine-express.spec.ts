@@ -3,13 +3,13 @@ import * as Core from "../../src/core"
 import * as Supertest from "supertest"
 import { ExpressEngine } from "../../src/engine-express"
 import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
-import { Router } from "../../src/router"
+import { RouteGenerator } from "../../src/route-generator"
 import * as http from "http"
 
 describe("ExpressEngine", () => {
     describe("API Controller", () => {
         it("Should return data with promise", async () => {
-            let router = new Router(["test/engine-express/controller"], new DefaultIdentifierResolver())
+            let router = new RouteGenerator(["test/engine-express/controller"], new DefaultIdentifierResolver())
             let engine = new ExpressEngine(new DefaultDependencyResolver(),
                 {
                     staticFilePath: "test/engine-express/public",
@@ -28,7 +28,7 @@ describe("ExpressEngine", () => {
         })
 
         it("Should return data without promise", async () => {
-            let router = new Router(["test/engine-express/controller"], new DefaultIdentifierResolver())
+            let router = new RouteGenerator(["test/engine-express/controller"], new DefaultIdentifierResolver())
             let engine = new ExpressEngine(new DefaultDependencyResolver(),
                 {
                     staticFilePath: "test/engine-express/public",
@@ -47,7 +47,7 @@ describe("ExpressEngine", () => {
         })
 
         it("Should return status 500 on thrown error", async () => {
-            let router = new Router(["test/engine-express/controller"], new DefaultIdentifierResolver())
+            let router = new RouteGenerator(["test/engine-express/controller"], new DefaultIdentifierResolver())
             let engine = new ExpressEngine(new DefaultDependencyResolver(),
                 {
                     staticFilePath: "test/engine-express/public",

@@ -3,7 +3,7 @@ import * as Lodash from "lodash"
 import { DefaultDependencyResolver } from "./resolver/dependency-resolver"
 import { DefaultIdentifierResolver } from "./resolver/identifier-resolver"
 import { ExpressEngine } from "./engine-express"
-import { Router } from "./router"
+import { RouteGenerator } from "./route-generator"
 
 export class Kamboja {
     engine: Core.Engine;
@@ -27,7 +27,7 @@ export class Kamboja {
     }
 
     async setup() {
-        let router = new Router(this.option.controllerPaths, this.option.identifierResolver);
+        let router = new RouteGenerator(this.option.controllerPaths, this.option.identifierResolver);
         let routes = await router.getRoutes()
         if(routes.analysis.length > 0){
             this.printAnalysis(routes.analysis);

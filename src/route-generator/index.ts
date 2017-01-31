@@ -7,7 +7,7 @@ import * as Transformer from "./transformers"
 import * as Analyzer from "./analyzer"
 import { PathResolver } from "../resolver/path-resolver"
 
-export class Router {
+export class RouteGenerator {
     private pathResolver: PathResolver;
     private routes: Core.RouteInfo[];
 
