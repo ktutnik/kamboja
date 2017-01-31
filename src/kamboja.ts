@@ -1,10 +1,9 @@
 import * as Core from "./core"
+import * as Lodash from "lodash"
 import { DefaultDependencyResolver } from "./resolver/dependency-resolver"
 import { DefaultIdentifierResolver } from "./resolver/identifier-resolver"
-import * as Lodash from "lodash"
 import { ExpressEngine } from "./engine-express"
 import { Router } from "./router"
-
 
 export class Kamboja {
     engine: Core.Engine;
@@ -24,13 +23,12 @@ export class Kamboja {
                 onAppSetup: this.option.onAppSetup
             })
         }
-        let router = new Router(this.option.controllerPaths, this.option.identifierResolver);
-        router.getRoutes().then((routes) => {
-            this.engine.setRoutes(routes)
-        })
     }
 
-    getApp() {
+    async setup() {
+        let router = new Router(this.option.controllerPaths, this.option.identifierResolver);
+        let routes = await router.getRoutes()
+        this.engine.setRoutes(routes)
         return this.engine.getApp();
     }
 }

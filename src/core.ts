@@ -88,6 +88,7 @@ export interface RouteInfo {
     httpMethod?: HttpMethod
     methodMetaData?: MethodMetaData
     className?: string
+    baseClass?:string
     classId?: any
     analysis?: number[]
 }
@@ -165,7 +166,7 @@ export interface IdentifierResolver {
 
 
 export interface ActionResult{
-    execute(response:HttpResponse):Promise<void>;
+    execute(response:HttpResponse);
 }
 
 const META_DATA_KEY = "kamboja:Call.when";

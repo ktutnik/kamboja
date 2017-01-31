@@ -16,25 +16,25 @@ export class Controller {
 }
 
 class ViewActionResult implements ActionResult{
-    constructor(model, viewName:string){}
+    constructor(private model, private viewName:string){}
 
-    execute(response:HttpResponse):Promise<void>{
-        return ;
+    execute(response:HttpResponse){
+        return response.view(this.viewName, this.model);
     }
 }
 
 class RedirectActionResult implements ActionResult{
-    constructor(url:string){}
+    constructor(private url:string){}
 
-    execute(response:HttpResponse):Promise<void>{
-        return ;
+    execute(response:HttpResponse){
+        return response.redirect(this.url);
     }
 }
 
 class FileActionResult implements ActionResult{
-    constructor(path:string){}
+    constructor(private path:string){}
 
-    execute(response:HttpResponse):Promise<void>{
-        return ;
+    execute(response:HttpResponse){
+        return response.file(this.path);
     }
 }

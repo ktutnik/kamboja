@@ -1,6 +1,6 @@
 import * as Core from "../core"
 import {Binder} from "./binder"
-import {Executor} from "./executor"
+import {Executor} from "../controller"
 
 export class RequestHandler implements Core.RequestHandler {
     constructor(public routeInfo: Core.RouteInfo, private resolver: Core.DependencyResolver) { }

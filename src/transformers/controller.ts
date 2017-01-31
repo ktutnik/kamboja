@@ -41,6 +41,7 @@ export class ControllerTransformer extends TransformerBase {
         let result = this.transformChildren(meta.methods, parent)
         result.forEach(x => {
             x.className = meta.name
+            x.baseClass = meta.baseClass
             if (!x.collaborator) x.collaborator = []
             x.collaborator.push("Controller")
         })
