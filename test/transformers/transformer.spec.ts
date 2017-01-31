@@ -6,29 +6,14 @@ import * as Transformer from "../../src/transformers"
 import * as Util from "util"
 import * as Dash from "lodash"
 
-function cleanUp(info: Core.RouteInfo[]) {
-    return info.map(x => {
-        let result: any = {
-            initiator: x.initiator,
-            route: x.route,
-            httpMethod: x.httpMethod,
-            methodMetaData: {
-                name: x.methodMetaData.name
-            },
-            className: x.className,
-            collaborator: x.collaborator,
-        }
-        if (x.analysis) result.analysis = x.analysis
-        return result;
-    });
-}
+
 
 describe("Transformer", () => {
     describe("Default Transformation", () => {
         it("Should be able to transform Class/Method/:Parameter", () => {
             let meta = H.fromFile("./test/transformers/dummy/simple-controller.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
                 route: '/simple/mygetaction/:par1/:par2',
@@ -58,14 +43,15 @@ describe("Transformer", () => {
         it("Should not transform class that not inherited from Controller", () => {
             let meta = H.fromFile("./test/transformers/dummy/non-controller.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
-            Chai.expect(clean.length).eq(0)
+            let clean = H.cleanUp(result)
+            Chai.expect(clean[0].analysis[0]).eq(Core.RouteAnalysisCode.ClassNotInherritedFromController)
+            Chai.expect(clean[1].analysis[0]).eq(Core.RouteAnalysisCode.ClassNotInherritedFromController)
         })
 
         it("Should be able to transform Deep Module Module/Class/Method/:Parameter", () => {
             let meta = H.fromFile("./test/transformers/dummy/deep-module.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
                 route: '/parentmodule/simple/myothergetaction/:par1',
@@ -87,7 +73,7 @@ describe("Transformer", () => {
         it("Should OK for class without 'Controller' prefix", () => {
             let meta = H.fromFile("./test/transformers/dummy/non-controller-name.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
                 route: '/controllerwithoutprefix/mygetaction/:par1',
@@ -101,8 +87,17 @@ describe("Transformer", () => {
         it("Should not transform non exported class", () => {
             let meta = H.fromFile("./test/transformers/dummy/non-exported-class.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
+                initiator: 'Controller',
+                route: undefined,
+                httpMethod: undefined,
+                methodMetaData: { name: '' },
+                className: 'NonExportedController, ./test/transformers/dummy/non-exported-class.js',
+                collaborator: undefined,
+                analysis: [Core.RouteAnalysisCode.ClassNotExported]
+            },
+            {
                 initiator: 'DefaultAction',
                 route: '/simple/myothergetaction/:par1',
                 httpMethod: 'GET',
@@ -115,7 +110,7 @@ describe("Transformer", () => {
         it("Should not transform non exported on Deep Module", () => {
             let meta = H.fromFile("./test/transformers/dummy/non-exported-deep-module.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
                 route: '/parentmodule/simple/myothergetaction/:par1',
@@ -123,6 +118,15 @@ describe("Transformer", () => {
                 methodMetaData: { name: 'myOtherGetAction' },
                 className: 'SimpleController, ./test/transformers/dummy/non-exported-deep-module.js',
                 collaborator: ['Controller', 'Module']
+            },
+            {
+                initiator: 'DefaultAction',
+                route: '/parentmodule/innermodule/simple/myactionwithoutparameter',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'myActionWithoutParameter' },
+                className: 'SimpleController, ./test/transformers/dummy/non-exported-deep-module.js',
+                collaborator: ['Controller', 'Module', 'Module'],
+                analysis: [Core.RouteAnalysisCode.ClassNotExported]
             }])
         })
     })
@@ -131,7 +135,7 @@ describe("Transformer", () => {
         it("Should transform @internal action", () => {
             let meta = H.fromFile("./test/transformers/dummy/internal-decorators.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
                 route: '/simple/publicmethod/:par1',
@@ -145,7 +149,7 @@ describe("Transformer", () => {
         it("Should detect conflict @internal and @http.<any>()", () => {
             let meta = H.fromFile("./test/transformers/dummy/internal-conflict.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'InternalDecorator',
                 route: undefined,
@@ -171,7 +175,7 @@ describe("Transformer", () => {
         it("Should transform @http decorator", () => {
             let meta = H.fromFile("./test/transformers/dummy/http-decorators.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'HttpMethodDecorator',
                 route: 'this/get/got/different',
@@ -209,7 +213,7 @@ describe("Transformer", () => {
         it("Should identify parameter association issue", () => {
             let meta = H.fromFile("./test/transformers/dummy/http-decorator-param-issue.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'HttpMethodDecorator',
                 route: 'route/got/:parameter',
@@ -245,7 +249,7 @@ describe("Transformer", () => {
         it("Should allow multiple decorators", () => {
             let meta = H.fromFile("./test/transformers/dummy/http-decorator-multiple.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'HttpMethodDecorator',
                 route: 'this/is/the/first/route',
@@ -283,7 +287,7 @@ describe("Transformer", () => {
         it("Empty http decorator parameter should fall back to default action generator", () => {
             let meta = H.fromFile("./test/transformers/dummy/http-decorator-no-parameter.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'HttpMethodDecorator',
                 route: '/simple/getmethod',
@@ -321,7 +325,7 @@ describe("Transformer", () => {
         it("Should check parameters association issue on multiple decorators", () => {
             let meta = H.fromFile("./test/transformers/dummy/http-decorator-multiple-issue.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'HttpMethodDecorator',
                 route: 'this/is/the/first/route/:nonPar',
@@ -347,7 +351,7 @@ describe("Transformer", () => {
         it("Should transform API Convention properly", () => {
             let meta = H.fromFile("./test/transformers/dummy/api-convention.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'ApiConvention',
                 route: '/simple/page/:offset/:pageWidth',
@@ -394,7 +398,7 @@ describe("Transformer", () => {
         it("Should identify missing parameter which cause issue", () => {
             let meta = H.fromFile("./test/transformers/dummy/api-convention-parameter-issue.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'ApiConvention',
                 route: '/simple/getbypage',
@@ -445,7 +449,7 @@ describe("Transformer", () => {
         it("Should fall back to default transformer if name doesn't match", () => {
             let meta = H.fromFile("./test/transformers/dummy/api-convention-free-name.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
                 route: '/simple/thisisfreeactionname/:offset/:pageWidth',
@@ -459,7 +463,7 @@ describe("Transformer", () => {
         it("Should support @internal decorator", () => {
             let meta = H.fromFile("./test/transformers/dummy/api-convention-with-internal.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'ApiConvention',
                 route: '/simple/:id',
@@ -473,7 +477,7 @@ describe("Transformer", () => {
         it("Should prioritized @http.<any> decorators", () => {
             let meta = H.fromFile("./test/transformers/dummy/api-convention-with-http-decorator.js")
             let result = Transformer.transform(meta);
-            let clean = cleanUp(result)
+            let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'HttpMethodDecorator',
                 route: '/simple/getbypage/:offset/:pageWidth',

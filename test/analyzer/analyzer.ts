@@ -3,7 +3,7 @@ import * as H from "../helper"
 import * as Transformer from "../../src/transformers"
 import * as Chai from "chai"
 
-describe.only("Analyzer", () => {
+describe("Analyzer", () => {
     it("Should analyze missing action parameter", () => {
         let meta = H.fromCode(`
             var MyClass = (function (_super) {
@@ -182,7 +182,7 @@ describe.only("Analyzer", () => {
         let info = Transformer.transform(meta);
         let result = Analyzer.analyze(info);
         Chai.expect(result).deep.eq([{
-            message: "Found not exported Class/Module in [MyClass, example-file.js]",
+            message: "Can not generate route because class is not exported [MyClass, example-file.js]",
             type: 'Warning'
         }])
     })

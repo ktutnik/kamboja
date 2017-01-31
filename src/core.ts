@@ -21,7 +21,7 @@ export class Validator {
     string(required = false, length?: number) { }
 }
 
-export module RouteAnalysisCode{
+export module RouteAnalysisCode {
 
     /**
      * Issue when route parameters doesn't have association 
@@ -64,7 +64,7 @@ export interface RouteAnalysis {
 /**
  * ask the next transformer to override each of field if possible
  */
-export enum OverrideRequest{
+export enum OverrideRequest {
     Route = 1,
     HttpMethod = 2,
 }
@@ -83,10 +83,10 @@ export interface RouteInfo {
     /**
      * Message for next transformer to override specific field
      */
-    overrideRequest?:OverrideRequest
+    overrideRequest?: OverrideRequest
     route?: string;
     httpMethod?: HttpMethod
-    methodMetaData?:MethodMetaData
+    methodMetaData?: MethodMetaData
     className?: string
     classId?: any
     analysis?: number[]
@@ -109,9 +109,11 @@ export interface RequestHandler {
 export interface KambojaOption {
     engine?: Engine
     onAppSetup?: (app) => void
-    controllerPath?: string
-    dependencyResolver?:DependencyResolver
-    identifierResolver?:IdentifierResolver
+    controllerPaths?: string[],
+    viewPath?: string,
+    staticFilePath?: string,
+    dependencyResolver?: DependencyResolver
+    identifierResolver?: IdentifierResolver
 }
 
 export interface Engine {
@@ -149,27 +151,21 @@ export interface HttpResponse {
     json(body, status?: number)
     jsonp(body, status?: number)
     view(name, model?)
-    redirect(url:string)
-    file(path:string)
+    redirect(url: string)
+    file(path: string)
 }
 
 export interface DependencyResolver {
     resolve<T>(qualifiedClassName: string);
 }
 
-export interface IdentifierResolver{
+export interface IdentifierResolver {
     getClassId(qualifiedClassName: string)
 }
 
-export class ApiController{
-    request: HttpRequest    
-}
 
-export class Controller {
-    request: HttpRequest
-    view(viewName, model?){}
-    redirect(url:string){}
-    file(path:string){}
+export interface ActionResult{
+    execute(response:HttpResponse):Promise<void>;
 }
 
 const META_DATA_KEY = "kamboja:Call.when";

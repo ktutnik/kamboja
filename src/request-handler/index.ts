@@ -6,17 +6,9 @@ export class RequestHandler implements Core.RequestHandler {
     constructor(public routeInfo: Core.RouteInfo, private resolver: Core.DependencyResolver) { }
 
     onRequest(request: Core.HttpRequest, response:Core.HttpResponse) {
-        let controller;
-        try {
-            controller = this.resolver.resolve<any>(this.routeInfo.classId);
-        } catch (e) {
-            throw Error(`Error: Unable to create instance of ${this.routeInfo.className}, with ID ${this.routeInfo.classId}`)
-        }
-
         let binder = new Binder(this.routeInfo, request)
-        let parameters = binder.getParameters();
-        let executor = new Executor(controller, this.routeInfo.methodMetaData.name, response)
-        executor.execute()
+        let executor = new Executor(this.routeInfo, this.resolver, response)
+        executor.execute(binder.getParameters())
     }
 }
 

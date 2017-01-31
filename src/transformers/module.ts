@@ -8,10 +8,13 @@ export class ModuleTransformer extends TransformerBase {
     transform(meta: Kecubung.ParentMetaData,
         parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
         this.installChildTransformer()
-        if (!Kecubung.flag(meta.analysis, Kecubung.AnalysisType.Valid)) return this.exit();
         parent += "/" + meta.name.toLowerCase();
         let result = this.transformChildren(meta.children, parent)
         result.forEach(x => {
+            if (!Kecubung.flag(meta.analysis, Kecubung.AnalysisType.Valid)) {
+                if (!x.analysis) x.analysis = []
+                x.analysis.push(Core.RouteAnalysisCode.ClassNotExported)
+            }
             x.collaborator.push("Module")
         })
         return this.exit(result)

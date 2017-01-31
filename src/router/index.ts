@@ -5,22 +5,27 @@ import * as Kenanga from "kecubung"
 import * as Babylon from "babylon"
 import * as Transformer from "../transformers"
 import * as Analyzer from "../analyzer"
-import {PathResolver} from "../resolver/path-resolver"
+import { PathResolver } from "../resolver/path-resolver"
 
 export class Router {
-    private pathResolver:PathResolver;
-    private routes:Core.RouteInfo[];
+    private pathResolver: PathResolver;
+    private routes: Core.RouteInfo[];
 
-    constructor(private path: string, private identifier: Core.IdentifierResolver) {
+    constructor(private paths: string[], private identifier: Core.IdentifierResolver) {
         this.pathResolver = new PathResolver()
-     }
+    }
 
     private getFiles() {
-        let fileDirectory = this.pathResolver.resolve(this.path)
-        if (!Fs.existsSync(fileDirectory)) throw new Error(`Directory ${fileDirectory} not found`)
-        return Fs.readdirSync(fileDirectory)
-            .filter(x => Path.extname(x) == ".js")
-            .map(x => Path.join(fileDirectory, x));
+        let result: string[] = []
+        for (let path of this.paths) {
+            let fileDirectory = this.pathResolver.resolve(path)
+            if (!Fs.existsSync(fileDirectory)) throw new Error(`Directory ${fileDirectory} not found`)
+            let resultPaths = Fs.readdirSync(fileDirectory)
+                .filter(x => Path.extname(x) == ".js")
+                .map(x => Path.join(fileDirectory, x));
+            result = result.concat(resultPaths)
+        }
+        return result;
     }
 
     private readFile(path: string): Promise<string> {
@@ -34,7 +39,7 @@ export class Router {
         });
     }
 
-    private async createInfo(filePath: string) {
+    private async createInfo(filePath: string):Promise<Core.RouteInfo[]> {
         let code = await this.readFile(filePath)
         let ast = Babylon.parse(code)
         let fileName = this.pathResolver.relative(filePath);
@@ -48,11 +53,15 @@ export class Router {
 
     async getRoutes() {
         let files = this.getFiles();
-        let promises:Promise<Core.RouteInfo>[] = []
+        let promises: Promise<Core.RouteInfo>[] = []
         for (let file of files) {
             promises.push(this.createInfo(file))
         }
         this.routes = await Promise.all(promises);
-        return this.routes;
+        let result:Core.RouteInfo[] = []
+        for(let route of this.routes){
+            result = result.concat(route)
+        }
+        return result;
     }
 }

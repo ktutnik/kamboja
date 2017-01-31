@@ -6,9 +6,8 @@ export class DuplicateRouteAnalyzer implements AnalyzerCommand {
     analyse(route: RouteInfo): RouteAnalysis[] {
         let dupe = this.routes.filter(x => x.route == route.route);
         if (dupe.length > 0) {
-            let message = `Duplicate route [${route.route}] on ${getMethodName(route)} and ${getMethodName(dupe[0])}`
             return [{
-                message: message,
+                message: `Duplicate route [${route.route}] on ${getMethodName(route)} and ${getMethodName(dupe[0])}`,
                 type: "Error"
             }];
         }

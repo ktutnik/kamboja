@@ -1,4 +1,5 @@
-import { ApiController, Controller } from "../../../src/core"
+import { internal, http } from "../../../src/core"
+import {Controller, ApiController} from "../../../src/controller"
 
 //this class is not exported
 class NonExportedController extends Controller {

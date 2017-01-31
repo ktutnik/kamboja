@@ -3,7 +3,7 @@ import { DefaultDependencyResolver } from "./resolver/dependency-resolver"
 import { DefaultIdentifierResolver } from "./resolver/identifier-resolver"
 import * as Lodash from "lodash"
 import { ExpressEngine } from "./engine-express"
-import { Router } from "./router/router"
+import { Router } from "./router"
 
 
 export class Kamboja {
@@ -12,7 +12,9 @@ export class Kamboja {
 
     constructor(option?: Core.KambojaOption) {
         this.option = Lodash.assign(option, <Core.KambojaOption>{
-            controllerPath: "./controller",
+            controllerPaths: ["controller"],
+            viewPath: "view",
+            staticFilePath: "public",
             dependencyResolver: new DefaultDependencyResolver(),
             identifierResolver: new DefaultIdentifierResolver(),
             onAppSetup: (app): void => { }
@@ -22,7 +24,7 @@ export class Kamboja {
                 onAppSetup: this.option.onAppSetup
             })
         }
-        let router = new Router(this.option.controllerPath, this.option.identifierResolver);
+        let router = new Router(this.option.controllerPaths, this.option.identifierResolver);
         router.getRoutes().then((routes) => {
             this.engine.setRoutes(routes)
         })

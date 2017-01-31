@@ -6,19 +6,18 @@ import { RequestHandler } from "../request-handler"
 import * as Http from "http";
 import * as Lodash from "lodash"
 
-
 export interface ExpressEngineOptions {
     onAppSetup?: (app) => void
     app?: Express.Application
+    viewPath?: string,
+    staticFilePath?:string,
 }
 
 export class ExpressEngine implements Core.Engine {
     app: Express.Application;
     constructor(private resolver: Core.DependencyResolver, options?: ExpressEngineOptions) {
-        let opts = Lodash.assign(options, {
-            onAppSetup: (app) => { },
-            app: Express()
-        })
+        let app = Express();
+        
     }
 
     setRoutes(routes: Core.RouteInfo[]) {
