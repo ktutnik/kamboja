@@ -3,7 +3,7 @@ import * as Express from "express"
 
 
 export class ResponseAdapter implements Core.HttpResponse {
-    constructor(private response: Express.Response) { }
+    constructor(private response: Express.Response, private next:Express.NextFunction) { }
 
     setCookie(key:string, value:string, option?:Core.CookieOptions){
         this.response.cookie(key, value, option)
@@ -38,5 +38,10 @@ export class ResponseAdapter implements Core.HttpResponse {
      status(status:number, message?:string){
          let resp = this.response.status(status)
          if(message) resp.send(message)
+     }
+
+     error(error, status?:number) {
+        error.status = status || 500
+        this.next(error)
      }
 }

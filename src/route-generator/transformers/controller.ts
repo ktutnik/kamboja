@@ -16,7 +16,7 @@ export class ControllerTransformer extends TransformerBase {
             !(meta.baseClass == "Controller"
                 || meta.baseClass == "ApiController"))
             return this.exit(<Core.RouteInfo>{
-                analysis: [Core.RouteAnalysisCode.ClassNotInherritedFromController],
+                analysis: [Core.RouteAnalysisCode.ClassNotInheritedFromController],
                 className: meta.name,
                 initiator: "Controller"
             });

@@ -51,7 +51,7 @@ export module RouteAnalysisCode {
      */
     export const ConventionFail = 5;
 
-    export const ClassNotInherritedFromController = 6
+    export const ClassNotInheritedFromController = 6
 
     export const ClassNotExported = 7
 }
@@ -104,15 +104,16 @@ export interface RequestHandler {
 }
 
 export interface KambojaOption {
-    verbose: boolean,
+    verbose?: boolean,
     engine?: Engine
-    onAppSetup?: (app) => void
+    overrideAppEngine?: (app) => void
     controllerPaths?: string[],
     viewPath?: string,
     viewEngine?:string,
     staticFilePath?: string,
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
+    errorHandler?: (err:HttpError) => void
 }
 
 export interface ExecutorCommand{
@@ -152,9 +153,17 @@ export interface HttpResponse {
     status(status:number, message?:string)
     json(body, status?: number)
     jsonp(body, status?: number)
+    error(error, status?:number)
     view(name, model?)
     redirect(url: string)
     file(path: string)
+}
+
+export class HttpError{
+    constructor(public status:number, 
+        public error, 
+        public request:HttpRequest,
+        public response:HttpResponse){}
 }
 
 export interface DependencyResolver {

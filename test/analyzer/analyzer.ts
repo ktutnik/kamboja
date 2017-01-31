@@ -148,7 +148,7 @@ describe("Analyzer", () => {
         }])
     })
 
-    it("Should analyze class not inherrited from ApiController or Controller", () => {
+    it("Should analyze class not inherited from ApiController or Controller", () => {
         let meta = H.fromCode(`
         var MyClass = (function () {
             function MyClass() {

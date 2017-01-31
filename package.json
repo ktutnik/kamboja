@@ -32,6 +32,7 @@
     "express": "^4.14.1",
     "kecubung": "0.0.3",
     "morgan": "^1.7.0",
+    "pug": "^2.0.0-beta10",
     "reflect-metadata": "^0.1.9",
     "tslib": "^1.5.0",
     "validator": "^6.2.1"

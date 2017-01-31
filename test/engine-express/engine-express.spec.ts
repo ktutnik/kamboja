@@ -6,15 +6,15 @@ import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/
 import { RouteGenerator } from "../../src/route-generator"
 import * as http from "http"
 
-describe("ExpressEngine", () => {
+describe.only("ExpressEngine", () => {
     describe("API Controller", () => {
         it("Should return data with promise", async () => {
             let router = new RouteGenerator(["test/engine-express/controller"], new DefaultIdentifierResolver())
             let engine = new ExpressEngine(new DefaultDependencyResolver(),
                 {
                     staticFilePath: "test/engine-express/public",
-                    viewEngine: "jade",
-                    viewPath: "test/engine-express/public",
+                    viewEngine: "pug",
+                    viewPath: "test/engine-express/view",
                 })
             let routes = await router.getRoutes();
             let app = engine.init(routes.result);
@@ -32,8 +32,8 @@ describe("ExpressEngine", () => {
             let engine = new ExpressEngine(new DefaultDependencyResolver(),
                 {
                     staticFilePath: "test/engine-express/public",
-                    viewEngine: "jade",
-                    viewPath: "test/engine-express/public",
+                    viewEngine: "pug",
+                    viewPath: "test/engine-express/view",
                 })
             let routes = await router.getRoutes();
             let app = engine.init(routes.result);
@@ -51,8 +51,8 @@ describe("ExpressEngine", () => {
             let engine = new ExpressEngine(new DefaultDependencyResolver(),
                 {
                     staticFilePath: "test/engine-express/public",
-                    viewEngine: "jade",
-                    viewPath: "test/engine-express/public",
+                    viewEngine: "pug",
+                    viewPath: "test/engine-express/view",
                 })
             let routes = await router.getRoutes();
             let app = engine.init(routes.result);

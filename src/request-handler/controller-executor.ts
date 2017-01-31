@@ -15,7 +15,7 @@ export class ControllerExecutor implements Core.ExecutorCommand {
             actionResult.execute(this.response)
         }
         catch (error) {
-            this.response.status(500, error.message)
+            this.response.error(500)
         }
     }
 }

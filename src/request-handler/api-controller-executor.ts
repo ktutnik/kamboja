@@ -19,7 +19,7 @@ export class ApiControllerExecutor implements Core.ExecutorCommand {
             this.response.json(result)
         }
         catch(error){
-            this.response.status(500, error.message)
+            this.response.error(error)
         }
     }
 }

@@ -1,7 +1,7 @@
-import {http, internal} from "../src/core"
-import {Controller, ApiController} from "../src/controller"
+import { http, internal } from "../src/core"
+import { Controller, ApiController } from "../src/controller"
 
 
-export class MyClass extends Controller{
-    getByPage(){}
+export class MyClass extends Controller {
+    getByPage() { }
 }

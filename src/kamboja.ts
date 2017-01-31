@@ -15,14 +15,12 @@ export class Kamboja {
             controllerPaths: ["controller"],
             viewPath: "view",
             staticFilePath: "public",
+            viewEngine: "pug",
             dependencyResolver: new DefaultDependencyResolver(),
             identifierResolver: new DefaultIdentifierResolver(),
-            onAppSetup: (app): void => { }
         })
         if (!this.option.engine) {
-            this.engine = new ExpressEngine(this.option.dependencyResolver, {
-                onAppSetup: this.option.onAppSetup
-            })
+            this.engine = new ExpressEngine(this.option.dependencyResolver, option)
         }
     }
 
@@ -33,7 +31,7 @@ export class Kamboja {
             this.printAnalysis(routes.analysis);
         }
         if(routes.analysis.some(x => x.type == "Error")){
-            console.log("[Kamboja] Info: Error found, quiting..")
+            console.log("[Kamboja] Info: Error found, quit.")
             process.exit()
         }
         

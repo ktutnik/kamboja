@@ -47,8 +47,8 @@ describe("Transformer", () => {
             let meta = H.fromFile("./test/transformers/dummy/non-controller.js")
             let result = Transformer.transform(meta);
             let clean = H.cleanUp(result)
-            Chai.expect(clean[0].analysis[0]).eq(Core.RouteAnalysisCode.ClassNotInherritedFromController)
-            Chai.expect(clean[1].analysis[0]).eq(Core.RouteAnalysisCode.ClassNotInherritedFromController)
+            Chai.expect(clean[0].analysis[0]).eq(Core.RouteAnalysisCode.ClassNotInheritedFromController)
+            Chai.expect(clean[1].analysis[0]).eq(Core.RouteAnalysisCode.ClassNotInheritedFromController)
         })
 
         it("Should be able to transform Deep Module Module/Class/Method/:Parameter", () => {
