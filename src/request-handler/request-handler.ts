@@ -8,10 +8,11 @@ export class RequestHandler {
     private controllerCommand: ControllerExecutor;
 
     constructor(private routeInfo: Core.RouteInfo,
+        private options:Core.KambojaOption,
         resolver: Core.DependencyResolver,
         request: Core.HttpRequest,
         response: Core.HttpResponse) {
-        this.apiCommand = new ApiControllerExecutor(routeInfo, resolver, request, response)
+        this.apiCommand = new ApiControllerExecutor(routeInfo,  resolver, request, response)
         this.controllerCommand = new ControllerExecutor(routeInfo, resolver, request, response)
     }
 

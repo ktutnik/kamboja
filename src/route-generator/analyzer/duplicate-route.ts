@@ -4,10 +4,11 @@ import { AnalyzerCommand, getMethodName } from "./definitions"
 export class DuplicateRouteAnalyzer implements AnalyzerCommand {
     routes: RouteInfo[] = []
     analyse(route: RouteInfo): RouteAnalysis[] {
-        let dupe = this.routes.filter(x => x.route == route.route);
+        let dupe = this.routes.filter(x => x.route.toLowerCase() == route.route.toLowerCase() 
+            && route.httpMethod == x.httpMethod);
         if (dupe.length > 0) {
             return [{
-                message: `Duplicate route [${route.route}] on ${getMethodName(route)} and ${getMethodName(dupe[0])}`,
+                message: `Duplicate route [${route.route}] on: \n  ${getMethodName(route)} \n\  ${getMethodName(dupe[0])}\n`,
                 type: "Error"
             }];
         }

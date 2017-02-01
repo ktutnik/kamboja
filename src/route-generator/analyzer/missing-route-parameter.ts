@@ -8,7 +8,7 @@ export class MissingRouteParameterAnalyzer implements AnalyzerCommand {
                 .parameters.map(x => x.name)
             return [{
                 type: "Warning",
-                message: `Parameters [${actionParams.join(", ")}] in ${getMethodName(route)} doesn't have associated parameters in [${route.route}]`
+                message: `Parameters [${actionParams.join(", ")}] in ${getMethodName(route)} doesn't have associated parameters in [${route.route}]\n`
             }]
         }
     }

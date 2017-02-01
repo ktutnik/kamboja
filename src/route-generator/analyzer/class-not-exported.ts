@@ -6,7 +6,7 @@ export class ClassNotExportedControllerAnalyzer implements AnalyzerCommand {
         if (route.analysis && route.analysis.some(x => x == RouteAnalysisCode.ClassNotExported)) {
             return [{
                 type: "Warning",
-                message: `Can not generate route because class is not exported [${route.className}]`
+                message: `Can not generate route because class is not exported [${route.className}]\n`
             }]
         }
     }

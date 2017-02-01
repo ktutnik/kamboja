@@ -2,7 +2,7 @@ import { MetaData, MetadataType, MethodMetaData } from "kecubung";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 export type TransformStatus = "ExitWithResult" | "Next" | "Exit"
-export type TransformerName = "DefaultAction" | "HttpMethodDecorator" | "ApiConvention" | "InternalDecorator" | "Controller" | "Module"
+export type TransformerName = "DefaultAction" | "IndexAction" | "HttpMethodDecorator" | "ApiConvention" | "InternalDecorator" | "Controller" | "Module"
 
 export class Decorator {
     internal() { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
@@ -157,6 +157,7 @@ export interface HttpResponse {
     view(name, model?)
     redirect(url: string)
     file(path: string)
+    end()
 }
 
 export class HttpError{
@@ -174,8 +175,12 @@ export interface IdentifierResolver {
     getClassId(qualifiedClassName: string)
 }
 
+export interface ActionResultParams{
+    response:HttpResponse, 
+    routeInfo:RouteInfo
+}
 export interface ActionResult{
-    execute(response:HttpResponse);
+    execute(params:ActionResultParams);
 }
 
 export const internal = new Decorator().internal;

@@ -40,6 +40,10 @@ export class ResponseAdapter implements Core.HttpResponse {
          if(message) resp.send(message)
      }
 
+     end(){
+         this.response.end()
+     }
+
      error(error, status?:number) {
         error.status = status || 500
         this.next(error)

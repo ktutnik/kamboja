@@ -102,6 +102,34 @@ describe("Analyzer", () => {
         }])
     })
 
+    it("Should not duplicate if different http method type ", () => {
+        let meta = H.fromCode(`
+        var MyClass = (function (_super) {
+            tslib_1.__extends(MyClass, _super);
+            function MyClass() {
+                return _super !== null && _super.apply(this, arguments) || this;
+            }
+            MyClass.prototype.myMethod = function () { };
+            MyClass.prototype.myOtherMethod = function () { };
+            return MyClass;
+        }(core_1.Controller));
+        tslib_1.__decorate([
+            core_1.http.get("/this/is/dupe"),
+        ], MyClass.prototype, "myMethod", null);
+        tslib_1.__decorate([
+            core_1.http.post("/this/is/dupe"),
+        ], MyClass.prototype, "myOtherMethod", null);
+        exports.MyClass = MyClass;
+        `, "example-file.js")
+
+        let info = Transformer.transform(meta);
+        let result = Analyzer.analyze(info);
+        Chai.expect(result).deep.eq([{
+            message: 'Duplicate route [/this/is/dupe] on [MyClass.myOtherMethod example-file.js] and [MyClass.myMethod example-file.js]',
+            type: 'Error'
+        }])
+    })
+
     it("Should analyze conflict decorators", () => {
         let meta = H.fromCode(`
         var MyClass = (function (_super) {

@@ -6,11 +6,11 @@ import { ExpressEngine } from "./engine-express"
 import { RouteGenerator } from "./route-generator"
 
 export class Kamboja {
-    engine: Core.Engine;
-    option: Core.KambojaOption;
+    private engine: Core.Engine;
+    private option: Core.KambojaOption;
 
     constructor(option?: Core.KambojaOption) {
-        this.option = Lodash.assign(option, <Core.KambojaOption>{
+        this.option = Lodash.assign(<Core.KambojaOption>{
             verbose:true,
             controllerPaths: ["controller"],
             viewPath: "view",
@@ -18,9 +18,9 @@ export class Kamboja {
             viewEngine: "pug",
             dependencyResolver: new DefaultDependencyResolver(),
             identifierResolver: new DefaultIdentifierResolver(),
-        })
+        }, option)
         if (!this.option.engine) {
-            this.engine = new ExpressEngine(this.option.dependencyResolver, option)
+            this.engine = new ExpressEngine(this.option.dependencyResolver, this.option)
         }
     }
 

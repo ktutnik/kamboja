@@ -5,6 +5,7 @@ import { ApiConventionTransformer } from "./api-convention"
 import { DefaultActionTransformer } from "./default-action"
 import { HttpDecoratorTransformer } from "./http-decorator"
 import { InternalDecoratorTransformer } from "./internal-decorator"
+import { IndexActionTransformer } from "./index-action"
 
 export class ControllerTransformer extends TransformerBase {
 
@@ -62,6 +63,7 @@ export class ControllerTransformer extends TransformerBase {
             this.transformers = [
                 new InternalDecoratorTransformer(),
                 new HttpDecoratorTransformer(),
+                new IndexActionTransformer(),
                 new DefaultActionTransformer()
             ]
         }

@@ -1,5 +1,4 @@
 import * as Core from "../../../src/core"
-import * as Sinon from "sinon"
 
 export class ClientController extends Core.ApiController {
 

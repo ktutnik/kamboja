@@ -6,7 +6,7 @@ export class ConflictInternalDecoratorAnalyzer implements AnalyzerCommand {
         if (route.analysis && route.analysis.some(x => x == RouteAnalysisCode.ConflictDecorators)) {
             return [{
                 type: "Error",
-                message: `Method decorated with @http will not visible, because the method is decorated @internal in ${getMethodName(route)}`
+                message: `Method decorated with @http will not visible, because the method is decorated @internal in ${getMethodName(route)}\n`
             }]
         }
     }

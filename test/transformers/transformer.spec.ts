@@ -15,30 +15,30 @@ describe("Transformer", () => {
             let result = Transformer.transform(meta);
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
+                initiator: 'IndexAction',
+                route: '/simple/:par1/:par2',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'index' },
+                className: 'SimpleController, ./test/transformers/dummy/simple-controller.js',
+                baseClass: 'Controller',
+                collaborator: ['Controller']
+            },
+            {
                 initiator: 'DefaultAction',
-                baseClass: "Controller",
                 route: '/simple/mygetaction/:par1/:par2',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myGetAction' },
                 className: 'SimpleController, ./test/transformers/dummy/simple-controller.js',
+                baseClass: 'Controller',
                 collaborator: ['Controller']
             },
             {
                 initiator: 'DefaultAction',
-                baseClass: "Controller",
-                route: '/simple/myothergetaction/:par1',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'myOtherGetAction' },
-                className: 'SimpleController, ./test/transformers/dummy/simple-controller.js',
-                collaborator: ['Controller']
-            },
-            {
-                initiator: 'DefaultAction',
-                baseClass: "Controller",
                 route: '/simple/myactionwithoutparameter',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myActionWithoutParameter' },
                 className: 'SimpleController, ./test/transformers/dummy/simple-controller.js',
+                baseClass: 'Controller',
                 collaborator: ['Controller']
             }])
         })

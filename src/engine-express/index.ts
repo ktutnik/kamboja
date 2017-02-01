@@ -11,7 +11,7 @@ import * as Http from "http";
 
 export class ExpressEngine implements Core.Engine {
     app: Express.Application;
-    constructor(private resolver: Core.DependencyResolver, private options?: Core.KambojaOption) {
+    constructor(private resolver: Core.DependencyResolver, private options: Core.KambojaOption) {
     }
 
     private initExpress() {
@@ -51,7 +51,7 @@ export class ExpressEngine implements Core.Engine {
         for (let route of routes) {
             let method = route.httpMethod.toLowerCase();
             this.app[method](route.route, async (req, resp, next) => {
-                let handler = new RequestHandler(route, this.resolver,
+                let handler = new RequestHandler(route, this.options, this.resolver,
                     new RequestAdapter(req), new ResponseAdapter(resp, next))
                 await handler.execute();
             })

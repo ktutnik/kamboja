@@ -15,10 +15,15 @@ export class ApiControllerExecutor implements Core.ExecutorCommand {
             let controller = this.resolver.resolve(this.routeInfo.classId)
             let method = <Function>controller[this.routeInfo.methodMetaData.name]
             let methodResult = method.apply(controller, this.binder.getParameters());
-            let result = await Promise.resolve(methodResult);
-            this.response.json(result)
+            if (methodResult) {
+                let result = await Promise.resolve(methodResult);
+                this.response.json(result)
+            }
+            else {
+                this.response.end()
+            }
         }
-        catch(error){
+        catch (error) {
             this.response.error(error)
         }
     }
