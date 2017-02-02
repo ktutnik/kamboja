@@ -12,6 +12,7 @@ export class UnassociatedParameterAnalyzer implements AnalyzerCommand {
             let missing = actionParams.filter(x => !routeParams.some(y => x == y))
             if (missing.length > 0) {
                 return [{
+                    code: RouteAnalysisCode.UnAssociatedParameters,
                     type: "Warning",
                     message: `Parameters [${missing.join(", ")}] in ${getMethodName(route)} doesn't have associated parameters in [${route.route}]`
                 }]

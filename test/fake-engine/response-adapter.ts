@@ -1,4 +1,4 @@
-import * as Core from "../core"
+import * as Core from "../../src/core"
 import * as Express from "express"
 
 

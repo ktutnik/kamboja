@@ -7,6 +7,7 @@ export class MissingRouteParameterAnalyzer implements AnalyzerCommand {
             let actionParams = route.methodMetaData
                 .parameters.map(x => x.name)
             return [{
+                code: RouteAnalysisCode.MissingRouteParameters,
                 type: "Warning",
                 message: `Parameters [${actionParams.join(", ")}] in ${getMethodName(route)} doesn't have associated parameters in [${route.route}]`
             }]

@@ -2,6 +2,7 @@ import * as Analyzer from "../../src/route-generator/analyzer"
 import * as H from "../helper"
 import * as Transformer from "../../src/route-generator/transformers"
 import * as Chai from "chai"
+import * as Core from "../../src/core"
 
 describe("Analyzer", () => {
     it("Should analyze missing action parameter", () => {
@@ -22,6 +23,7 @@ describe("Analyzer", () => {
         let info = Transformer.transform(meta);
         let result = Analyzer.analyze(info);
         Chai.expect(result).deep.eq([{
+            code: Core.RouteAnalysisCode.MissingActionParameters,
             type: 'Warning',
             message: "Parameters [not, param] in [/this/is/:not/:param] doesn't have associated parameters in [MyClass.myMethod example-file.js]"
         }])
@@ -45,6 +47,7 @@ describe("Analyzer", () => {
         let info = Transformer.transform(meta);
         let result = Analyzer.analyze(info);
         Chai.expect(result).deep.eq([{
+            code: Core.RouteAnalysisCode.MissingRouteParameters,
             type: 'Warning',
             message: "Parameters [par1] in [MyClass.myMethod example-file.js] doesn't have associated parameters in [/this/is/route]"
         }])
@@ -68,6 +71,7 @@ describe("Analyzer", () => {
         let info = Transformer.transform(meta);
         let result = Analyzer.analyze(info);
         Chai.expect(result).deep.eq([{
+            code: Core.RouteAnalysisCode.UnAssociatedParameters,
             type: 'Warning',
             message: "Parameters [par1] in [MyClass.myMethod example-file.js] doesn't have associated parameters in [/this/is/route/:par/:par2]"
         }])
@@ -97,6 +101,7 @@ describe("Analyzer", () => {
         let info = Transformer.transform(meta);
         let result = Analyzer.analyze(info);
         Chai.expect(result).deep.eq([{
+            code: Core.RouteAnalysisCode.DuplicateRoutes,
             message: 'Duplicate route [/this/is/dupe] on: \n  [MyClass.myOtherMethod example-file.js] \n  [MyClass.myMethod example-file.js]',
             type: 'Error'
         }])
@@ -147,6 +152,7 @@ describe("Analyzer", () => {
         let info = Transformer.transform(meta);
         let result = Analyzer.analyze(info);
         Chai.expect(result).deep.eq([{
+            code: Core.RouteAnalysisCode.ConflictDecorators,
             message: 'Method decorated with @http will not visible, because the method is decorated @internal in [MyClass.myMethod example-file.js]',
             type: 'Error'
         }])
@@ -168,6 +174,7 @@ describe("Analyzer", () => {
         let info = Transformer.transform(meta);
         let result = Analyzer.analyze(info);
         Chai.expect(result).deep.eq([{
+            code: Core.RouteAnalysisCode.ConventionFail,
             message: "Method name match API Convention but has lack of parameters in [MyClass.getByPage example-file.js]",
             type: 'Warning'
         }])
@@ -187,6 +194,7 @@ describe("Analyzer", () => {
         let info = Transformer.transform(meta);
         let result = Analyzer.analyze(info);
         Chai.expect(result).deep.eq([{
+            code: Core.RouteAnalysisCode.ClassNotInheritedFromController,
             message: "Class not inherited from ApiController or Controller in [MyClass, example-file.js]",
             type: 'Error'
         }])
@@ -207,6 +215,7 @@ describe("Analyzer", () => {
         let info = Transformer.transform(meta);
         let result = Analyzer.analyze(info);
         Chai.expect(result).deep.eq([{
+            code: Core.RouteAnalysisCode.ClassNotExported,
             message: "Can not generate route because class is not exported [MyClass, example-file.js]",
             type: 'Warning'
         }])

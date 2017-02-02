@@ -10,6 +10,9 @@ export module ParentModule {
         export class SimpleController extends Controller {
             myActionWithoutParameter() { }
         }
+        export class SimpleNoInheritance{
+            myOtherMethod(){}
+        }
     }
 }
 

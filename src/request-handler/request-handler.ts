@@ -8,20 +8,30 @@ export class RequestHandler {
     private controllerCommand: ControllerExecutor;
 
     constructor(private routeInfo: Core.RouteInfo,
-        private options:Core.KambojaOption,
         resolver: Core.DependencyResolver,
         request: Core.HttpRequest,
-        response: Core.HttpResponse) {
-        this.apiCommand = new ApiControllerExecutor(routeInfo,  resolver, request, response)
-        this.controllerCommand = new ControllerExecutor(routeInfo, resolver, request, response)
+        private response: Core.HttpResponse) {
+        this.apiCommand = new ApiControllerExecutor(routeInfo, resolver, request)
+        this.controllerCommand = new ControllerExecutor(routeInfo, resolver, request)
     }
 
-    execute() {
-        switch (this.routeInfo.baseClass) {
-            case "ApiController":
-                return this.apiCommand.execute();
-            case "Controller":
-                return this.controllerCommand.execute();
+    async execute() {
+        try {
+            let result: Core.ActionResult;
+            switch (this.routeInfo.baseClass) {
+                case "ApiController":
+                    result = await this.apiCommand.execute();
+                    break;
+                default:
+                    result = await this.controllerCommand.execute();
+                    if (!result["execute"])
+                        throw new Error(`[Kamboja] Error: Controller must return ActionResult on [${Core.getMethodName(this.routeInfo)}]`)
+                    break;
+            }
+            result.execute(this.response, this.routeInfo)
+        }
+        catch (error) {
+            this.response.error(error)
         }
     }
 }

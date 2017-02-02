@@ -8,6 +8,7 @@ export class MissingActionParameterAnalyzer implements AnalyzerCommand {
                 .filter(x => x.charAt(0) == ":")
                 .map(x => x.substring(1))
             return [{
+                code: RouteAnalysisCode.MissingActionParameters,
                 type: "Warning",
                 message: `Parameters [${routeParams.join(", ")}] in [${route.route}] doesn't have associated parameters in ${getMethodName(route)}`
             }]

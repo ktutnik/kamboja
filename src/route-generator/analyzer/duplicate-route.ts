@@ -9,6 +9,7 @@ export class DuplicateRouteAnalyzer implements AnalyzerCommand {
             && route.httpMethod == x.httpMethod);
         if (dupe.length > 0) {
             return [{
+                code: RouteAnalysisCode.DuplicateRoutes,
                 message: `Duplicate route [${route.route}] on: \n  ${getMethodName(route)} \n\  ${getMethodName(dupe[0])}`,
                 type: "Error"
             }];

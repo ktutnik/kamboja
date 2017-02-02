@@ -10,7 +10,6 @@ interface BinderCommand {
 }
 
 function convert(source: string) {
-    if (!source) return;
     if (!isNaN(+source))
         return parseInt(source);
     else if (source.toLowerCase() === "true" || source.toLowerCase() === "false")
@@ -18,7 +17,7 @@ function convert(source: string) {
     else return source;
 }
 
-export class Binder {
+export class ParameterBinder {
 
 
     private commands: BinderCommand[] = []
@@ -76,8 +75,6 @@ class ApiConventionParameterBinder {
                     return { status: "Exit", result: result };
                 case "POST":
                     return { status: "Exit", result: [this.request.body] };
-                default:
-                    throw Error("Unknown http method")
             }
         }
         else return { status: "Next" }

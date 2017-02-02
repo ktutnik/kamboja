@@ -1,7 +1,7 @@
 import { HttpRequest, HttpResponse, ActionResult, RouteInfo } from "../core"
 
 export class ViewActionResult implements ActionResult {
-    constructor(private model, private viewName: string) { }
+    constructor(public model, public viewName: string) { }
 
     execute(response: HttpResponse, routeInfo: RouteInfo) {
         //if viewname doesn't contains / then add the classname

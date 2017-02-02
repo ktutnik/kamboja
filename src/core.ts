@@ -54,9 +54,12 @@ export module RouteAnalysisCode {
     export const ClassNotInheritedFromController = 6
 
     export const ClassNotExported = 7
+
+    export const DuplicateRoutes = 8
 }
 
 export interface RouteAnalysis {
+    code: number
     type: "Error" | "Warning"
     message: string
 }
@@ -104,8 +107,8 @@ export interface RequestHandler {
 }
 
 export interface KambojaOption {
-    verbose?: boolean,
-    engine?: Engine
+    skipAnalysis?:boolean
+    showConsoleLog?:boolean
     overrideAppEngine?: (app) => void
     controllerPaths?: string[],
     viewPath?: string,
@@ -114,15 +117,14 @@ export interface KambojaOption {
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
     errorHandler?: (err: HttpError) => void
-    exitOnError?: boolean
 }
 
 export interface ExecutorCommand {
-    execute(parameters: any[]): Promise<void>
+    execute(parameters: any[]): Promise<ActionResult>
 }
 
 export interface Engine {
-    init(routes: RouteInfo[]): any;
+    init(routes: RouteInfo[], option:KambojaOption): any;
 }
 
 export interface HttpRequest {
@@ -178,7 +180,14 @@ export interface IdentifierResolver {
 
 export interface ActionResult {
     execute(response: HttpResponse,
-        routeInfo: RouteInfo);
+        routeInfo: RouteInfo):void;
+}
+
+export function getMethodName(info:RouteInfo){
+    let tokens = info.className.split(",")
+    let method = `${tokens[0].trim()}.${info.methodMetaData.name}`
+    let file = tokens[1].trim()
+    return `[${method} ${file}]`;
 }
 
 export const internal = new Decorator().internal;

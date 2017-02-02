@@ -1,30 +1,20 @@
 import * as Core from "../core"
-import { Binder } from "./parameter-binder"
+import { ParameterBinder } from "./parameter-binder"
+import {JsonActionResult} from "../controller"
 
 export class ApiControllerExecutor implements Core.ExecutorCommand {
-    private binder: Binder;
+    private binder: ParameterBinder;
     constructor(private routeInfo: Core.RouteInfo,
         private resolver: Core.DependencyResolver,
-        private request: Core.HttpRequest,
-        private response: Core.HttpResponse) {
-        this.binder = new Binder(routeInfo, request)
+        private request: Core.HttpRequest) {
+        this.binder = new ParameterBinder(routeInfo, request)
     }
 
     async execute() {
-        try {
-            let controller = this.resolver.resolve(this.routeInfo.classId)
-            let method = <Function>controller[this.routeInfo.methodMetaData.name]
-            let methodResult = method.apply(controller, this.binder.getParameters());
-            if (methodResult) {
-                let result = await Promise.resolve(methodResult);
-                this.response.json(result)
-            }
-            else {
-                this.response.end()
-            }
-        }
-        catch (error) {
-            this.response.error(error)
-        }
+        let controller = this.resolver.resolve(this.routeInfo.classId)
+        let method = <Function>controller[this.routeInfo.methodMetaData.name]
+        let methodResult = method.apply(controller, this.binder.getParameters());
+        let result = await Promise.resolve(methodResult);
+        return new JsonActionResult(result);
     }
 }

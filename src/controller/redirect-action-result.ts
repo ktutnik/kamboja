@@ -1,9 +1,9 @@
 import { HttpRequest, HttpResponse, ActionResult, RouteInfo } from "../core"
 
 export class RedirectActionResult implements ActionResult{
-    constructor(private url:string){}
+    constructor(public redirectUrl:string){}
 
     execute(response: HttpResponse, routeInfo: RouteInfo){
-        return response.redirect(this.url);
+        response.redirect(this.redirectUrl);
     }
 }

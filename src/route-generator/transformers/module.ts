@@ -16,6 +16,7 @@ export class ModuleTransformer extends TransformerBase {
                 x.analysis.push(Core.RouteAnalysisCode.ClassNotExported)
             }
             x.className = meta.name + "." + x.className;
+            if(!x.collaborator)x.collaborator = []
             x.collaborator.push("Module")
         })
         return this.exit(result)

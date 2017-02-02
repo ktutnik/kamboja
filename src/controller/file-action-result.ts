@@ -1,9 +1,9 @@
 import { HttpRequest, HttpResponse, ActionResult, RouteInfo } from "../core"
 
 export class FileActionResult implements ActionResult{
-    constructor(private path:string){}
+    constructor(public filePath:string){}
 
     execute(response: HttpResponse, routeInfo: RouteInfo){
-        return response.file(this.path);
+        response.file(this.filePath);
     }
 }

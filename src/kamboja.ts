@@ -2,19 +2,17 @@ import * as Core from "./core"
 import * as Lodash from "lodash"
 import { DefaultDependencyResolver } from "./resolver/dependency-resolver"
 import { DefaultIdentifierResolver } from "./resolver/identifier-resolver"
-import { ExpressEngine } from "./engine-express"
 import { RouteGenerator } from "./route-generator"
 import * as Fs from "fs"
 
 export class Kamboja {
-    private engine: Core.Engine;
     private option: Core.KambojaOption;
-    private routes: Core.RouteInfo[]
+    private analysis: Core.RouteAnalysis[]
 
-    constructor(option?: Core.KambojaOption) {
+    constructor(private engine:Core.Engine, option?: Core.KambojaOption) {
         this.option = Lodash.assign(<Core.KambojaOption>{
-            verbose:true,
-            exitOnError: true,
+            skipAnalysis: false,
+            showConsoleLog: true,
             controllerPaths: ["controller"],
             viewPath: "view",
             staticFilePath: "public",
@@ -22,38 +20,45 @@ export class Kamboja {
             dependencyResolver: new DefaultDependencyResolver(),
             identifierResolver: new DefaultIdentifierResolver(),
         }, option)
-        if (!this.option.engine) {
-            this.engine = new ExpressEngine(this.option.dependencyResolver, this.option)
-        }
     }
 
-    getRoutes(){
-        return this.routes;
+    getAnalysis() {
+        return this.analysis
     }
 
     async setup() {
-        let router = new RouteGenerator(this.option.controllerPaths, 
+        let router = new RouteGenerator(this.option.controllerPaths,
             this.option.identifierResolver, Fs.readFile);
         let routes = await router.getRoutes()
-        this.routes = routes.result;
-        if(routes.analysis.length > 0){
+        this.analysis = routes.analysis;
+        if (!this.option.skipAnalysis && routes.analysis.length > 0) {
+            this.printRoute(routes.result)
             this.printAnalysis(routes.analysis);
+            if (routes.analysis.some(x => x.type == "Error")) {
+                console.log("[Kamboja] Critical error, can't continue")
+                process.exit();
+            }
         }
-        if(this.option.exitOnError && routes.analysis.some(x => x.type == "Error")){
-            console.log("[Kamboja] Process exited")
-            process.exit(1)
-        }
-        
-        return this.engine.init(routes.result)
+        return this.engine.init(routes.result, this.option)
     }
 
-    private printAnalysis(analysis:Core.RouteAnalysis[]){
-        for(let item of analysis){
+    private printRoute(routes:Core.RouteInfo[]){
+        console.log()
+        console.log("Route List")
+        for(let route of routes){
+            if(route.analysis && route.analysis.length > 0) continue
+            console.log(`${route.httpMethod} ${route.route}`)
+        }
+        console.log()
+    }
+
+    private printAnalysis(analysis: Core.RouteAnalysis[]) {
+        for (let item of analysis) {
             console.log()
-            if(item.type == "Warning" && this.option.verbose){
+            if (item.type == "Warning" && this.option.showConsoleLog) {
                 console.log("[Kamboja] Warning: " + item.message);
             }
-            else if(item.type == "Error"){
+            else if (item.type == "Error" && this.option.showConsoleLog) {
                 console.log("[Kamboja] Error: " + item.message);
             }
         }
