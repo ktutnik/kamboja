@@ -1,4 +1,4 @@
-import { MetaData, MetadataType, MethodMetaData } from "kecubung";
+import { MetaData, MetadataType, MethodMetaData, ClassMetaData } from "kecubung";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 export type TransformStatus = "ExitWithResult" | "Next" | "Exit"
@@ -90,7 +90,8 @@ export interface RouteInfo {
     route?: string;
     httpMethod?: HttpMethod
     methodMetaData?: MethodMetaData
-    className?: string
+    classMetaData?: ClassMetaData
+    qualifiedClassName?: string
     baseClass?: string
     classId?: any
     analysis?: number[]
@@ -184,7 +185,7 @@ export interface ActionResult {
 }
 
 export function getMethodName(info:RouteInfo){
-    let tokens = info.className.split(",")
+    let tokens = info.qualifiedClassName.split(",")
     let method = `${tokens[0].trim()}.${info.methodMetaData.name}`
     let file = tokens[1].trim()
     return `[${method} ${file}]`;

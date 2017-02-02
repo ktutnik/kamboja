@@ -18,14 +18,14 @@ export class ControllerTransformer extends TransformerBase {
                 || meta.baseClass == "ApiController"))
             return this.exit(<Core.RouteInfo>{
                 analysis: [Core.RouteAnalysisCode.ClassNotInheritedFromController],
-                className: meta.name,
+                qualifiedClassName: meta.name,
                 initiator: "Controller",
             });
         //check if class is valid (exported)
         if (!Kecubung.flag(meta.analysis, Kecubung.AnalysisType.Valid))
             return this.exit(<Core.RouteInfo>{
                 analysis: [Core.RouteAnalysisCode.ClassNotExported],
-                className: meta.name,
+                qualifiedClassName: meta.name,
                 initiator: "Controller",
             });
 
@@ -41,7 +41,7 @@ export class ControllerTransformer extends TransformerBase {
         }
         let result = this.transformChildren(meta.methods, parent)
         result.forEach(x => {
-            x.className = meta.name
+            x.qualifiedClassName = meta.name
             x.baseClass = meta.baseClass
             if (!x.collaborator) x.collaborator = []
             x.collaborator.push("Controller")

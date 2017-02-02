@@ -47,7 +47,7 @@ export class RouteGenerator {
         let meta = Kenanga.transform("ASTree", ast, fileName)
         let routeInfos = Transformer.transform(meta);
         routeInfos.forEach(x => {
-            x.classId = this.identifier.getClassId(x.className)
+            x.classId = this.identifier.getClassId(x.qualifiedClassName)
         })
         return routeInfos;
     }

@@ -6,14 +6,14 @@ export class ViewActionResult implements ActionResult {
     execute(response: HttpResponse, routeInfo: RouteInfo) {
         //if viewname doesn't contains / then add the classname
         if(this.viewName && this.viewName.indexOf("/") == -1){
-            let className = this.getClassName(routeInfo.className)
+            let className = this.getClassName(routeInfo.qualifiedClassName)
             let viewPath = className + "/" + this.viewName;
             response.view(viewPath, this.model);
         }
         else if (this.viewName)
             response.view(this.viewName, this.model);
         else {
-            let className = this.getClassName(routeInfo.className)
+            let className = this.getClassName(routeInfo.qualifiedClassName)
             let viewPath = className + "/" + routeInfo.methodMetaData.name.toLowerCase()
             response.view(viewPath, this.model);
         }

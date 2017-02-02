@@ -33,7 +33,7 @@ describe("ApiControllerExecutor", () => {
         let meta = H.fromFile("test/request-handler/controller/api-controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
-        info.classId = info.className
+        info.classId = info.qualifiedClassName
         getParamStub.withArgs("par1").returns("param1")
         let executor = new ApiControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
         let result = <JsonActionResult>await executor.execute()
@@ -44,7 +44,7 @@ describe("ApiControllerExecutor", () => {
         let meta = H.fromFile("test/request-handler/controller/api-controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnTheParamWithPromise")[0]
-        info.classId = info.className
+        info.classId = info.qualifiedClassName
         getParamStub.withArgs("par1").returns("param1")
         let executor = new ApiControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
         let result = <JsonActionResult>await executor.execute()
@@ -55,7 +55,7 @@ describe("ApiControllerExecutor", () => {
         let meta = H.fromFile("test/request-handler/controller/api-controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "voidMethod")[0]
-        info.classId = info.className
+        info.classId = info.qualifiedClassName
         let executor = new ApiControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
         let result = <JsonActionResult>await executor.execute()
         Chai.expect(result.body).undefined

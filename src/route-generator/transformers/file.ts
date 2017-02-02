@@ -10,7 +10,7 @@ export class FileTransformer extends TransformerBase {
     transform(meta: Kecubung.ParentMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
         this.installChildTransformer()
         let result = this.transformChildren(meta.children, parent)
-        result.forEach(x => x.className += `, ${meta.name}`)
+        result.forEach(x => x.qualifiedClassName += `, ${meta.name}`)
         return this.exit(result)
     }
 

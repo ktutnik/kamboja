@@ -44,7 +44,7 @@ describe("RequestHandler", () => {
         let meta = H.fromFile("test/request-handler/controller/api-controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
-        info.classId = info.className
+        info.classId = info.qualifiedClassName
         getParamStub.withArgs("par1").returns("param1")
         let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
         await executor.execute()
@@ -56,7 +56,7 @@ describe("RequestHandler", () => {
         let meta = H.fromFile("test/request-handler/controller/api-controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
-        info.classId = info.className
+        info.classId = info.qualifiedClassName
         let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
         await executor.execute()
         let result = errorSpy.getCall(0).args[0]
@@ -67,7 +67,7 @@ describe("RequestHandler", () => {
         let meta = H.fromFile("test/request-handler/controller/controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnFile")[0]
-        info.classId = info.className
+        info.classId = info.qualifiedClassName
         let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
         await executor.execute()
         let result = fileSpy.getCall(0).args[0]
@@ -78,7 +78,7 @@ describe("RequestHandler", () => {
         let meta = H.fromFile("test/request-handler/controller/controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnNonActionResult")[0]
-        info.classId = info.className
+        info.classId = info.qualifiedClassName
         let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
         await executor.execute()
         let result = errorSpy.getCall(0).args[0]

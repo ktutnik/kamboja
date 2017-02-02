@@ -33,7 +33,7 @@ describe("ControllerExecutor", () => {
         let meta = H.fromFile("test/request-handler/controller/controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
-        info.classId = info.className
+        info.classId = info.qualifiedClassName
         let executor = new ControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
         let result = <ViewActionResult>await executor.execute()
         Chai.expect(result.viewName).eq("index")
@@ -43,7 +43,7 @@ describe("ControllerExecutor", () => {
         let meta = H.fromFile("test/request-handler/controller/controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnFile")[0]
-        info.classId = info.className
+        info.classId = info.qualifiedClassName
         let executor = new ControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
         let result = <FileActionResult>await executor.execute()
         Chai.expect(result.filePath).eq("/go/go/kamboja.js")
@@ -53,7 +53,7 @@ describe("ControllerExecutor", () => {
         let meta = H.fromFile("test/request-handler/controller/controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnRedirect")[0]
-        info.classId = info.className
+        info.classId = info.qualifiedClassName
         let executor = new ControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
         let result = <RedirectActionResult>await executor.execute()
         Chai.expect(result.redirectUrl).eq("/go/go/kamboja.js")

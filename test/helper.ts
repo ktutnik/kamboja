@@ -24,7 +24,7 @@ export function cleanUp(info: Core.RouteInfo[]) {
             methodMetaData: {
                 name: x.methodMetaData ? x.methodMetaData.name : ""
             },
-            className: x.className,
+            className: x.qualifiedClassName,
             baseClass: x.baseClass,
             collaborator: x.collaborator,
         }

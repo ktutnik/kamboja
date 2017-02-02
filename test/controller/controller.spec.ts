@@ -3,11 +3,13 @@ import * as H from "../helper"
 import * as Chai from "chai"
 import * as Core from "../../src/core"
 import * as Sinon from "sinon"
+import * as Kecubung from "kecubung"
 
-let RouteInfo: any = {
-    className: 'SimpleController, .simple-controller.js',
-    methodMetaData:
-    {
+let RouteInfo: any = <Core.RouteInfo>{
+    qualifiedClassName: 'SimpleController, .simple-controller.js',
+    methodMetaData: <Kecubung.MethodMetaData>{   
+        type: 'Method',
+        decorators:[],
         name: 'myMethod',
     }
 }
@@ -67,10 +69,9 @@ describe("Controller", () => {
             let controller = new Controller()
             //called without view name
             let view = controller.view({});
-            view.execute(HttpResponse, <any>{
-                className: 'Proud, .simple-controller.js',
-                methodMetaData:
-                {
+            view.execute(HttpResponse, <Core.RouteInfo>{
+                qualifiedClassName: 'Proud, .simple-controller.js',
+                methodMetaData:<Kecubung.MethodMetaData>{
                     name: 'myMethod',
                 }
             })
