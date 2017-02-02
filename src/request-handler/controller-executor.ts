@@ -16,10 +16,7 @@ export class ControllerExecutor implements Core.ExecutorCommand {
             let method = <Function>controller[this.routeInfo.methodMetaData.name]
             let actionResult = <Core.ActionResult>method.apply(controller, this.binder.getParameters());
             if(actionResult && actionResult["execute"])
-                actionResult.execute({
-                    response: this.response,
-                    routeInfo: this.routeInfo
-                })
+                actionResult.execute(this.response, this.routeInfo)
             else this.response.error(new Error("Controller must return ActionResult"))
         }
         catch (error) {

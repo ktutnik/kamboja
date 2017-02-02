@@ -14,7 +14,7 @@ export class DefaultActionTransformer extends TransformerBase {
                 if (Kecubung.flag(x.overrideRequest, Core.OverrideRequest.Route)) {
                     x.route = parent;
                 }
-                if (!x.collaborator) x.collaborator = [];
+                x.collaborator = [];
                 x.collaborator.push("DefaultAction")
             })
             return this.exit(prevResult);

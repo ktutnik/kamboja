@@ -61,7 +61,7 @@ describe("Transformer", () => {
                 route: '/parentmodule/simple/myothergetaction/:par1',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myOtherGetAction' },
-                className: 'SimpleController, ./test/transformers/dummy/deep-module.js',
+                className: 'ParentModule.SimpleController, ./test/transformers/dummy/deep-module.js',
                 collaborator: ['Controller', 'Module']
             },
             {
@@ -70,7 +70,7 @@ describe("Transformer", () => {
                 route: '/parentmodule/innermodule/simple/myactionwithoutparameter',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myActionWithoutParameter' },
-                className: 'SimpleController, ./test/transformers/dummy/deep-module.js',
+                className: 'ParentModule.InnerModule.SimpleController, ./test/transformers/dummy/deep-module.js',
                 collaborator: ['Controller', 'Module', 'Module']
             }])
         })
@@ -125,7 +125,7 @@ describe("Transformer", () => {
                 route: '/parentmodule/simple/myothergetaction/:par1',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myOtherGetAction' },
-                className: 'SimpleController, ./test/transformers/dummy/non-exported-deep-module.js',
+                className: 'ParentModule.SimpleController, ./test/transformers/dummy/non-exported-deep-module.js',
                 collaborator: ['Controller', 'Module']
             },
             {
@@ -134,7 +134,7 @@ describe("Transformer", () => {
                 route: '/parentmodule/innermodule/simple/myactionwithoutparameter',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myActionWithoutParameter' },
-                className: 'SimpleController, ./test/transformers/dummy/non-exported-deep-module.js',
+                className: 'ParentModule.InnerModule.SimpleController, ./test/transformers/dummy/non-exported-deep-module.js',
                 collaborator: ['Controller', 'Module', 'Module'],
                 analysis: [Core.RouteAnalysisCode.ClassNotExported]
             }])
@@ -373,6 +373,22 @@ describe("Transformer", () => {
                 className: 'SimpleController, ./test/transformers/dummy/http-decorator-multiple-issue.js',
                 collaborator: ['DefaultAction', 'Controller'],
                 analysis: [Core.RouteAnalysisCode.UnAssociatedParameters]
+            }])
+        })
+
+        it("Should not error when there is issue in a class inside non exported module", () => {
+            let meta = H.fromFile("./test/transformers/dummy/issue-with-non-valid-module.js")
+            let result = Transformer.transform(meta);
+            let clean = H.cleanUp(result)
+            Chai.expect(clean).deep.eq([{
+                initiator: 'HttpMethodDecorator',
+                route: 'this/is/the/:nonPar/route',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'actionHaveNoParameter' },
+                className: 'MyModule.SimpleController, ./test/transformers/dummy/issue-with-non-valid-module.js',
+                baseClass: 'Controller',
+                collaborator: ['DefaultAction', 'Controller', 'Module'],
+                analysis: [Core.RouteAnalysisCode.UnAssociatedParameters, Core.RouteAnalysisCode.ClassNotExported]
             }])
         })
     })

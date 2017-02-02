@@ -19,14 +19,14 @@ export class ControllerTransformer extends TransformerBase {
             return this.exit(<Core.RouteInfo>{
                 analysis: [Core.RouteAnalysisCode.ClassNotInheritedFromController],
                 className: meta.name,
-                initiator: "Controller"
+                initiator: "Controller",
             });
         //check if class is valid (exported)
         if (!Kecubung.flag(meta.analysis, Kecubung.AnalysisType.Valid))
             return this.exit(<Core.RouteInfo>{
                 analysis: [Core.RouteAnalysisCode.ClassNotExported],
                 className: meta.name,
-                initiator: "Controller"
+                initiator: "Controller",
             });
 
         this.installChildTransformer(meta)

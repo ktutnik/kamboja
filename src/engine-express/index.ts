@@ -49,6 +49,7 @@ export class ExpressEngine implements Core.Engine {
 
     private initController(routes: Core.RouteInfo[]) {
         for (let route of routes) {
+            if(route.analysis && route.analysis.length > 0) continue
             let method = route.httpMethod.toLowerCase();
             this.app[method](route.route, async (req, resp, next) => {
                 let handler = new RequestHandler(route, this.options, this.resolver,

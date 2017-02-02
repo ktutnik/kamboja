@@ -88,7 +88,7 @@ export interface RouteInfo {
     httpMethod?: HttpMethod
     methodMetaData?: MethodMetaData
     className?: string
-    baseClass?:string
+    baseClass?: string
     classId?: any
     analysis?: number[]
 }
@@ -109,19 +109,20 @@ export interface KambojaOption {
     overrideAppEngine?: (app) => void
     controllerPaths?: string[],
     viewPath?: string,
-    viewEngine?:string,
+    viewEngine?: string,
     staticFilePath?: string,
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
-    errorHandler?: (err:HttpError) => void
+    errorHandler?: (err: HttpError) => void
+    exitOnError?: boolean
 }
 
-export interface ExecutorCommand{
-    execute(parameters:any[]):Promise<void>
+export interface ExecutorCommand {
+    execute(parameters: any[]): Promise<void>
 }
 
 export interface Engine {
-    init(routes: RouteInfo[]):any;
+    init(routes: RouteInfo[]): any;
 }
 
 export interface HttpRequest {
@@ -150,21 +151,21 @@ export interface CookieOptions {
 
 export interface HttpResponse {
     setCookie(key: string, value: string, option?: CookieOptions)
-    status(status:number, message?:string)
+    status(status: number, message?: string)
     json(body, status?: number)
     jsonp(body, status?: number)
-    error(error, status?:number)
+    error(error, status?: number)
     view(name, model?)
     redirect(url: string)
     file(path: string)
     end()
 }
 
-export class HttpError{
-    constructor(public status:number, 
-        public error, 
-        public request:HttpRequest,
-        public response:HttpResponse){}
+export class HttpError {
+    constructor(public status: number,
+        public error,
+        public request: HttpRequest,
+        public response: HttpResponse) { }
 }
 
 export interface DependencyResolver {
@@ -175,15 +176,12 @@ export interface IdentifierResolver {
     getClassId(qualifiedClassName: string)
 }
 
-export interface ActionResultParams{
-    response:HttpResponse, 
-    routeInfo:RouteInfo
-}
-export interface ActionResult{
-    execute(params:ActionResultParams);
+export interface ActionResult {
+    execute(response: HttpResponse,
+        routeInfo: RouteInfo);
 }
 
 export const internal = new Decorator().internal;
 export const http = new HttpDecorator();
 export const val = new Validator();
-export {ApiController, Controller} from "./controller"
+export { ApiController, Controller } from "./controller"

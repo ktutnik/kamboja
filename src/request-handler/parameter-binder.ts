@@ -1,17 +1,85 @@
 import * as Core from "../core"
 
-export class Binder{
-    constructor(private routeInfo:Core.RouteInfo, private request:Core.HttpRequest){}
+interface BinderResult {
+    status: "Next" | "Exit",
+    result?: any[]
+}
 
-    getParameters():Array<any>{
-        let result:any[] = []
-        let routeParams = this.routeInfo.route 
+interface BinderCommand {
+    getParameters(): BinderResult;
+}
+
+function convert(source: string) {
+    if (!source) return;
+    if (!isNaN(+source))
+        return parseInt(source);
+    else if (source.toLowerCase() === "true" || source.toLowerCase() === "false")
+        return source.toLowerCase() === "true";
+    else return source;
+}
+
+export class Binder {
+
+
+    private commands: BinderCommand[] = []
+    constructor(private routeInfo: Core.RouteInfo, private request: Core.HttpRequest) {
+        //priorities
+        this.commands = [
+            new ApiConventionParameterBinder(this.routeInfo, this.request),
+            new DefaultParameterBinder(this.routeInfo, this.request),
+        ]
+    }
+
+    getParameters(): Array<any> {
+        for (let command of this.commands) {
+            let commandResult = command.getParameters();
+            if (commandResult.status == "Exit")
+                return commandResult.result;
+        }
+    }
+}
+
+class DefaultParameterBinder {
+    constructor(private routeInfo: Core.RouteInfo, private request: Core.HttpRequest) { }
+
+    getParameters(): BinderResult {
+        let result: any[] = []
+        let routeParams = this.routeInfo.route
             .split("/")
             .filter(x => x.charAt(0) == ":")
             .map(x => x.substring(1))
-        for(let item of routeParams){
-            result.push(this.request.getParam(item))
+        for (let item of routeParams) {
+            result.push(convert(this.request.getParam(item)))
         }
-        return result;
+        return { status: "Exit", result: result };
+    }
+}
+
+class ApiConventionParameterBinder {
+    constructor(private routeInfo: Core.RouteInfo, private request: Core.HttpRequest) { }
+
+    getParameters(): BinderResult {
+        if (this.routeInfo.initiator == "ApiConvention") {
+            let routeParams = this.routeInfo.route
+                .split("/")
+                .filter(x => x.charAt(0) == ":")
+                .map(x => x.substring(1))
+
+            switch (this.routeInfo.httpMethod) {
+                case "GET":
+                case "DELETE":
+                    return { status: "Next" };
+                case "PUT":
+                    let result = [];
+                    result.push(convert(this.request.getParam(routeParams[0])))
+                    result.push(this.request.body)
+                    return { status: "Exit", result: result };
+                case "POST":
+                    return { status: "Exit", result: [this.request.body] };
+                default:
+                    throw Error("Unknown http method")
+            }
+        }
+        else return { status: "Next" }
     }
 }

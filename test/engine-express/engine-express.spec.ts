@@ -5,9 +5,11 @@ import { ExpressEngine } from "../../src/engine-express"
 import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
 import { RouteGenerator } from "../../src/route-generator"
 import * as http from "http"
+import * as Fs from "fs"
 
 async function setupApp() {
-    let router = new RouteGenerator(["test/engine-express/controller"], new DefaultIdentifierResolver())
+    let router = new RouteGenerator(["test/engine-express/controller"],
+         new DefaultIdentifierResolver(), Fs.readFile)
     let engine = new ExpressEngine(new DefaultDependencyResolver(),
         {
             staticFilePath: "test/engine-express/public",

@@ -6,7 +6,7 @@ export class ConventionFailDecoratorAnalyzer implements AnalyzerCommand {
         if (route.analysis && route.analysis.some(x => x == RouteAnalysisCode.ConventionFail)) {
             return [{
                 type: "Warning",
-                message: `Method name match API Convention but has lack of parameters in ${getMethodName(route)}\n`
+                message: `Method name match API Convention but has lack of parameters in ${getMethodName(route)}`
             }]
         }
     }

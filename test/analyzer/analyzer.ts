@@ -97,7 +97,7 @@ describe("Analyzer", () => {
         let info = Transformer.transform(meta);
         let result = Analyzer.analyze(info);
         Chai.expect(result).deep.eq([{
-            message: 'Duplicate route [/this/is/dupe] on [MyClass.myOtherMethod example-file.js] and [MyClass.myMethod example-file.js]',
+            message: 'Duplicate route [/this/is/dupe] on: \n  [MyClass.myOtherMethod example-file.js] \n  [MyClass.myMethod example-file.js]',
             type: 'Error'
         }])
     })
@@ -124,10 +124,7 @@ describe("Analyzer", () => {
 
         let info = Transformer.transform(meta);
         let result = Analyzer.analyze(info);
-        Chai.expect(result).deep.eq([{
-            message: 'Duplicate route [/this/is/dupe] on [MyClass.myOtherMethod example-file.js] and [MyClass.myMethod example-file.js]',
-            type: 'Error'
-        }])
+        Chai.expect(result).deep.eq([])
     })
 
     it("Should analyze conflict decorators", () => {

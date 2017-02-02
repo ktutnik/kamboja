@@ -11,7 +11,8 @@ export class RouteGenerator {
     private pathResolver: PathResolver;
     private routes: Core.RouteInfo[];
 
-    constructor(private paths: string[], private identifier: Core.IdentifierResolver) {
+    constructor(private paths: string[], private identifier: Core.IdentifierResolver,
+        private fileReader: (path: string, callback: (err, data) => void) => void) {
         this.pathResolver = new PathResolver()
     }
 
@@ -29,8 +30,8 @@ export class RouteGenerator {
     }
 
     private readFile(path: string): Promise<string> {
-        return new Promise(function (resolve, reject) {
-            Fs.readFile(path, function (err, data) {
+        return new Promise((resolve, reject) => {
+            this.fileReader(path, (err, data) => {
                 if (err)
                     reject(err);
                 else
