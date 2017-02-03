@@ -101,7 +101,7 @@ gulp.task("test", function (cb) {
 //******** DISTRIBUTION *************
 gulp.task("build-lib", function () {
     return gulp.src(["src/**/*.js", "src/**/*.d.ts"])
-        .pipe(gulp.dest("lib/src/"));
+        .pipe(gulp.dest("lib/source/"));
 });
 
 var tsDtsProject = tsc.createProject("tsconfig.json", {
@@ -114,11 +114,11 @@ gulp.task("build-dts", function () {
     return gulp.src([
         "src/**/*.ts"
     ])
-        .pipe(tsDtsProject())
-        .on("error", function (err) {
-            process.exit(1);
-        })
-        .dts.pipe(gulp.dest("lib/dts"));
+    .pipe(tsDtsProject())
+    .on("error", function (err) {
+        process.exit(1);
+    })
+    .dts.pipe(gulp.dest("lib/dts"));
 });
 
 gulp.task("dist", function (cb) {
