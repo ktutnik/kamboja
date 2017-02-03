@@ -3,7 +3,7 @@
   "version": "0.0.1-0",
   "description": "MVC Framework powered by TypeScript",
   "main": "lib/source/index.js",
-  "typings": "lib/source/index.d.ts",
+  "typings": "lib/dts/index.d.ts",
   "directories": {
     "test": "test"
   },
