@@ -20,6 +20,7 @@ export class ApiConventionTransformer extends TransformerBase {
                     initiator: "ApiConvention",
                     methodMetaData:meta,
                     overrideRequest: Core.OverrideRequest.Route,
+                    //GET by design
                     httpMethod: "GET"
                 });
             }

@@ -180,6 +180,46 @@ describe("Analyzer", () => {
         }])
     })
 
+    it("Should not use 'view', 'json', 'redirect', 'file' as action because it will override existing ", () => {
+        let meta = H.fromCode(`
+        var MyClass = (function (_super) {
+            tslib_1.__extends(MyClass, _super);
+            function MyClass() {
+                return _super !== null && _super.apply(this, arguments) || this;
+            }
+            MyClass.prototype.view = function () { };
+            MyClass.prototype.json = function () { };
+            MyClass.prototype.redirect = function () { };
+            MyClass.prototype.file = function () { };
+            return MyClass;
+        }(core_1.Controller));
+        exports.MyClass = MyClass;
+        `, "example-file.js")
+
+        let info = Transformer.transform(meta);
+        let result = Analyzer.analyze(info);
+        Chai.expect(result).deep.eq([{
+            code: 1,
+            type: 'Error',
+            message: '[view] must not be used as action, because it will override the Controller method, in [[MyClass.view example-file.js]]'
+        },
+        {
+            code: 1,
+            type: 'Error',
+            message: '[json] must not be used as action, because it will override the Controller method, in [[MyClass.json example-file.js]]'
+        },
+        {
+            code: 1,
+            type: 'Error',
+            message: '[redirect] must not be used as action, because it will override the Controller method, in [[MyClass.redirect example-file.js]]'
+        },
+        {
+            code: 1,
+            type: 'Error',
+            message: '[file] must not be used as action, because it will override the Controller method, in [[MyClass.file example-file.js]]'
+        }])
+    })
+
     it("Should analyze class not inherited from ApiController or Controller", () => {
         let meta = H.fromCode(`
         var MyClass = (function () {

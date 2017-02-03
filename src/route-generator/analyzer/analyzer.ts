@@ -8,6 +8,7 @@ import { ConflictInternalDecoratorAnalyzer } from "./conflict-internal-decorator
 import { ConventionFailDecoratorAnalyzer } from "./convention-fail"
 import { ClassNotInherritedFromControllerAnalyzer } from "./class-not-controller"
 import { ClassNotExportedControllerAnalyzer } from "./class-not-exported"
+import { ReservedWordUsedAnalyzer } from "./reserved-word-used"
 
 export class RouteAnalyzer {
     private commands: Index.AnalyzerCommand[];
@@ -20,7 +21,8 @@ export class RouteAnalyzer {
             new ConflictInternalDecoratorAnalyzer(),
             new ConventionFailDecoratorAnalyzer(),
             new ClassNotInherritedFromControllerAnalyzer(),
-            new ClassNotExportedControllerAnalyzer()
+            new ClassNotExportedControllerAnalyzer(),
+            new ReservedWordUsedAnalyzer(),
         ]
     }
 

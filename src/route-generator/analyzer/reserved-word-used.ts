@@ -1,22 +1,18 @@
 import { RouteAnalysis, RouteInfo, RouteAnalysisCode } from "../../core"
 import { AnalyzerCommand, getMethodName } from "./definitions"
 
-export class UnassociatedParameterAnalyzer implements AnalyzerCommand {
+const reservedWords = ["view", "json", "redirect", "file"]
+
+export class ReservedWordUsedAnalyzer implements AnalyzerCommand {
     analyse(route: RouteInfo): RouteAnalysis[] {
-        if (route.analysis && route.analysis.some(x => x == RouteAnalysisCode.UnAssociatedParameters)) {
-            let routeParams = route.route.split("/")
-                .filter(x => x.charAt(0) == ":")
-                .map(x => x.substring(1))
-            let actionParams = route.methodMetaData
-                .parameters.map(x => x.name)
-            let missing = actionParams.filter(x => !routeParams.some(y => x == y))
-            if (missing.length > 0) {
-                return [{
-                    code: RouteAnalysisCode.UnAssociatedParameters,
-                    type: "Warning",
-                    message: `Parameters [${missing.join(", ")}] in ${getMethodName(route)} doesn't have associated parameters in [${route.route}]`
-                }]
-            }
+        if (reservedWords.some(x => route.methodMetaData 
+            && x == route.methodMetaData.name 
+            && route.classMetaData.baseClass == "Controller")) {
+            return [{
+                code: RouteAnalysisCode.UnAssociatedParameters,
+                type: "Error",
+                message: `[${route.methodMetaData.name}] must not be used as action, because it will override the Controller method, in [${getMethodName(route)}]`
+            }]
         }
     }
 }

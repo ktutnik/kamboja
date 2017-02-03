@@ -18,7 +18,7 @@ export class RequestHandler {
     async execute() {
         try {
             let result: Core.ActionResult;
-            switch (this.routeInfo.baseClass) {
+            switch (this.routeInfo.classMetaData.baseClass) {
                 case "ApiController":
                     result = await this.apiCommand.execute();
                     break;

@@ -92,7 +92,6 @@ export interface RouteInfo {
     methodMetaData?: MethodMetaData
     classMetaData?: ClassMetaData
     qualifiedClassName?: string
-    baseClass?: string
     classId?: any
     analysis?: number[]
 }

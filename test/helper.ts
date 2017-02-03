@@ -17,18 +17,21 @@ export function fromCode(code, filePath: string = "") {
 
 export function cleanUp(info: Core.RouteInfo[]) {
     return info.map(x => {
-        let result: any = {
+        let result:any = {
             initiator: x.initiator,
             route: x.route,
             httpMethod: x.httpMethod,
             methodMetaData: {
                 name: x.methodMetaData ? x.methodMetaData.name : ""
             },
-            className: x.qualifiedClassName,
-            baseClass: x.baseClass,
+            qualifiedClassName: x.qualifiedClassName,
+            classMetaData: {
+                name: x.classMetaData.name
+            },
             collaborator: x.collaborator,
         }
         if (x.analysis) result.analysis = x.analysis
+        if (x.classMetaData.baseClass) result.classMetaData.baseClass = x.classMetaData.baseClass
         return result;
     });
 }

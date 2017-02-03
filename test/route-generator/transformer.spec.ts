@@ -17,8 +17,8 @@ describe("Transformer", () => {
                 route: '/simple/:par1/:par2',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'index' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/simple-controller.js',
-                baseClass: 'Controller',
+                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/simple-controller.js',
+                classMetaData: { name: 'SimpleController', baseClass: 'Controller' },
                 collaborator: ['Controller']
             },
             {
@@ -26,8 +26,8 @@ describe("Transformer", () => {
                 route: '/simple/mygetaction/:par1/:par2',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myGetAction' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/simple-controller.js',
-                baseClass: 'Controller',
+                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/simple-controller.js',
+                classMetaData: { name: 'SimpleController', baseClass: 'Controller' },
                 collaborator: ['Controller']
             },
             {
@@ -35,8 +35,8 @@ describe("Transformer", () => {
                 route: '/simple/myactionwithoutparameter',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myActionWithoutParameter' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/simple-controller.js',
-                baseClass: 'Controller',
+                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/simple-controller.js',
+                classMetaData: { name: 'SimpleController', baseClass: 'Controller' },
                 collaborator: ['Controller']
             }])
         })
@@ -52,145 +52,61 @@ describe("Transformer", () => {
         it("Should be able to transform Deep Module Module/Class/Method/:Parameter", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/deep-module.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'DefaultAction',
-                baseClass: "Controller",
-                route: '/parentmodule/simple/myothergetaction/:par1',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'myOtherGetAction' },
-                className: 'ParentModule.SimpleController, ./test/route-generator/transformer-dummy/deep-module.js',
-                collaborator: ['Controller', 'Module']
-            },
-            {
-                initiator: 'DefaultAction',
-                baseClass: "Controller",
-                route: '/parentmodule/innermodule/simple/myactionwithoutparameter',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'myActionWithoutParameter' },
-                className: 'ParentModule.InnerModule.SimpleController, ./test/route-generator/transformer-dummy/deep-module.js',
-                collaborator: ['Controller', 'Module', 'Module']
-            }])
+            Chai.expect(result[0].route).eq('/parentmodule/simple/myothergetaction/:par1')
+            Chai.expect(result[1].route).eq('/parentmodule/innermodule/simple/myactionwithoutparameter')
         })
 
         it("Should OK for class without 'Controller' prefix", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/non-controller-name.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'DefaultAction',
-                baseClass: "Controller",
-                route: '/controllerwithoutprefix/mygetaction/:par1',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'myGetAction' },
-                className: 'ControllerWithoutPrefix, ./test/route-generator/transformer-dummy/non-controller-name.js',
-                collaborator: ['Controller']
-            }])
+            Chai.expect(result[0].route).eq('/controllerwithoutprefix/mygetaction/:par1')
         })
 
         it("Should not transform non exported class", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/non-exported-class.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'Controller',
-                baseClass: undefined,
-                route: undefined,
-                httpMethod: undefined,
-                methodMetaData: { name: '' },
-                className: 'NonExportedController, ./test/route-generator/transformer-dummy/non-exported-class.js',
-                collaborator: undefined,
-                analysis: [Core.RouteAnalysisCode.ClassNotExported]
-            },
-            {
-                initiator: 'DefaultAction',
-                baseClass: "Controller",
-                route: '/simple/myothergetaction/:par1',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'myOtherGetAction' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/non-exported-class.js',
-                collaborator: ['Controller']
-            }])
+            Chai.expect(result[0].route).undefined
+            Chai.expect(result[0].analysis).deep.eq([Core.RouteAnalysisCode.ClassNotExported])
+            Chai.expect(result[1].route).eq("/simple/myothergetaction/:par1")
         })
 
         it("Should not transform non exported on Deep Module", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/non-exported-deep-module.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'DefaultAction',
-                route: '/parentmodule/simple/myothergetaction/:par1',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'myOtherGetAction' },
-                className: 'ParentModule.SimpleController, ./test/route-generator/transformer-dummy/non-exported-deep-module.js',
-                baseClass: 'Controller',
-                collaborator: ['Controller', 'Module']
-            },
-            {
-                initiator: 'DefaultAction',
-                route: '/parentmodule/innermodule/simple/myactionwithoutparameter',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'myActionWithoutParameter' },
-                className: 'ParentModule.InnerModule.SimpleController, ./test/route-generator/transformer-dummy/non-exported-deep-module.js',
-                baseClass: 'Controller',
-                collaborator: ['Controller', 'Module', 'Module'],
-                analysis: [Core.RouteAnalysisCode.ClassNotExported]
-            },
-            {
-                initiator: 'Controller',
-                route: undefined,
-                httpMethod: undefined,
-                methodMetaData: { name: '' },
-                className: 'ParentModule.InnerModule.SimpleNoInheritance, ./test/route-generator/transformer-dummy/non-exported-deep-module.js',
-                baseClass: undefined,
-                collaborator: ['Module', 'Module'],
-                analysis: [
-                    Core.RouteAnalysisCode.ClassNotInheritedFromController,
-                    Core.RouteAnalysisCode.ClassNotExported
-                ]
-            }])
+            Chai.expect(result[0].route).eq('/parentmodule/simple/myothergetaction/:par1')
+            Chai.expect(result[1].route).eq('/parentmodule/innermodule/simple/myactionwithoutparameter')
+            Chai.expect(result[1].analysis).deep.eq([Core.RouteAnalysisCode.ClassNotExported])
+            Chai.expect(result[2].route).undefined
+            Chai.expect(result[2].analysis).deep.eq([
+                Core.RouteAnalysisCode.ClassNotInheritedFromController,
+                Core.RouteAnalysisCode.ClassNotExported])
+        })
+
+        it("Should give correct analysis in Deep Module", () => {
+            let meta = H.fromFile("./test/route-generator/transformer-dummy/issue-with-non-valid-module.js")
+            let result = Transformer.transform(meta);
+            Chai.expect(result[0].route).eq('this/is/the/:nonPar/route')
+            Chai.expect(result[0].analysis).deep.eq([
+                Core.RouteAnalysisCode.UnAssociatedParameters,
+                Core.RouteAnalysisCode.ClassNotExported
+            ])
         })
     })
 
     describe("Internal Decorator", () => {
-        it("Should transform @internal action", () => {
+        it("Should not transform @internal action", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/internal-decorators.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'DefaultAction',
-                baseClass: "Controller",
-                route: '/simple/publicmethod/:par1',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'publicMethod' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/internal-decorators.js',
-                collaborator: ['Controller']
-            }])
+            let info = result.filter(x => x.methodMetaData.name == "privateMethod")
+            Chai.expect(info.length).eq(0);
         })
 
         it("Should detect conflict @internal and @http.<any>()", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/internal-conflict.js")
             let result = Transformer.transform(meta);
             let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'InternalDecorator',
-                baseClass: "Controller",
-                route: undefined,
-                httpMethod: 'GET',
-                methodMetaData: { name: 'privateMethod' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/internal-conflict.js',
-                collaborator: ['DefaultAction', 'Controller'],
-                analysis: [4]
-            },
-            {
-                initiator: 'DefaultAction',
-                baseClass: "Controller",
-                route: '/simple/publicmethod/:par1',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'publicMethod' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/internal-conflict.js',
-                collaborator: ['Controller']
-            }])
+            Chai.expect(result[0].route).undefined
+            Chai.expect(result[0].analysis).deep.eq([Core.RouteAnalysisCode.ConflictDecorators])
         })
 
     })
@@ -199,208 +115,82 @@ describe("Transformer", () => {
         it("Should transform @http decorator", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/http-decorators.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'this/get/got/different',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'getMethod' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorators.js',
-                collaborator: ['DefaultAction', 'Controller']
-            },
-            {
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'this/post/got/different',
-                httpMethod: 'POST',
-                methodMetaData: { name: 'postMethod' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorators.js',
-                collaborator: ['DefaultAction', 'Controller']
-            },
-            {
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'this/put/got/different',
-                httpMethod: 'PUT',
-                methodMetaData: { name: 'putMethod' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorators.js',
-                collaborator: ['DefaultAction', 'Controller']
-            },
-            {
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'this/delete/got/different',
-                httpMethod: 'DELETE',
-                methodMetaData: { name: 'deleteMethod' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorators.js',
-                collaborator: ['DefaultAction', 'Controller']
-            }])
+            Chai.expect(result[0].route).eq("this/get/got/different")
+            Chai.expect(result[0].httpMethod).eq("GET")
+            Chai.expect(result[1].route).eq("this/post/got/different")
+            Chai.expect(result[1].httpMethod).eq("POST")
+            Chai.expect(result[2].route).eq("this/put/got/different")
+            Chai.expect(result[2].httpMethod).eq("PUT")
+            Chai.expect(result[3].route).eq("this/delete/got/different")
+            Chai.expect(result[3].httpMethod).eq("DELETE")
         })
 
         it("Should identify parameter association issue", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/http-decorator-param-issue.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'route/got/:parameter',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'actionHaveNoParameter' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-param-issue.js',
-                collaborator: ['DefaultAction', 'Controller'],
-                analysis: [
-                    Core.RouteAnalysisCode.MissingActionParameters,
-                    Core.RouteAnalysisCode.UnAssociatedParameters
-                ]
-            },
-            {
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'route/:associated/:notAssociated',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'postMethod' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-param-issue.js',
-                collaborator: ['DefaultAction', 'Controller'],
-                analysis: [Core.RouteAnalysisCode.UnAssociatedParameters]
-            },
-            {
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'route/have/no/parameter',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'actionHaveParameter' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-param-issue.js',
-                collaborator: ['DefaultAction', 'Controller'],
-                analysis: [Core.RouteAnalysisCode.MissingRouteParameters]
-            }])
+            Chai.expect(result[0].route).eq('route/got/:parameter')
+            Chai.expect(result[0].analysis).deep.eq([
+                Core.RouteAnalysisCode.MissingActionParameters,
+                Core.RouteAnalysisCode.UnAssociatedParameters
+            ])
+            Chai.expect(result[1].route).eq('route/:associated/:notAssociated')
+            Chai.expect(result[1].analysis).deep.eq([
+                Core.RouteAnalysisCode.UnAssociatedParameters
+            ])
+            Chai.expect(result[2].route).eq('route/have/no/parameter')
+            Chai.expect(result[2].analysis).deep.eq([
+                Core.RouteAnalysisCode.MissingRouteParameters,
+            ])
         })
 
         it("Should allow multiple decorators", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/http-decorator-multiple.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'this/is/the/first/route',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'actionHaveNoParameter' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-multiple.js',
-                collaborator: ['DefaultAction', 'Controller']
-            },
-            {
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'this/is/the/other/route',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'actionHaveNoParameter' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-multiple.js',
-                collaborator: ['DefaultAction', 'Controller']
-            },
-            {
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'this/is/:parameter',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'actionWithParameter' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-multiple.js',
-                collaborator: ['DefaultAction', 'Controller']
-            },
-            {
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'the/:parameter/in/the/middle',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'actionWithParameter' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-multiple.js',
-                collaborator: ['DefaultAction', 'Controller']
-            }])
+            Chai.expect(result[0].route).eq('this/is/the/first/route')
+            Chai.expect(result[0].methodMetaData.name).eq('actionHaveNoParameter')
+            Chai.expect(result[1].route).eq('this/is/the/other/route')
+            Chai.expect(result[1].methodMetaData.name).eq('actionHaveNoParameter')
+            Chai.expect(result[2].route).eq('this/is/:parameter')
+            Chai.expect(result[2].methodMetaData.name).eq('actionWithParameter')
+            Chai.expect(result[3].route).eq('the/:parameter/in/the/middle')
+            Chai.expect(result[3].methodMetaData.name).eq('actionWithParameter')
         })
 
         it("Empty http decorator parameter should fall back to default action generator", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/http-decorator-no-parameter.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: '/simple/getmethod',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'getMethod' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-no-parameter.js',
-                collaborator: ['DefaultAction', 'Controller']
-            },
-            {
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: '/simple/postmethod/:params',
-                httpMethod: 'POST',
-                methodMetaData: { name: 'postMethod' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-no-parameter.js',
-                collaborator: ['DefaultAction', 'Controller']
-            },
-            {
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: '/simple/putmethod',
-                httpMethod: 'PUT',
-                methodMetaData: { name: 'putMethod' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-no-parameter.js',
-                collaborator: ['DefaultAction', 'Controller']
-            },
-            {
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: '/simple/deletemethod',
-                httpMethod: 'DELETE',
-                methodMetaData: { name: 'deleteMethod' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-no-parameter.js',
-                collaborator: ['DefaultAction', 'Controller']
-            }])
+            Chai.expect(result[0].route).eq("/simple/getmethod")
+            Chai.expect(result[0].httpMethod).eq("GET")
+            Chai.expect(result[0].initiator).eq("HttpMethodDecorator")
+            Chai.expect(result[0].collaborator.some(x => x == "DefaultAction")).true
+            Chai.expect(result[1].route).eq("/simple/postmethod/:params")
+            Chai.expect(result[1].httpMethod).eq("POST")
+            Chai.expect(result[1].initiator).eq("HttpMethodDecorator")
+            Chai.expect(result[1].collaborator.some(x => x == "DefaultAction")).true
+            Chai.expect(result[2].route).eq("/simple/putmethod")
+            Chai.expect(result[2].httpMethod).eq("PUT")
+            Chai.expect(result[2].initiator).eq("HttpMethodDecorator")
+            Chai.expect(result[2].collaborator.some(x => x == "DefaultAction")).true
+            Chai.expect(result[3].route).eq("/simple/deletemethod")
+            Chai.expect(result[3].httpMethod).eq("DELETE")
+            Chai.expect(result[3].initiator).eq("HttpMethodDecorator")
+            Chai.expect(result[3].collaborator.some(x => x == "DefaultAction")).true
         })
 
         it("Should check parameters association issue on multiple decorators", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/http-decorator-multiple-issue.js")
             let result = Transformer.transform(meta);
             let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'this/is/the/first/route/:nonPar',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'actionHaveNoParameter' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-multiple-issue.js',
-                collaborator: ['DefaultAction', 'Controller'],
-                analysis: [Core.RouteAnalysisCode.UnAssociatedParameters]
-            },
-            {
-                initiator: 'HttpMethodDecorator',
-                baseClass: "Controller",
-                route: 'this/is/the/:nonPar/route',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'actionHaveNoParameter' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/http-decorator-multiple-issue.js',
-                collaborator: ['DefaultAction', 'Controller'],
-                analysis: [Core.RouteAnalysisCode.UnAssociatedParameters]
-            }])
-        })
-
-        it("Should not error when there is issue in a class inside non exported module", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/issue-with-non-valid-module.js")
-            let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'HttpMethodDecorator',
-                route: 'this/is/the/:nonPar/route',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'actionHaveNoParameter' },
-                className: 'MyModule.SimpleController, ./test/route-generator/transformer-dummy/issue-with-non-valid-module.js',
-                baseClass: 'Controller',
-                collaborator: ['DefaultAction', 'Controller', 'Module'],
-                analysis: [Core.RouteAnalysisCode.UnAssociatedParameters, Core.RouteAnalysisCode.ClassNotExported]
-            }])
+            Chai.expect(result[0].route).eq("this/is/the/first/route/:nonPar")
+            Chai.expect(result[0].analysis).deep.eq([
+                Core.RouteAnalysisCode.UnAssociatedParameters
+            ])
+            Chai.expect(result[0].methodMetaData.name).eq("actionHaveNoParameter")
+            Chai.expect(result[1].route).eq("this/is/the/:nonPar/route")
+            Chai.expect(result[1].analysis).deep.eq([
+                Core.RouteAnalysisCode.UnAssociatedParameters
+            ])
+            Chai.expect(result[1].methodMetaData.name).eq("actionHaveNoParameter")
         })
     })
 
@@ -411,151 +201,91 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'ApiConvention',
-                baseClass: "ApiController",
                 route: '/simple/page/:offset/:pageWidth',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'getByPage' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
                 collaborator: ['Controller']
             },
             {
                 initiator: 'ApiConvention',
-                baseClass: "ApiController",
                 route: '/simple/:id',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'get' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
                 collaborator: ['Controller']
             },
             {
                 initiator: 'ApiConvention',
-                baseClass: "ApiController",
                 route: '/simple',
                 httpMethod: 'POST',
                 methodMetaData: { name: 'add' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
                 collaborator: ['Controller']
             },
             {
                 initiator: 'ApiConvention',
-                baseClass: "ApiController",
                 route: '/simple/:id',
                 httpMethod: 'PUT',
                 methodMetaData: { name: 'modify' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
                 collaborator: ['Controller']
             },
             {
                 initiator: 'ApiConvention',
-                baseClass: "ApiController",
                 route: '/simple/:id',
                 httpMethod: 'DELETE',
                 methodMetaData: { name: 'delete' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
                 collaborator: ['Controller']
             }])
-
         })
 
-        it("Should identify missing parameter which cause issue", () => {
+        it("Should identify missing parameter and give Convention Fail warning", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/api-convention-parameter-issue.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'ApiConvention',
-                baseClass: "ApiController",
-                route: '/simple/getbypage',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'getByPage' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention-parameter-issue.js',
-                collaborator: ['DefaultAction', 'Controller'],
-                analysis: [5]
-            },
-            {
-                initiator: 'ApiConvention',
-                baseClass: "ApiController",
-                route: '/simple/get',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'get' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention-parameter-issue.js',
-                collaborator: ['DefaultAction', 'Controller'],
-                analysis: [5]
-            },
-            {
-                initiator: 'ApiConvention',
-                baseClass: "ApiController",
-                route: '/simple/add',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'add' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention-parameter-issue.js',
-                collaborator: ['DefaultAction', 'Controller'],
-                analysis: [5]
-            },
-            {
-                initiator: 'ApiConvention',
-                baseClass: "ApiController",
-                route: '/simple/modify',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'modify' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention-parameter-issue.js',
-                collaborator: ['DefaultAction', 'Controller'],
-                analysis: [5]
-            },
-            {
-                initiator: 'ApiConvention',
-                baseClass: "ApiController",
-                route: '/simple/delete',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'delete' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention-parameter-issue.js',
-                collaborator: ['DefaultAction', 'Controller'],
-                analysis: [5]
-            }])
+            Chai.expect(result[0].route).eq("/simple/getbypage")
+            Chai.expect(result[0].httpMethod).eq("GET")
+            Chai.expect(result[0].analysis).deep.eq([Core.RouteAnalysisCode.ConventionFail])
+            Chai.expect(result[1].route).eq("/simple/get")
+            Chai.expect(result[1].httpMethod).eq("GET")
+            Chai.expect(result[1].analysis).deep.eq([Core.RouteAnalysisCode.ConventionFail])
+            Chai.expect(result[2].route).eq("/simple/add")
+            Chai.expect(result[2].httpMethod).eq("GET")
+            Chai.expect(result[2].analysis).deep.eq([Core.RouteAnalysisCode.ConventionFail])
+            Chai.expect(result[3].route).eq("/simple/modify")
+            Chai.expect(result[3].httpMethod).eq("GET")
+            Chai.expect(result[3].analysis).deep.eq([Core.RouteAnalysisCode.ConventionFail])
+            Chai.expect(result[4].route).eq("/simple/delete")
+            Chai.expect(result[4].httpMethod).eq("GET")
+            Chai.expect(result[4].analysis).deep.eq([Core.RouteAnalysisCode.ConventionFail])
         })
 
         it("Should fall back to default transformer if name doesn't match", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/api-convention-free-name.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'DefaultAction',
-                baseClass: "ApiController",
-                route: '/simple/thisisfreeactionname/:offset/:pageWidth',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'thisIsFreeActionName' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention-free-name.js',
-                collaborator: ['Controller']
-            }])
+            Chai.expect(result[0].route).eq('/simple/thisisfreeactionname/:offset/:pageWidth')
+            Chai.expect(result[0].initiator).eq("DefaultAction")
         })
 
         it("Should support @internal decorator", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/api-convention-with-internal.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'ApiConvention',
-                baseClass: "ApiController",
-                route: '/simple/:id',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'get' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention-with-internal.js',
-                collaborator: ['Controller']
-            }])
+            let info = result.filter(x => x.methodMetaData.name == "getByPage")
+            Chai.expect(info.length).eq(0)
         })
 
         it("Should prioritized @http.<any> decorators", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/api-convention-with-http-decorator.js")
             let result = Transformer.transform(meta);
-            let clean = H.cleanUp(result)
-            Chai.expect(clean).deep.eq([{
-                initiator: 'HttpMethodDecorator',
-                baseClass: "ApiController",
-                route: '/simple/getbypage/:offset/:pageWidth',
-                httpMethod: 'GET',
-                methodMetaData: { name: 'getByPage' },
-                className: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention-with-http-decorator.js',
-                collaborator: ['DefaultAction', 'Controller']
-            }])
+            Chai.expect(result[0].route).eq("/simple/getbypage/:offset/:pageWidth")
+            Chai.expect(result[0].initiator).eq("HttpMethodDecorator")
+            Chai.expect(result[0].collaborator.some(x => x == "DefaultAction")).true
         })
     })
 })
