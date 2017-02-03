@@ -1,0 +1,10 @@
+import { internal, http } from "../../../src/core"
+import {Controller, ApiController} from "../../../src/controller"
+
+export class SimpleController extends Controller {
+    
+    @internal()
+    privateMethod(par1, par2) { }
+
+    publicMethod(par1) { }
+}
