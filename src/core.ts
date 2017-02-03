@@ -101,11 +101,6 @@ export interface TransformResult {
     info?: RouteInfo[]
 }
 
-export interface RequestHandler {
-    routeInfo: RouteInfo
-    onRequest(request: HttpRequest, response: HttpResponse);
-}
-
 export interface KambojaOption {
     skipAnalysis?:boolean
     showConsoleLog?:boolean
@@ -194,3 +189,4 @@ export const internal = new Decorator().internal;
 export const http = new HttpDecorator();
 export const val = new Validator();
 export { ApiController, Controller } from "./controller"
+
