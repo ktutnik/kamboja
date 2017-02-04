@@ -36,6 +36,6 @@ export function cleanUp(info: Core.RouteInfo[]) {
     });
 }
 
-export function errorReadFile(path: string, cb: (err, result) => void) {
-    cb(new Error("Error: ENOENT: no such file or directory, open"), null)
+export function errorReadFile(path: string):Buffer {
+    throw new Error("Error: ENOENT: no such file or directory, open")
 }
