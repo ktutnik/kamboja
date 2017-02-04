@@ -21,16 +21,16 @@ export class Validator {
     string(required = false, length?: number) { }
 }
 
-export module RouteAnalysisCode {
+export namespace RouteAnalysisCode {
 
     /**
-     * Issue when route parameters doesn't have association 
+     * Issue when route parameters doesn't have association
      * with action parameters
      */
     export const UnAssociatedParameters = 1;
 
     /**
-     * Only applied on GET method, issue when action contains parameter 
+     * Only applied on GET method, issue when action contains parameter
      * but route doesn't have any
      */
     export const MissingRouteParameters = 2;
@@ -46,7 +46,7 @@ export module RouteAnalysisCode {
     export const ConflictDecorators = 4;
 
     /**
-     * API Convention fail because appropriate method name is match with 
+     * API Convention fail because appropriate method name is match with
      * method naming convention but the method doesn't have parameters
      */
     export const ConventionFail = 5;
@@ -102,8 +102,8 @@ export interface TransformResult {
 }
 
 export interface KambojaOption {
-    skipAnalysis?:boolean
-    showConsoleLog?:boolean
+    skipAnalysis?: boolean
+    showConsoleLog?: boolean
     overrideAppEngine?: (app) => void
     controllerPaths?: string[],
     viewPath?: string,
@@ -119,7 +119,7 @@ export interface ExecutorCommand {
 }
 
 export interface Engine {
-    init(routes: RouteInfo[], option:KambojaOption): any;
+    init(routes: RouteInfo[], option: KambojaOption): any;
 }
 
 export interface HttpRequest {
@@ -143,7 +143,7 @@ export interface CookieOptions {
     httpOnly?: boolean;
     path?: string;
     domain?: string;
-    secure?: boolean | 'auto';
+    secure?: boolean | "auto";
 }
 
 export interface HttpResponse {
@@ -175,13 +175,13 @@ export interface IdentifierResolver {
 
 export interface ActionResult {
     execute(response: HttpResponse,
-        routeInfo: RouteInfo):void;
+        routeInfo: RouteInfo): void;
 }
 
-export function getMethodName(info:RouteInfo){
-    let tokens = info.qualifiedClassName.split(",")
-    let method = `${tokens[0].trim()}.${info.methodMetaData.name}`
-    let file = tokens[1].trim()
+export function getMethodName(info: RouteInfo) {
+    const tokens = info.qualifiedClassName.split(",")
+    const method = `${tokens[0].trim()}.${info.methodMetaData.name}`
+    const file = tokens[1].trim()
     return `[${method} ${file}]`;
 }
 

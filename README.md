@@ -22,7 +22,7 @@ what you need todo is:
 
 ```javascript
 export class UserController : ApiController{
-    getByPage(offset, page){ /* your code */ }
+    getByPage(offset, take){ /* your code */ }
     get(id){ /* your code */ }
     add(body){ /* your code */ }
     modify(id, body){ /* your code */ }
@@ -95,10 +95,10 @@ this behavior will make the action accessible from many routes.
 
 ```javascript
 export class CarController : Controller{
-    @http.post("/dashboard")
-    @http.post("/dashboard/property")
-    @http.post("/dashboard/property/car")
-    @http.post("/dashboard/property/car/list")
+    @http.get("/dashboard")
+    @http.get("/dashboard/property")
+    @http.get("/dashboard/property/car")
+    @http.get("/dashboard/property/car/list")
     list(){
         return this.json({success:true})
     }
@@ -141,6 +141,31 @@ export class CarController : Controller{
 }
 ```
 
+> Important note when using callback style libraries
+>> Event if you are free to return value or promise, don't be confused
+>> if using callback style libraries.
+
+If using callback style inside controller we need to 
+return promise manually
+
+```javascript
+export class CarController : Controller{
+
+    list(){
+        return new Promise<string>((resolve, reject) => {
+            fs.readFile(function(err, result){
+                if(err) reject(err)
+                else {
+                    /* do your work */
+                    resolve(<result>)
+                }
+            })
+        })
+    }
+}
+```
+
+
 # Error handling using try-catch
 Another TypeScript 2.1 feature we also can do try-catch error 
 inside controller. The error will nicely passed through the 
@@ -165,14 +190,12 @@ KambojaJs not totally created from scratch instead it designed so it can sits on
 of another framework such as ExpressJs(implemented), Koa(in progress).
 This is good so we can reuse any great existing library like BodyParser and some middleware
 
-# Smart Analysis
-KambojaJs comes with smart analytic engine, it will identify common mistakes that hard to trace.
+# Issue Analysis
+KambojaJs comes with issue analysis, it will identify common mistakes developer make.
 - Detect non exported controller
-- Detect if there is controller not inherited from ApiController or Controller
-- Detect if @internal decorator combined with @http.<any>() decorator
-- Detect if an Api Naming convention in an action fail caused by lack of parameters
-- Detect un match parameter between route and action when using custom route
+- Detect if there is controller doesn't inherited from ApiController or Controller
+- Detect if @internal decorator combined with @http decorator
+- Detect if an Api naming convention in an action fail caused by lack of parameters
+- Detect un match parameter name between route and action when using custom route
 - Detect if Controller method accidentally overridden such as json, redirect, file, view 
 - Detect if there are duplicate route happened.
-
-

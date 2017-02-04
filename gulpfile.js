@@ -4,6 +4,7 @@
 var gulp = require("gulp"),
     tsc = require("gulp-typescript"),
     del = require("del"),
+    tslint = require("gulp-tslint"),
     runSequence = require("run-sequence"),
     mocha = require("gulp-mocha"),
     istanbul = require("gulp-istanbul");
@@ -34,6 +35,22 @@ gulp.task("clean-lib", function (cb) {
 gulp.task("clean", function (cb) {
     runSequence("clean-source", "clean-test", "clean-lib", cb);
 });
+
+/********* LINT */
+
+gulp.task("lint", function () {
+
+    var config = { formatter: "verbose", emitError: (process.env.CI) ? true : false };
+
+    return gulp.src([
+        "src/**/**.ts",
+        "test/**/**.test.ts"
+    ])
+        .pipe(tslint(config))
+        .pipe(tslint.report());
+
+});
+
 
 //******** BUILD *************
 
@@ -114,11 +131,11 @@ gulp.task("build-dts", function () {
     return gulp.src([
         "src/**/*.ts"
     ])
-    .pipe(tsDtsProject())
-    .on("error", function (err) {
-        process.exit(1);
-    })
-    .dts.pipe(gulp.dest("lib/dts"));
+        .pipe(tsDtsProject())
+        .on("error", function (err) {
+            process.exit(1);
+        })
+        .dts.pipe(gulp.dest("lib/dts"));
 });
 
 gulp.task("dist", function (cb) {

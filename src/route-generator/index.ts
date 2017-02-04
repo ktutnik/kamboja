@@ -18,10 +18,10 @@ export class RouteGenerator {
 
     private getFiles() {
         let result: string[] = []
-        for (let path of this.paths) {
-            let fileDirectory = this.pathResolver.resolve(path)
+        for (const path of this.paths) {
+            const fileDirectory = this.pathResolver.resolve(path)
             if (!Fs.existsSync(fileDirectory)) throw new Error(`Directory ${fileDirectory} not found`)
-            let resultPaths = Fs.readdirSync(fileDirectory)
+            const resultPaths = Fs.readdirSync(fileDirectory)
                 .filter(x => Path.extname(x) == ".js")
                 .map(x => Path.join(fileDirectory, x));
             result = result.concat(resultPaths)
