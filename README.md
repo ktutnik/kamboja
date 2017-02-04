@@ -141,9 +141,9 @@ export class CarController : Controller{
 }
 ```
 
-> Important note when using ApiController
+> Important note when using callback style libraries
 >> Event if you are free to return value or promise, don't be confused
->> if using callback style function.
+>> if using callback style libraries.
 
 If using callback style inside controller we need to 
 return promise manually
@@ -153,7 +153,7 @@ export class CarController : Controller{
 
     list(){
         return new Promise<string>((resolve, reject) => {
-            functionUseCallback(function(err, result){
+            fs.readFile(function(err, result){
                 if(err) reject(err)
                 else {
                     /* do your work */
