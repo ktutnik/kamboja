@@ -3,7 +3,7 @@
   "version": "0.0.1-0",
   "description": "MVC Framework powered by TypeScript",
   "main": "lib/source/index.js",
-  "typings": "lib/source/index.d.ts",
+  "typings": "lib/dts/index.d.ts",
   "directories": {
     "test": "test"
   },
@@ -45,11 +45,13 @@
     "gulp": "^3.9.1",
     "gulp-istanbul": "^1.1.1",
     "gulp-mocha": "^3.0.1",
+    "gulp-tslint": "^7.1.0",
     "gulp-typescript": "^3.1.4",
     "mocha": "^3.2.0",
     "run-sequence": "^1.2.2",
     "sinon": "^1.17.7",
     "supertest": "^2.0.1",
+    "tslint": "^4.4.2",
     "typescript": "^2.1.1"
   }
 }

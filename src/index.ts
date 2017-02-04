@@ -14,4 +14,9 @@ export {
     KambojaOption,
     RouteInfo
 } from "./core"
+export {
+    DefaultDependencyResolver,
+    DefaultIdentifierResolver,
+    PathResolver
+} from "./resolver"
 export { RequestHandler } from "./request-handler"
