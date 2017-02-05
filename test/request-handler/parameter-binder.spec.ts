@@ -39,8 +39,8 @@ describe("ParameterBinder", () => {
             //dummy/mymethod/:par1/:par2        
             let meta = H.fromFile("test/request-handler/controller/parameter-binder-controller.js")
             let infos = Transformer.transform(meta)
-            getParamStub.withArgs("par1").returns(20)
-            getParamStub.withArgs("par2").returns(30)
+            getParamStub.withArgs("par1").returns("20")
+            getParamStub.withArgs("par2").returns("30")
             let binder = new ParameterBinder(infos.filter(x => x.methodMetaData.name == "myMethod")[0], HttpRequest);
             let result = binder.getParameters();
             Chai.expect(result).deep.eq([20, 30])
