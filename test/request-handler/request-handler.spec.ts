@@ -11,7 +11,8 @@ let HttpResponse: any = {
     file: function () { },
     redirect: function () { },
     json: function () { },
-    error: function () { }
+    error: function () { },
+    setCookie:function(){}
 };
 
 let HttpRequest: any = {
@@ -25,12 +26,14 @@ describe("RequestHandler", () => {
     let jsonSpy: Sinon.SinonSpy
     let errorSpy: Sinon.SinonSpy;
     let fileSpy: Sinon.SinonSpy;
+    let setCookieSpy: Sinon.SinonSpy;
 
     beforeEach(() => {
         getParamStub = Sinon.stub(HttpRequest, "getParam")
         jsonSpy = Sinon.stub(HttpResponse, "json")
         errorSpy = Sinon.spy(HttpResponse, "error")
         fileSpy = Sinon.spy(HttpResponse, "file")
+        setCookieSpy = Sinon.spy(HttpResponse, "setCookie")
     })
 
     afterEach(() => {
@@ -38,6 +41,7 @@ describe("RequestHandler", () => {
         jsonSpy.restore();
         errorSpy.restore();
         fileSpy.restore()
+        setCookieSpy.restore()
     })
 
     it("Should execute API controller properly", async () => {
@@ -50,6 +54,17 @@ describe("RequestHandler", () => {
         await executor.execute()
         let result = jsonSpy.getCall(0).args[0]
         Chai.expect(result).eq("param1")
+    })
+
+    it("Should set cookie to the response properly", async () => {
+        let meta = H.fromFile("test/request-handler/controller/controller.js")
+        let infos = Transformer.transform(meta)
+        let info = infos.filter(x => x.methodMetaData.name == "setTheCookie")[0]
+        info.classId = info.qualifiedClassName
+        let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
+        await executor.execute()
+        let result = setCookieSpy.getCall(0).args
+        Chai.expect(result).deep.eq([ 'TheKey', 'TheValue', { expires: true } ])
     })
 
     it("Should handle internal error inside controller properly", async () => {

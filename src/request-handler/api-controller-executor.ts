@@ -15,6 +15,6 @@ export class ApiControllerExecutor implements Core.ExecutorCommand {
         let method = <Function>controller[this.routeInfo.methodMetaData.name]
         let methodResult = method.apply(controller, this.binder.getParameters());
         let result = await Promise.resolve(methodResult);
-        return new JsonActionResult(result);
+        return new JsonActionResult(result, undefined, undefined);
     }
 }

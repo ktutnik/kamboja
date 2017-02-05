@@ -136,6 +136,13 @@ export interface HttpRequest {
     getParam(key: string): string
 }
 
+
+export interface Cookie {
+    key: string
+    value: string
+    options?: CookieOptions
+}
+
 export interface CookieOptions {
     maxAge?: number;
     signed?: boolean;
@@ -173,9 +180,16 @@ export interface IdentifierResolver {
     getClassId(qualifiedClassName: string)
 }
 
-export interface ActionResult {
+export class ActionResult {
+    constructor(public cookies: Cookie[]) { }
+
     execute(response: HttpResponse,
-        routeInfo: RouteInfo): void;
+        routeInfo: RouteInfo) {
+        if(!this.cookies) return
+        for(let cookie of this.cookies){
+            response.setCookie(cookie.key, cookie.value, cookie.options)
+        }
+    }
 }
 
 export function getMethodName(info: RouteInfo) {

@@ -1,10 +1,13 @@
-import { HttpRequest, HttpResponse, ActionResult, RouteInfo } from "../core"
+import { HttpRequest, HttpResponse, ActionResult, RouteInfo, Cookie } from "../core"
 
-export class ViewActionResult implements ActionResult {
-    constructor(public model, public viewName: string) { }
+export class ViewActionResult extends ActionResult {
+    constructor(public model, public viewName: string, public cookies:Cookie[]) { 
+        super(cookies)
+    }
 
     execute(response: HttpResponse, routeInfo: RouteInfo) {
-        //if viewname doesn't contains / then add the classname
+        super.execute(response, routeInfo)
+        //if view name doesn't contains / then add the classname
         if(this.viewName && this.viewName.indexOf("/") == -1){
             let className = this.getClassName(routeInfo.qualifiedClassName)
             let viewPath = className + "/" + this.viewName;
