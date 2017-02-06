@@ -7,6 +7,7 @@ export {
     Engine,
     http,
     HttpError,
+    HttpMethod,
     HttpRequest,
     HttpResponse,
     IdentifierResolver,
@@ -19,4 +20,10 @@ export {
     DefaultIdentifierResolver,
     PathResolver
 } from "./resolver"
-export { RequestHandler } from "./request-handler"
+export { 
+    RequestHandler 
+} from "./request-handler"
+export { 
+    RouteGenerator, RouteAnalyzer
+} from "./route-generator"
+

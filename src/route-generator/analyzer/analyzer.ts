@@ -32,7 +32,7 @@ export class RouteAnalyzer {
             for (let command of this.commands) {
                 let analysis = command.analyse(route)
                 if (analysis)
-                    result = result.concat(analysis)
+                    result.push(...analysis)
             }
         return result;
     }

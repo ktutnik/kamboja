@@ -1,9 +1,12 @@
-import { HttpRequest, HttpResponse, ActionResult, RouteInfo } from "../core"
+import { HttpRequest, HttpResponse, ActionResult, RouteInfo, Cookie } from "../core"
 
-export class JsonActionResult implements ActionResult{
-    constructor(public body:any, public status?:number){}
+export class JsonActionResult extends ActionResult {
+    constructor(public body: any, public status: number, public cookies: Cookie[]) {
+        super(cookies)
+    }
 
-    execute(response: HttpResponse, routeInfo: RouteInfo){
+    execute(response: HttpResponse, routeInfo: RouteInfo) {
+        super.execute(response, routeInfo)
         response.json(this.body, this.status);
     }
 }

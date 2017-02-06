@@ -4,13 +4,15 @@ import * as Chai from "chai"
 import * as H from "../helper"
 import * as Fs from "fs"
 
-describe("Router", () => {
-    it("Should load routes from controllers properly", async () => {
+describe("RouteGenerator", () => {
+    it("Should load routes from controllers properly", () => {
         let test = new RouteGenerator(["test/route-generator/api",
             "test/route-generator/controller"],
-            new DefaultIdentifierResolver(), Fs.readFile)
-        let routes = await test.getRoutes()
-        let clean = H.cleanUp(routes.result)
+            new DefaultIdentifierResolver(), Fs.readFileSync)
+        let routes = test.getRoutes()
+        let clean = H.cleanUp(routes)
+        Chai.expect(routes[0].classId).eq("DummyApi, test/route-generator/api/dummy-api.js")
+        Chai.expect(routes[1].classId).eq("DummyController, test/route-generator/controller/dummy-controller.js")
         Chai.expect(clean).deep.eq([{
             initiator: 'ApiConvention',
             route: '/dummyapi/page/:offset/:pageSize',
@@ -31,13 +33,13 @@ describe("Router", () => {
         }])
     })
 
-    it("Should throw error when provided path not found", async () => {
+    it("Should throw error when provided path not found", () => {
         let test = new RouteGenerator(["test/fake/path",
             "test/route-generator/controller"],
-            new DefaultIdentifierResolver(), Fs.readFile)
+            new DefaultIdentifierResolver(), Fs.readFileSync)
         let thrown = false;
         try {
-            await test.getRoutes();
+            test.getRoutes();
             thrown = false
         }
         catch (e) {
@@ -46,12 +48,12 @@ describe("Router", () => {
         Chai.expect(thrown).true;
     })
 
-    it("Should handle read file error", async () => {
+    it("Should handle read file error", () => {
         let test = new RouteGenerator(["test/route-generator/api", "test/route-generator/controller"],
             new DefaultIdentifierResolver(), H.errorReadFile)
         let thrown = false;
         try {
-            await test.getRoutes();
+            test.getRoutes();
             thrown = false
         }
         catch (e) {

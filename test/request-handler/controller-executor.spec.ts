@@ -59,4 +59,14 @@ describe("ControllerExecutor", () => {
         Chai.expect(result.redirectUrl).eq("/go/go/kamboja.js")
     })
 
+    it("Should set cookie properly", async () => {
+        let meta = H.fromFile("test/request-handler/controller/controller.js")
+        let infos = Transformer.transform(meta)
+        let info = infos.filter(x => x.methodMetaData.name == "setTheCookie")[0]
+        info.classId = info.qualifiedClassName
+        let executor = new ControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
+        let result = <ViewActionResult>await executor.execute()
+        Chai.expect(result.cookies[0]).deep.eq({ key: "TheKey", value: "TheValue", options: { expires: true } })
+    })
+
 })
