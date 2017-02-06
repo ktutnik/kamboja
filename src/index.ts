@@ -24,6 +24,6 @@ export {
     RequestHandler 
 } from "./request-handler"
 export { 
-    RouteGenerator 
+    RouteGenerator, RouteAnalyzer
 } from "./route-generator"
 
