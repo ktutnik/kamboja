@@ -11,8 +11,8 @@ describe("RouteGenerator", () => {
             new DefaultIdentifierResolver(), Fs.readFileSync)
         let routes = test.getRoutes()
         let clean = H.cleanUp(routes)
-        Chai.expect(routes[0].classId).eq("DummyApi, test/route-generator/api/dummy-api.js")
-        Chai.expect(routes[1].classId).eq("DummyController, test/route-generator/controller/dummy-controller.js")
+        Chai.expect(routes[0].classId.replace(/\\/g, "/")).eq("DummyApi, test/route-generator/api/dummy-api.js")
+        Chai.expect(routes[1].classId.replace(/\\/g, "/")).eq("DummyController, test/route-generator/controller/dummy-controller.js")
         Chai.expect(clean).deep.eq([{
             initiator: 'ApiConvention',
             route: '/dummyapi/page/:offset/:pageSize',
