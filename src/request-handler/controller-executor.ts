@@ -1,5 +1,5 @@
 import * as Core from "../core"
-import { ParameterBinder } from "./parameter-binder"
+import { ParameterBinder } from "../parameter-binder"
 
 export class ControllerExecutor implements Core.ExecutorCommand {
     private binder: ParameterBinder;

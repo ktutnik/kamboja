@@ -1,4 +1,4 @@
-import { ParameterBinder } from "../../src/request-handler/parameter-binder"
+import { ParameterBinder } from "../../src/parameter-binder"
 import { DefaultDependencyResolver } from "../../src/resolver"
 import * as Transformer from "../../src/route-generator/transformers"
 import * as Chai from "chai"
@@ -26,7 +26,7 @@ describe("ParameterBinder", () => {
 
         it("Should bind string value properly", () => {
             //dummy/mymethod/:par1/:par2        
-            let meta = H.fromFile("test/request-handler/controller/parameter-binder-controller.js")
+            let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
             let infos = Transformer.transform(meta)
             getParamStub.withArgs("par1").returns("param1")
             getParamStub.withArgs("par2").returns("param2")
@@ -37,7 +37,7 @@ describe("ParameterBinder", () => {
 
         it("Should bind number value properly", () => {
             //dummy/mymethod/:par1/:par2        
-            let meta = H.fromFile("test/request-handler/controller/parameter-binder-controller.js")
+            let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
             let infos = Transformer.transform(meta)
             getParamStub.withArgs("par1").returns("20")
             getParamStub.withArgs("par2").returns("30")
@@ -48,7 +48,7 @@ describe("ParameterBinder", () => {
 
         it("Should bind boolean value properly", () => {
             //dummy/mymethod/:par1/:par2        
-            let meta = H.fromFile("test/request-handler/controller/parameter-binder-controller.js")
+            let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
             let infos = Transformer.transform(meta)
             getParamStub.withArgs("par1").returns("false")
             getParamStub.withArgs("par2").returns("True")
@@ -59,7 +59,7 @@ describe("ParameterBinder", () => {
 
         it("Should return empty array for method without parameter", () => {
             //dummy/mymethod/:par1/:par2        
-            let meta = H.fromFile("test/request-handler/controller/parameter-binder-controller.js")
+            let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
             let infos = Transformer.transform(meta)
             getParamStub.withArgs("par1").returns("false")
             getParamStub.withArgs("par2").returns("True")
@@ -83,7 +83,7 @@ describe("ParameterBinder", () => {
 
         it("Should fallback to default binding on GET Http Method", () => {
             //dummy/page/:offset/:pageWidth        
-            let meta = H.fromFile("test/request-handler/controller/parameter-binder-controller.js")
+            let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
             let infos = Transformer.transform(meta)
             getParamStub.withArgs("offset").returns(1)
             getParamStub.withArgs("pageWidth").returns(10)
@@ -95,7 +95,7 @@ describe("ParameterBinder", () => {
 
         it("Should assign HttpRequest Body on first parameter on POST method", () => {
             //dummy/page       
-            let meta = H.fromFile("test/request-handler/controller/parameter-binder-controller.js")
+            let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
             let infos = Transformer.transform(meta)
             let binder = new ParameterBinder(infos.filter(x => x.methodMetaData.name == "add")[0], HttpRequest);
             let result = binder.getParameters();
@@ -104,7 +104,7 @@ describe("ParameterBinder", () => {
 
         it("Should assign HttpRequest Body on second parameter on PUT method", () => {
             //dummy/page/id     
-            let meta = H.fromFile("test/request-handler/controller/parameter-binder-controller.js")
+            let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
             let infos = Transformer.transform(meta)
             let binder = new ParameterBinder(infos.filter(x => x.methodMetaData.name == "modify")[0], HttpRequest);
             getParamStub.withArgs("id").returns(1)

@@ -1,5 +1,5 @@
 import * as Core from "../core"
-import { ParameterBinder } from "./parameter-binder"
+import { ParameterBinder } from "../parameter-binder"
 import {JsonActionResult} from "../controller"
 
 export class ApiControllerExecutor implements Core.ExecutorCommand {
