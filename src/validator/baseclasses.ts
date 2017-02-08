@@ -5,65 +5,47 @@ export interface ValidatorCommand {
 }
 
 export interface ValidatorParams {
-    type: "Model" | "CreditCard" | "Email" | "Phone" | "String" | "Number" | "Boolean" | "Date"
-    required?: boolean,
+    required?: boolean
     message?: string
+    max?:any
+    min?:any
 }
 
 const MetaDataKey = "kamboja:Validator"
 
+function parameterDecorator(target: any, propertyKey: string, index: number){}
+
 export class Validator {
-    static getMetaData(target: any, methodName: string, index: number) {
-        let key = `${methodName}(${index})`
-        return Reflect.getMetadata(MetaDataKey, target, key)
+    model(qualifiedName:string, opt?: boolean | ValidatorParams) {
+        return parameterDecorator
     }
 
-    private createDescriptor(metaDataKey: string, params: ValidatorParams) {
-        return (target: any, methodName: string, index: number) => {
-            let key = `${methodName}(${index})`
-            Reflect.defineMetadata(MetaDataKey, params, target, key)
-        }
+    creditCard(opt?: boolean | ValidatorParams) {
+        return parameterDecorator
     }
 
-    model(qualifiedName: string, required?: boolean) {
-        return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-
-        }
+    email(opt?: boolean | ValidatorParams) {
+        return parameterDecorator
     }
 
-    creditCard(required?: boolean) {
-        return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-
-        }
+    phone(opt?: boolean | ValidatorParams) {
+        return parameterDecorator
     }
 
-    email(required?: boolean) {
-        return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        }
+    string(opt?: boolean | ValidatorParams) {
+        return parameterDecorator
     }
 
-    phone(required?: boolean) {
-        return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        }
+    number(opt?: boolean | ValidatorParams) {
+        return parameterDecorator
     }
 
-    string(required?: boolean, max?: number, min?: number) {
-        return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        }
+    boolean(opt?: boolean | ValidatorParams) {
+        return parameterDecorator
     }
 
-    number(required?: boolean, max?: number, min?: number) {
-        return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        }
-    }
-
-    boolean(required?: boolean) {
-        return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        }
-    }
-
-    date(required?: boolean, max?: number, min?: number) {
-        return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        }
+    date(opt?: boolean | ValidatorParams) {
+        return parameterDecorator
     }
 }
+
