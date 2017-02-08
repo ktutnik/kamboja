@@ -17,16 +17,6 @@ export class HttpDecorator {
 
 export type DecoratorType = keyof Decorator | keyof HttpDecorator;
 
-export class Validator {
-    model(qualifiedName:string, required?:boolean) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
-    creditCard(required?:boolean) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
-    email(required?:boolean) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
-    phone(required?:boolean) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
-    string(required?:boolean, max?: number, min?:number) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
-    number(required?:boolean, max?: number, min?:number) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
-    boolean(required?:boolean) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
-    date(required?:boolean, max?:number, min?:number) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
-}
 
 export namespace RouteAnalysisCode {
 
@@ -208,6 +198,5 @@ export function getMethodName(info: RouteInfo) {
 
 export const internal = new Decorator().internal;
 export const http = new HttpDecorator();
-export const val = new Validator();
 export { ApiController, Controller } from "./controller"
 

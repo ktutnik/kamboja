@@ -13,8 +13,7 @@ export {
     IdentifierResolver,
     internal,
     KambojaOption,
-    RouteInfo,
-    val
+    RouteInfo
 } from "./core"
 export {
     DefaultDependencyResolver,
