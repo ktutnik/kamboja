@@ -18,7 +18,14 @@ export class HttpDecorator {
 export type DecoratorType = keyof Decorator | keyof HttpDecorator;
 
 export class Validator {
-    string(required = false, length?: number) { }
+    model(qualifiedName:string, required?:boolean) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+    creditCard(required?:boolean) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+    email(required?:boolean) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+    phone(required?:boolean) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+    string(required?:boolean, max?: number, min?:number) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+    number(required?:boolean, max?: number, min?:number) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+    boolean(required?:boolean) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+    date(required?:boolean, max?:number, min?:number) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
 }
 
 export namespace RouteAnalysisCode {

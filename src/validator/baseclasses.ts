@@ -1,0 +1,4 @@
+
+interface Validator{
+    validate()
+}
