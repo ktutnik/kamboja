@@ -17,9 +17,6 @@ export class HttpDecorator {
 
 export type DecoratorType = keyof Decorator | keyof HttpDecorator;
 
-export class Validator {
-    string(required = false, length?: number) { }
-}
 
 export namespace RouteAnalysisCode {
 
@@ -201,6 +198,5 @@ export function getMethodName(info: RouteInfo) {
 
 export const internal = new Decorator().internal;
 export const http = new HttpDecorator();
-export const val = new Validator();
 export { ApiController, Controller } from "./controller"
 
