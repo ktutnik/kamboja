@@ -3,7 +3,7 @@ import * as Kecubung from "kecubung"
 import { ValidationError } from "../core"
 
 export interface ValidatorCommand {
-    validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData): ValidationError[]
+    validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?:string): ValidationError[]
 }
 
 const MetaDataKey = "kamboja:Validator"
@@ -30,7 +30,7 @@ export class ValidatorDecorator {
 }
 
 export abstract class ValidatorCommandBase implements ValidatorCommand {
-    abstract validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData): ValidationError[];
+    abstract validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?:string): ValidationError[];
 
     protected getParameter(metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, index: number, type: string) {
         let decoratorName = getDecoratorName(this)

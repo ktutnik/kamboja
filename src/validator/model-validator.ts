@@ -11,7 +11,7 @@ export class ModelValidator extends ValidatorCommandBase {
     }
 
     @decoratorName("model")
-    validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData) {
+    validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?:string) {
         if (!value) return
         let modelName = this.getParameter(metaData, 0, "String")
         let storage = new MetaDataStorage(this.idResolver)
@@ -19,9 +19,11 @@ export class ModelValidator extends ValidatorCommandBase {
         let errors:ValidationError[] = []
         for (let property of modelMetaData.properties) {
             for (let decorator of property.decorators) {
-                let validator = Validator.getValidators().filter(x => getDecoratorName(x) == decorator.name)[0];
+                let validator = Validator.getValidators()
+                    .filter(x => getDecoratorName(x) == decorator.name)[0];
                 if (validator) {
-                    let errorMessage = validator.validate(value[property.name], property)
+                    let errorMessage = validator.validate(value[property.name], property, 
+                        parent? `${parent}.${metaData.name}` : metaData.name)
                     if (errorMessage)
                         errors.push(...errorMessage)
                 }

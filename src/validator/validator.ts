@@ -22,6 +22,8 @@ export class Validator implements Core.Validator {
     constructor(private parameters: any[], private meta: Kecubung.MethodMetaData, private idResolver: Core.IdentifierResolver) { }
 
     valid() {
+        let validators = Validator.getValidators();
+        if(!validators) throw new Error("Validator is not initialized yet")
         for (let i = 0; i < this.meta.parameters.length; i++) {
             let value = this.parameters[i];
             let meta = this.meta.parameters[i]

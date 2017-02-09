@@ -24,7 +24,7 @@ let storage = new MetaDataStorage(new DefaultIdentifierResolver())
 storage.save(modelMeta);
 Validator.initValidators(new DefaultIdentifierResolver())
 
-describe("ModelValidator", () => {
+describe.only("ModelValidator", () => {
     it("Should return error message when provided null", () => {
         let meta = H.fromCode(`
             var MyClass = (function (_super) {
@@ -44,7 +44,7 @@ describe("ModelValidator", () => {
         let test = new ModelValidator(new DefaultIdentifierResolver());
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
         let result = test.validate({ myProp: null }, clazz.methods[0].parameters[0])
-        Chai.expect(result[0].field == "myProp")
+        Chai.expect(result[0].field == "model.myProp")
         Chai.expect(result[0].message).contain("required")
     })
 
