@@ -1,37 +1,44 @@
 import * as Kecubung from "kecubung"
 import * as Core from "../core"
-import { ValidatorCommand, ValidationType, transform } from "./baseclasses"
+import { ValidatorCommand, getDecoratorName } from "./baseclasses"
 import { ModelValidator } from "./model-validator"
+import { RequiredValidator } from "./required-validator"
 
 export class Validator implements Core.Validator {
-    private validators: ValidationType[] = ["model", "creditCard", "boolean", "date", "email", "number", "phone", "string"]
+    private static validators: ValidatorCommand[]
+    static getValidators(){
+        return Validator.validators;
+    }
+    
+    static initValidators(idResolver:Core.IdentifierResolver){
+        Validator.validators = [
+            new ModelValidator(idResolver),
+            new RequiredValidator()
+        ]
+    }
+
     private errors: Core.ValidationError[] = []
 
     constructor(private parameters: any[], private meta: Kecubung.MethodMetaData, private idResolver: Core.IdentifierResolver) { }
 
     valid() {
         for (let i = 0; i < this.meta.parameters.length; i++) {
-            let parameter = this.meta.parameters[i];
-            if (parameter.decorators && parameter.decorators.length > 0) {
-                let decorator = parameter.decorators.filter(x => this.validators.some(y => y == x.name))[0]
-                if (decorator) this.validate(this.parameters[i], parameter.name, decorator)
+            let value = this.parameters[i];
+            let meta = this.meta.parameters[i]
+            for (let decorator of meta.decorators) {
+                let validator = Validator.getValidators().filter(x => getDecoratorName(x) == decorator.name)[0];
+                if (validator) {
+                    let errorMessage = validator.validate(value, meta)
+                    if (errorMessage)
+                        this.errors.push(...errorMessage)
+                }
             }
         }
         return this.errors.length > 0;
     }
 
-    private validate(value: any, fieldName:string, decorator: Kecubung.DecoratorMetaData) {
-        let type: ValidationType = <ValidationType>decorator.name;
-        switch (type) {
-            case "model":
-                let validator = new ModelValidator(value, fieldName, decorator.parameters, this.idResolver)
-                let errors = validator.validate();
-                if(errors) this.errors.push(...errors)
-            
-        }
-    }
 
     getValidationErrors() {
-        return []
+        return this.errors;
     }
 }

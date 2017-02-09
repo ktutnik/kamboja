@@ -1,3 +1,13 @@
+import { ValidatorDecorator } from "./validator/baseclasses"
+let val = new ValidatorDecorator();
+
+export { val }
+export {
+    ValidatorCommand,
+    ValidatorCommandBase,
+    decoratorName
+} from "./validator"
+
 export {
     ActionResult,
     ApiController,
@@ -20,13 +30,12 @@ export {
     DefaultIdentifierResolver,
     PathResolver
 } from "./resolver"
-export { 
-    RequestHandler 
+export {
+    RequestHandler
 } from "./request-handler"
-export { 
+export {
     RouteGenerator, RouteAnalyzer
 } from "./route-generator"
-export { 
+export {
     MetaDataStorage
 } from "./metadata-storage"
-

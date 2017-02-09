@@ -26,7 +26,7 @@ export class MetaDataStorage {
             for (let item of (<ParentMetaData>result).children) {
                 if (item.name == className) {
                     if (item.type == "Class") {
-                        return item
+                        return <ClassMetaData>item
                     }
                     else {
                         result = item;
