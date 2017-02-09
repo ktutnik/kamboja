@@ -1,22 +1,26 @@
 import 'reflect-metadata'
+import * as Kecubung from "kecubung"
+import { ValidationError } from "../core"
 
 export interface ValidatorCommand {
-    validate()
+    validate(): ValidationError[]
 }
 
 export interface ValidatorParams {
     required?: boolean
     message?: string
-    max?:any
-    min?:any
+    max?: any
+    min?: any
 }
+
+export type ValidationType = keyof ValidatorDecorator;
 
 const MetaDataKey = "kamboja:Validator"
 
-function parameterDecorator(target: any, propertyKey: string, index: number){}
+export function parameterDecorator(target: any, propertyKey: string, index: any) { }
 
-export class Validator {
-    model(qualifiedName:string, opt?: boolean | ValidatorParams) {
+export class ValidatorDecorator {
+    model(qualifiedName: string, opt?: boolean | ValidatorParams) {
         return parameterDecorator
     }
 
@@ -49,3 +53,18 @@ export class Validator {
     }
 }
 
+export function transform(meta: Kecubung.ValueMetaData): ValidatorParams {
+    if (meta.type == "Boolean") {
+        return {
+            required: (<Kecubung.PrimitiveValueMetaData>meta).value
+        }
+    }
+    else {
+        let option = <Kecubung.ObjectValueMetaData>meta;
+        let result: any = {}
+        for (let prop of option.properties) {
+            result[prop.name] = (<Kecubung.PrimitiveValueMetaData>prop).value
+        }
+        return result;
+    }
+}

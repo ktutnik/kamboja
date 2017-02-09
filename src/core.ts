@@ -1,4 +1,4 @@
-import { MetaData, MetadataType, MethodMetaData, ClassMetaData } from "kecubung";
+import { MetaData, ParentMetaData, MetadataType, MethodMetaData, ClassMetaData } from "kecubung";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 export type TransformStatus = "ExitWithResult" | "Next" | "Exit"
@@ -102,10 +102,11 @@ export interface KambojaOption {
     skipAnalysis?: boolean
     showConsoleLog?: boolean
     overrideAppEngine?: (app) => void
-    controllerPaths?: string[],
-    viewPath?: string,
-    viewEngine?: string,
-    staticFilePath?: string,
+    controllerPaths?: string[]
+    viewPath?: string
+    viewEngine?: string
+    staticFilePath?: string
+    modelPath?: string
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
     errorHandler?: (err: HttpError) => void
@@ -117,6 +118,21 @@ export interface ExecutorCommand {
 
 export interface Engine {
     init(routes: RouteInfo[], option: KambojaOption): any;
+}
+
+export interface ValidationError {
+    field: string,
+    message: string
+}
+
+export interface Validator {
+    valid(): boolean
+    getValidationErrors(): ValidationError[]
+}
+
+export interface BaseController {
+    request: HttpRequest;
+    validator: Validator;
 }
 
 export interface HttpRequest {
@@ -175,6 +191,7 @@ export interface DependencyResolver {
 
 export interface IdentifierResolver {
     getClassId(qualifiedClassName: string)
+    getClassName(classId:string)
 }
 
 export class ActionResult {
@@ -182,8 +199,8 @@ export class ActionResult {
 
     execute(response: HttpResponse,
         routeInfo: RouteInfo) {
-        if(!this.cookies) return
-        for(let cookie of this.cookies){
+        if (!this.cookies) return
+        for (let cookie of this.cookies) {
             response.setCookie(cookie.key, cookie.value, cookie.options)
         }
     }
@@ -195,6 +212,8 @@ export function getMethodName(info: RouteInfo) {
     const file = tokens[1].trim()
     return `[${method} ${file}]`;
 }
+
+
 
 export const internal = new Decorator().internal;
 export const http = new HttpDecorator();

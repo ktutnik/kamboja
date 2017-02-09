@@ -1,10 +1,20 @@
 import * as Kecubung from "kecubung"
-import {ValidatorCommand} from "./baseclasses"
+import { ValidatorCommand, ValidatorParams, transform } from "./baseclasses"
+import { ValidationError, IdentifierResolver } from "../core"
+import { MetaDataStorage } from "../metadata-storage"
 
-export class ModelValidator implements ValidatorCommand{
-    constructor(private model:any, private meta:Kecubung.ValueMetaData){}
+export class ModelValidator implements ValidatorCommand {
 
-    validate(){
-        
+    constructor(private model: any, private fieldName: string,
+        private decoratorParameters: Kecubung.ValueMetaData[],
+        private idResolver: IdentifierResolver) { }
+
+    validate() {
+        let firstParam = <Kecubung.PrimitiveValueMetaData>this.decoratorParameters[0]
+        let modelName = firstParam.value;
+        let storage = new MetaDataStorage(this.idResolver)
+        let modelMetaData = storage.get(modelName)
+        return <ValidationError[]>{}
     }
+
 }

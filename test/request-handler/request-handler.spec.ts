@@ -1,5 +1,5 @@
 import { RequestHandler } from "../../src/request-handler/request-handler"
-import { DefaultDependencyResolver } from "../../src/resolver"
+import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
 import * as Transformer from "../../src/route-generator/transformers"
 import * as Chai from "chai"
 import * as H from "../helper"
@@ -50,7 +50,7 @@ describe("RequestHandler", () => {
         let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
         info.classId = info.qualifiedClassName
         getParamStub.withArgs("par1").returns("param1")
-        let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
+        let executor = new RequestHandler(info, new DefaultDependencyResolver(), new DefaultIdentifierResolver(), HttpRequest, HttpResponse)
         await executor.execute()
         let result = jsonSpy.getCall(0).args[0]
         Chai.expect(result).eq("param1")
@@ -61,7 +61,7 @@ describe("RequestHandler", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "setTheCookie")[0]
         info.classId = info.qualifiedClassName
-        let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
+        let executor = new RequestHandler(info, new DefaultDependencyResolver(), new DefaultIdentifierResolver(), HttpRequest, HttpResponse)
         await executor.execute()
         let result = setCookieSpy.getCall(0).args
         Chai.expect(result).deep.eq([ 'TheKey', 'TheValue', { expires: true } ])
@@ -72,7 +72,7 @@ describe("RequestHandler", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
         info.classId = info.qualifiedClassName
-        let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
+        let executor = new RequestHandler(info, new DefaultDependencyResolver(), new DefaultIdentifierResolver(), HttpRequest, HttpResponse)
         await executor.execute()
         let result = errorSpy.getCall(0).args[0]
         Chai.expect(result.message).contains("Internal error from DummyApi")
@@ -83,7 +83,7 @@ describe("RequestHandler", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnFile")[0]
         info.classId = info.qualifiedClassName
-        let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
+        let executor = new RequestHandler(info, new DefaultDependencyResolver(), new DefaultIdentifierResolver(), HttpRequest, HttpResponse)
         await executor.execute()
         let result = fileSpy.getCall(0).args[0]
         Chai.expect(result).eq("/go/go/kamboja.js")
@@ -94,7 +94,7 @@ describe("RequestHandler", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnNonActionResult")[0]
         info.classId = info.qualifiedClassName
-        let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
+        let executor = new RequestHandler(info, new DefaultDependencyResolver(), new DefaultIdentifierResolver(), HttpRequest, HttpResponse)
         await executor.execute()
         let result = errorSpy.getCall(0).args[0]
         Chai.expect(result.message).contains("Controller must return ActionResult")

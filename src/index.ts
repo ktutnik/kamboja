@@ -26,4 +26,7 @@ export {
 export { 
     RouteGenerator, RouteAnalyzer
 } from "./route-generator"
+export { 
+    MetaDataStorage
+} from "./metadata-storage"
 
