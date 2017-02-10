@@ -7,12 +7,12 @@ export class RequestHandler {
     private apiCommand: ApiControllerExecutor;
     private controllerCommand: ControllerExecutor;
 
-    constructor(private routeInfo: Core.RouteInfo,
-        resolver: Core.DependencyResolver,
+    constructor(private facade:Core.Facade, 
+        private routeInfo: Core.RouteInfo,
         request: Core.HttpRequest,
         private response: Core.HttpResponse) {
-        this.apiCommand = new ApiControllerExecutor(routeInfo, resolver, request)
-        this.controllerCommand = new ControllerExecutor(routeInfo, resolver, request)
+        this.apiCommand = new ApiControllerExecutor(facade, routeInfo, request)
+        this.controllerCommand = new ControllerExecutor(facade, routeInfo, request)
     }
 
     async execute() {

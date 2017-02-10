@@ -41,7 +41,7 @@ export class HttpDecoratorTransformer extends TransformerBase {
             };
         }
         else {
-            let route = decorator.parameters[0].name;
+            let route = (<Kecubung.PrimitiveValueMetaData>decorator.parameters[0]).value;
             let analysis: number[] = []
 
             let routeAnalysis = this.checkMissingActionParameters(meta, route)

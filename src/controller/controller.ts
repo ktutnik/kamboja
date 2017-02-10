@@ -1,13 +1,14 @@
-import { HttpRequest, HttpResponse, ActionResult, CookieOptions, Cookie } from "../core"
+import { HttpRequest, HttpResponse, ActionResult, CookieOptions, Cookie, Validator, BaseController } from "../core"
 import { FileActionResult } from "./file-action-result"
 import { RedirectActionResult } from "./redirect-action-result"
 import { ViewActionResult } from "./view-action-result"
 import { JsonActionResult } from "./json-action-result"
 
 
-export class Controller {
+export class Controller implements BaseController {
     request: HttpRequest
-    cookies: Cookie[] = []
+    validator: Validator
+    private cookies: Cookie[] = []
 
     setCookie(key: string, value: string, option?: CookieOptions) {
         this.cookies.push({ key: key, value: value, options: option })

@@ -1,3 +1,12 @@
+import { ValidatorDecorator } from "./validator/baseclasses"
+let val = new ValidatorDecorator();
+
+export { val }
+export {
+    ValidatorCommandBase,
+    decoratorName
+} from "./validator"
+
 export {
     ActionResult,
     ApiController,
@@ -13,17 +22,24 @@ export {
     IdentifierResolver,
     internal,
     KambojaOption,
-    RouteInfo
+    RouteInfo,
+    Facade,
+    ValidatorCommand,
+    Cookie,
+    Validator,
+    ValidationError
 } from "./core"
 export {
     DefaultDependencyResolver,
     DefaultIdentifierResolver,
     PathResolver
 } from "./resolver"
-export { 
-    RequestHandler 
+export {
+    RequestHandler
 } from "./request-handler"
-export { 
+export {
     RouteGenerator, RouteAnalyzer
 } from "./route-generator"
-
+export {
+    MetaDataStorage
+} from "./metadata-storage"

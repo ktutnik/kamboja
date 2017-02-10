@@ -1,4 +1,5 @@
-import { MetaData, MetadataType, MethodMetaData, ClassMetaData } from "kecubung";
+import { MetaData, ParentMetaData, MetadataType, MethodMetaData, ClassMetaData } from "kecubung";
+import * as Kecubung from "kecubung"
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 export type TransformStatus = "ExitWithResult" | "Next" | "Exit"
@@ -17,9 +18,6 @@ export class HttpDecorator {
 
 export type DecoratorType = keyof Decorator | keyof HttpDecorator;
 
-export class Validator {
-    string(required = false, length?: number) { }
-}
 
 export namespace RouteAnalysisCode {
 
@@ -96,6 +94,11 @@ export interface RouteInfo {
     analysis?: number[]
 }
 
+
+export interface ValidatorCommand {
+    validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?:string): ValidationError[]
+}
+
 export interface TransformResult {
     status: TransformStatus
     info?: RouteInfo[]
@@ -105,13 +108,27 @@ export interface KambojaOption {
     skipAnalysis?: boolean
     showConsoleLog?: boolean
     overrideAppEngine?: (app) => void
-    controllerPaths?: string[],
-    viewPath?: string,
-    viewEngine?: string,
-    staticFilePath?: string,
+    controllerPaths?: string[]
+    viewPath?: string
+    viewEngine?: string
+    staticFilePath?: string
+    modelPath?: string
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
+    validators?: ValidatorCommand[]
     errorHandler?: (err: HttpError) => void
+}
+
+export interface MetaDataStorage {
+    save(meta: ParentMetaData)
+    get(classId: string):Kecubung.ClassMetaData
+}
+
+export interface Facade{
+    resolver:DependencyResolver,
+    idResolver:IdentifierResolver,
+    validators:ValidatorCommand[],
+    metadataStorage:MetaDataStorage
 }
 
 export interface ExecutorCommand {
@@ -120,6 +137,21 @@ export interface ExecutorCommand {
 
 export interface Engine {
     init(routes: RouteInfo[], option: KambojaOption): any;
+}
+
+export interface ValidationError {
+    field: string,
+    message: string
+}
+
+export interface Validator {
+    isValid(): boolean
+    getValidationErrors(): ValidationError[]
+}
+
+export interface BaseController {
+    request: HttpRequest;
+    validator: Validator;
 }
 
 export interface HttpRequest {
@@ -178,6 +210,7 @@ export interface DependencyResolver {
 
 export interface IdentifierResolver {
     getClassId(qualifiedClassName: string)
+    getClassName(classId:string)
 }
 
 export class ActionResult {
@@ -185,8 +218,8 @@ export class ActionResult {
 
     execute(response: HttpResponse,
         routeInfo: RouteInfo) {
-        if(!this.cookies) return
-        for(let cookie of this.cookies){
+        if (!this.cookies) return
+        for (let cookie of this.cookies) {
             response.setCookie(cookie.key, cookie.value, cookie.options)
         }
     }
@@ -201,6 +234,5 @@ export function getMethodName(info: RouteInfo) {
 
 export const internal = new Decorator().internal;
 export const http = new HttpDecorator();
-export const val = new Validator();
 export { ApiController, Controller } from "./controller"
 

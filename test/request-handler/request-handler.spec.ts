@@ -1,10 +1,12 @@
 import { RequestHandler } from "../../src/request-handler/request-handler"
-import { DefaultDependencyResolver } from "../../src/resolver"
+import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
+import { RequiredValidator } from "../../src/validator"
+import { MetaDataStorage } from "../../src/metadata-storage"
 import * as Transformer from "../../src/route-generator/transformers"
 import * as Chai from "chai"
 import * as H from "../helper"
 import * as Sinon from "sinon"
-
+import * as Core from "../../src/core"
 
 let HttpResponse: any = {
     view: function () { },
@@ -12,7 +14,7 @@ let HttpResponse: any = {
     redirect: function () { },
     json: function () { },
     error: function () { },
-    setCookie:function(){}
+    setCookie: function () { }
 };
 
 let HttpRequest: any = {
@@ -20,6 +22,14 @@ let HttpRequest: any = {
     getParam: (key: string) => { }
 }
 
+let facade: Core.Facade = {
+    idResolver: new DefaultIdentifierResolver(),
+    resolver: new DefaultDependencyResolver(),
+    metadataStorage: new MetaDataStorage(new DefaultIdentifierResolver()),
+    validators: [
+        new RequiredValidator()
+    ]
+}
 
 describe("RequestHandler", () => {
     let getParamStub: Sinon.SinonStub;
@@ -50,7 +60,7 @@ describe("RequestHandler", () => {
         let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
         info.classId = info.qualifiedClassName
         getParamStub.withArgs("par1").returns("param1")
-        let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
+        let executor = new RequestHandler(facade, info, HttpRequest, HttpResponse)
         await executor.execute()
         let result = jsonSpy.getCall(0).args[0]
         Chai.expect(result).eq("param1")
@@ -61,10 +71,10 @@ describe("RequestHandler", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "setTheCookie")[0]
         info.classId = info.qualifiedClassName
-        let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
+        let executor = new RequestHandler(facade, info, HttpRequest, HttpResponse)
         await executor.execute()
         let result = setCookieSpy.getCall(0).args
-        Chai.expect(result).deep.eq([ 'TheKey', 'TheValue', { expires: true } ])
+        Chai.expect(result).deep.eq(['TheKey', 'TheValue', { expires: true }])
     })
 
     it("Should handle internal error inside controller properly", async () => {
@@ -72,7 +82,7 @@ describe("RequestHandler", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
         info.classId = info.qualifiedClassName
-        let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
+        let executor = new RequestHandler(facade, info, HttpRequest, HttpResponse)
         await executor.execute()
         let result = errorSpy.getCall(0).args[0]
         Chai.expect(result.message).contains("Internal error from DummyApi")
@@ -83,7 +93,7 @@ describe("RequestHandler", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnFile")[0]
         info.classId = info.qualifiedClassName
-        let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
+        let executor = new RequestHandler(facade, info, HttpRequest, HttpResponse)
         await executor.execute()
         let result = fileSpy.getCall(0).args[0]
         Chai.expect(result).eq("/go/go/kamboja.js")
@@ -94,9 +104,22 @@ describe("RequestHandler", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnNonActionResult")[0]
         info.classId = info.qualifiedClassName
-        let executor = new RequestHandler(info, new DefaultDependencyResolver(), HttpRequest, HttpResponse)
+        let executor = new RequestHandler(facade, info, HttpRequest, HttpResponse)
         await executor.execute()
         let result = errorSpy.getCall(0).args[0]
         Chai.expect(result.message).contains("Controller must return ActionResult")
+    })
+
+    it("Should handle validation properly", async () => {
+        let meta = H.fromFile("test/request-handler/controller/controller.js")
+        let infos = Transformer.transform(meta)
+        let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
+        info.classId = info.qualifiedClassName
+        getParamStub.withArgs("age").returns(undefined)
+        let executor = new RequestHandler(facade, info, HttpRequest, HttpResponse)
+        await executor.execute()
+        let result = jsonSpy.getCall(0).args[0]
+        Chai.expect(result[0].field).eq("age")
+        Chai.expect(result[0].message).contain("required")
     })
 })

@@ -1,11 +1,14 @@
 import { ApiControllerExecutor } from "../../src/request-handler/api-controller-executor"
 import { ControllerExecutor } from "../../src/request-handler/controller-executor"
-import { DefaultDependencyResolver } from "../../src/resolver"
+import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
 import { JsonActionResult, ViewActionResult, RedirectActionResult, FileActionResult } from "../../src/controller"
+import { MetaDataStorage } from "../../src/metadata-storage"
+import { RequiredValidator } from "../../src/validator"
 import * as Transformer from "../../src/route-generator/transformers"
 import * as Chai from "chai"
 import * as H from "../helper"
 import * as Sinon from "sinon"
+import * as Core from "../../src/core"
 
 
 let HttpResponse: any = {
@@ -20,6 +23,14 @@ let HttpRequest: any = {
 
 describe("ApiControllerExecutor", () => {
     let getParamStub: Sinon.SinonStub;
+    let facade: Core.Facade = {
+        idResolver: new DefaultIdentifierResolver(),
+        resolver: new DefaultDependencyResolver(),
+        metadataStorage: new MetaDataStorage(new DefaultIdentifierResolver()),
+        validators: [
+            new RequiredValidator()
+        ]
+    }
 
     beforeEach(() => {
         getParamStub = Sinon.stub(HttpRequest, "getParam")
@@ -35,7 +46,7 @@ describe("ApiControllerExecutor", () => {
         let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
         info.classId = info.qualifiedClassName
         getParamStub.withArgs("par1").returns("param1")
-        let executor = new ApiControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
+        let executor = new ApiControllerExecutor(facade, info, HttpRequest)
         let result = <JsonActionResult>await executor.execute()
         Chai.expect(result.body).eq("param1")
     })
@@ -46,7 +57,7 @@ describe("ApiControllerExecutor", () => {
         let info = infos.filter(x => x.methodMetaData.name == "returnTheParamWithPromise")[0]
         info.classId = info.qualifiedClassName
         getParamStub.withArgs("par1").returns("param1")
-        let executor = new ApiControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
+        let executor = new ApiControllerExecutor(facade, info, HttpRequest)
         let result = <JsonActionResult>await executor.execute()
         Chai.expect(result.body).eq("param1")
     })
@@ -56,7 +67,7 @@ describe("ApiControllerExecutor", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "voidMethod")[0]
         info.classId = info.qualifiedClassName
-        let executor = new ApiControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
+        let executor = new ApiControllerExecutor(facade, info, HttpRequest)
         let result = <JsonActionResult>await executor.execute()
         Chai.expect(result.body).undefined
     })

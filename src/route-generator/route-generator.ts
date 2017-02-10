@@ -6,6 +6,7 @@ import * as Babylon from "babylon"
 import * as Transformer from "./transformers"
 import * as Analyzer from "./analyzer"
 import { PathResolver } from "../resolver/path-resolver"
+import { MetaDataStorage } from "../metadata-storage"
 
 export class RouteGenerator {
     private pathResolver: PathResolver;
@@ -41,6 +42,8 @@ export class RouteGenerator {
             for (let route of infos) {
                 route.classId = this.identifier.getClassId(route.qualifiedClassName)
             }
+            let storage = new MetaDataStorage(this.identifier)
+            storage.save(meta)
             routeInfos.push(...infos)
         }
         return routeInfos;

@@ -1,11 +1,14 @@
 import { ApiControllerExecutor } from "../../src/request-handler/api-controller-executor"
 import { ControllerExecutor } from "../../src/request-handler/controller-executor"
-import { DefaultDependencyResolver } from "../../src/resolver"
+import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
 import { JsonActionResult, ViewActionResult, RedirectActionResult, FileActionResult } from "../../src/controller"
+import { RequiredValidator } from "../../src/validator"
+import { MetaDataStorage } from "../../src/metadata-storage"
 import * as Transformer from "../../src/route-generator/transformers"
 import * as Chai from "chai"
 import * as H from "../helper"
 import * as Sinon from "sinon"
+import * as Core from "../../src/core"
 
 
 let HttpResponse: any = {
@@ -20,7 +23,15 @@ let HttpRequest: any = {
 
 describe("ControllerExecutor", () => {
     let getParamStub: Sinon.SinonStub;
-
+    let facade: Core.Facade = {
+        idResolver: new DefaultIdentifierResolver(),
+        resolver: new DefaultDependencyResolver(),
+        metadataStorage: new MetaDataStorage(new DefaultIdentifierResolver()),
+        validators: [
+            new RequiredValidator()
+        ]
+    }
+    
     beforeEach(() => {
         getParamStub = Sinon.stub(HttpRequest, "getParam")
     })
@@ -34,7 +45,7 @@ describe("ControllerExecutor", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
         info.classId = info.qualifiedClassName
-        let executor = new ControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
+        let executor = new ControllerExecutor(facade, info, HttpRequest)
         let result = <ViewActionResult>await executor.execute()
         Chai.expect(result.viewName).eq("index")
     })
@@ -44,7 +55,7 @@ describe("ControllerExecutor", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnFile")[0]
         info.classId = info.qualifiedClassName
-        let executor = new ControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
+        let executor = new ControllerExecutor(facade, info, HttpRequest)
         let result = <FileActionResult>await executor.execute()
         Chai.expect(result.filePath).eq("/go/go/kamboja.js")
     })
@@ -54,7 +65,7 @@ describe("ControllerExecutor", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "returnRedirect")[0]
         info.classId = info.qualifiedClassName
-        let executor = new ControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
+        let executor = new ControllerExecutor(facade, info, HttpRequest)
         let result = <RedirectActionResult>await executor.execute()
         Chai.expect(result.redirectUrl).eq("/go/go/kamboja.js")
     })
@@ -64,7 +75,7 @@ describe("ControllerExecutor", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "setTheCookie")[0]
         info.classId = info.qualifiedClassName
-        let executor = new ControllerExecutor(info, new DefaultDependencyResolver(), HttpRequest)
+        let executor = new ControllerExecutor(facade, info, HttpRequest)
         let result = <ViewActionResult>await executor.execute()
         Chai.expect(result.cookies[0]).deep.eq({ key: "TheKey", value: "TheValue", options: { expires: true } })
     })

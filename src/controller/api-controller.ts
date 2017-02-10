@@ -1,5 +1,6 @@
-import { HttpRequest, HttpResponse, ActionResult } from "../core"
+import { HttpRequest, HttpResponse, ActionResult, BaseController, Validator } from "../core"
 
-export class ApiController {
+export class ApiController implements BaseController {
     request: HttpRequest
+    validator: Validator
 }
