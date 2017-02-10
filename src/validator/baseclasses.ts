@@ -20,10 +20,8 @@ export function parameterDecorator(...params) { }
 export class ValidatorDecorator {
     required(message?: string) { return parameterDecorator; }
     range(min: number, max?: number, message?: string) { return parameterDecorator; }
-    model(qualifiedName: string) { return parameterDecorator; }
-    creditCard(message?: string) { return parameterDecorator; }
+    type(qualifiedName: string) { return parameterDecorator; }
     email(message?: string) { return parameterDecorator; }
-    phone(message?: string) { return parameterDecorator; }
 }
 
 export abstract class ValidatorCommandBase implements ValidatorCommand {

@@ -32,6 +32,56 @@ describe("MetaDataStorage", () => {
         })
     })
 
+    describe("save", () => {
+        let storage: MetaDataStorage;
+        beforeEach(() => {
+            storage = new MetaDataStorage(new DefaultIdentifierResolver())
+        })
+
+        it("Should save class properly", () => {
+            let meta = H.fromCode(`
+                "use strict";
+                var MyClass = (function () {
+                    function MyClass() {
+                    }
+                    MyClass.prototype.getByPage = function () { };
+                    return MyClass;
+                }());
+                exports.MyClass = MyClass;
+                `, "path/class.js")
+            storage.save(meta)
+            let result = storage.get("MyClass, ./path/class.js")
+            Chai.expect(result.name).eq("MyClass")
+        })
+
+        it("Should not duplicate saved class", () => {
+            let meta = H.fromCode(`
+                "use strict";
+                var MyClass = (function () {
+                    function MyClass() {
+                    }
+                    MyClass.prototype.getByPage = function () { };
+                    return MyClass;
+                }());
+                exports.MyClass = MyClass;
+                `, "path/class.js")
+            let dupe = H.fromCode(`
+                "use strict";
+                var MyClass = (function () {
+                    function MyClass() {
+                    }
+                    MyClass.prototype.getByPage = function () { };
+                    return MyClass;
+                }());
+                exports.MyClass = MyClass;
+                `, "path/class.js")
+            storage.save(meta)
+            storage.save(dupe)
+            let result = storage.get("MyClass, ./path/class.js")
+            Chai.expect(result.name).eq("MyClass")
+        })
+    })
+
     describe("get", () => {
         let storage: MetaDataStorage;
         beforeEach(() => {

@@ -3,18 +3,17 @@ import { ValidationError } from "../core"
 import * as Kecubung from "kecubung"
 import * as Validator from "validator"
 
-export class RequiredValidator extends ValidatorCommandBase {
+export class RangeValidator extends ValidatorCommandBase {
 
     @decoratorName("range")
     validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?: string) {
         if (!value) return
-        let test: string = value.toString();
         let fieldName = parent ? `${parent}.${metaData.name}` : metaData.name;
         let minValue = this.getParameter(metaData, 0, "Number")
         let maxValue = this.getParameter(metaData, 1, "Number")
         let customMessage = this.getParameter(metaData, 2, "String")
-        if (Validator.isNumeric(test)) {
-            let numericValue = +fieldName;
+        if (typeof value == "number") {
+            let numericValue = value;
             if (numericValue < minValue) {
                 return [{
                     field: fieldName,
@@ -28,8 +27,8 @@ export class RequiredValidator extends ValidatorCommandBase {
                 }]
             }
         }
-        else {
-            let length = test.length;
+        else if(typeof value == "string") {
+            let length = value.length;
             if (length < minValue){
                 return [{
                     field: fieldName,

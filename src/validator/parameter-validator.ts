@@ -12,11 +12,11 @@ export class ParameterValidator extends ValidatorCommandBase {
         super()
     }
 
-    @decoratorName("model")
+    @decoratorName("type")
     validate(value, meta: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?: string) {
         let result: Core.ValidationError[] = []
         for (let decorator of meta.decorators) {
-            if (decorator.name == "model") {
+            if (decorator.name == "type") {
                 let validationResult = this.validateModel(value, meta, 
                     parent? `${parent}.${meta.name}` : meta.name)
                 if (validationResult) result.push(...validationResult)

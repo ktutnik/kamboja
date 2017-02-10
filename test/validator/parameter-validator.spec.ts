@@ -33,7 +33,7 @@ describe("ParameterValidator", () => {
                 return ParentModel;
             }());
             tslib_1.__decorate([
-                src_1.val.model("MyModel, model/my-model"),
+                src_1.val.type("MyModel, model/my-model"),
             ], ParentModel.prototype, "child", void 0);
             exports.ParentModel = ParentModel;
         `, "model/parent-model")
@@ -52,7 +52,7 @@ describe("ParameterValidator", () => {
                 return MyClass;
             }(controller_1.Controller));
             tslib_1.__decorate([
-                tslib_1.__param(0, src_1.val.model("MyModel, model/my-model")),
+                tslib_1.__param(0, src_1.val.type("MyModel, model/my-model")),
             ], MyClass.prototype, "getByPage", null);
             exports.MyClass = MyClass;
             `)
@@ -75,7 +75,7 @@ describe("ParameterValidator", () => {
                 return MyClass;
             }(controller_1.Controller));
             tslib_1.__decorate([
-                tslib_1.__param(0, src_1.val.model("ParentModel, model/parent-model")),
+                tslib_1.__param(0, src_1.val.type("ParentModel, model/parent-model")),
             ], MyClass.prototype, "getByPage", null);
             exports.MyClass = MyClass;
             `)
@@ -98,7 +98,7 @@ describe("ParameterValidator", () => {
                 return MyClass;
             }(controller_1.Controller));
             tslib_1.__decorate([
-                tslib_1.__param(0, src_1.val.model("ParentModel, model/parent-model")),
+                tslib_1.__param(0, src_1.val.type("ParentModel, model/parent-model")),
             ], MyClass.prototype, "getByPage", null);
             exports.MyClass = MyClass;
             `)
@@ -120,7 +120,7 @@ describe("ParameterValidator", () => {
                 return MyClass;
             }(controller_1.Controller));
             tslib_1.__decorate([
-                tslib_1.__param(0, src_1.val.model("ParentModel, model/parent-model")),
+                tslib_1.__param(0, src_1.val.type("ParentModel, model/parent-model")),
             ], MyClass.prototype, "getByPage", null);
             exports.MyClass = MyClass;
             `)

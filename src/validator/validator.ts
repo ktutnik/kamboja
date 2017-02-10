@@ -12,7 +12,7 @@ export class Validator implements Core.Validator {
     constructor(private parameters: any[],
         private meta: Kecubung.MethodMetaData,
         private metaDataStorage: Core.MetaDataStorage,
-        private validators: Core.ValidatorCommand[]) {}
+        private validators: Core.ValidatorCommand[]) { }
 
     isValid() {
         let parameterValidator = new ParameterValidator(this.metaDataStorage, this.validators)
@@ -20,12 +20,12 @@ export class Validator implements Core.Validator {
             let value = this.parameters[i];
             let meta = this.meta.parameters[i]
             let result = parameterValidator.validate(value, meta)
-            if (result) this.errors.push(...result)
+            if (result) this.errors = this.errors.concat(result)
         }
         return this.errors.length > 0;
     }
 
     getValidationErrors() {
-        return this.errors;
+        return this.errors.length > 0 ? this.errors : undefined;
     }
 }
