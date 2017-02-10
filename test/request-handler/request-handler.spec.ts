@@ -109,4 +109,17 @@ describe("RequestHandler", () => {
         let result = errorSpy.getCall(0).args[0]
         Chai.expect(result.message).contains("Controller must return ActionResult")
     })
+
+    it("Should handle validation properly", async () => {
+        let meta = H.fromFile("test/request-handler/controller/controller.js")
+        let infos = Transformer.transform(meta)
+        let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
+        info.classId = info.qualifiedClassName
+        getParamStub.withArgs("age").returns(undefined)
+        let executor = new RequestHandler(facade, info, HttpRequest, HttpResponse)
+        await executor.execute()
+        let result = jsonSpy.getCall(0).args[0]
+        Chai.expect(result[0].field).eq("age")
+        Chai.expect(result[0].message).contain("required")
+    })
 })

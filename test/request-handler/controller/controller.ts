@@ -1,4 +1,5 @@
 import { Controller, ApiController } from "../../../src/controller"
+import { val } from "../../../src"
 
 export class DummyApi extends Controller {
     returnView() {
@@ -11,6 +12,7 @@ export class DummyApi extends Controller {
         return this.redirect("/go/go/kamboja.js");
     }
 
+    //throw error
     returnNonActionResult() {
         return "This is dumb"
     }
@@ -18,6 +20,13 @@ export class DummyApi extends Controller {
     setTheCookie() {
         this.setCookie("TheKey", "TheValue", { expires: true })
         return this.view()
+    }
+
+    validationTest(@val.required() age){
+        if(this.validator.isValid()){
+            return this.json(true)
+        }
+        return this.json(this.validator.getValidationErrors())
     }
 
 }

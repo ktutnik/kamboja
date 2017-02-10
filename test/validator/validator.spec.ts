@@ -35,9 +35,10 @@ describe("Validator", () => {
             `)
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
         let test = new Validator([20, "Nobita"],clazz.methods[0], storage, validators)
-        test.isValid();
+        let isValid = test.isValid();
         let result = test.getValidationErrors();
         Chai.expect(result).undefined
+        Chai.expect(isValid).true
     })
 
     it("Should return messages when provided incorrect value", () => {

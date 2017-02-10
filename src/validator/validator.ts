@@ -22,7 +22,7 @@ export class Validator implements Core.Validator {
             let result = parameterValidator.validate(value, meta)
             if (result) this.errors = this.errors.concat(result)
         }
-        return this.errors.length > 0;
+        return this.errors.length == 0;
     }
 
     getValidationErrors() {
