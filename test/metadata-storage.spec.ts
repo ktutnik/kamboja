@@ -4,7 +4,6 @@ import { MetaDataStorage } from "../src/metadata-storage"
 import { DefaultIdentifierResolver } from "../src/resolver"
 import * as H from "./helper"
 
-
 describe("MetaDataStorage", () => {
     describe("cleanupFileName", () => {
         let storage: MetaDataStorage;

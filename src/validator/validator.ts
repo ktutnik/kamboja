@@ -1,44 +1,29 @@
 import * as Kecubung from "kecubung"
 import * as Core from "../core"
-import { ValidatorCommand, getDecoratorName } from "./baseclasses"
-import { ModelValidator } from "./model-validator"
+import { ValidatorCommandBase, getDecoratorName } from "./baseclasses"
+import { ParameterValidator } from "./parameter-validator"
 import { RequiredValidator } from "./required-validator"
+import { MetaDataStorage } from "../metadata-storage"
 
 export class Validator implements Core.Validator {
-    private static validators: ValidatorCommand[]
-    static getValidators(){
-        return Validator.validators;
-    }
-    
-    static initValidators(idResolver:Core.IdentifierResolver){
-        Validator.validators = [
-            new ModelValidator(idResolver),
-            new RequiredValidator()
-        ]
-    }
 
     private errors: Core.ValidationError[] = []
 
-    constructor(private parameters: any[], private meta: Kecubung.MethodMetaData, private idResolver: Core.IdentifierResolver) { }
+    constructor(private parameters: any[],
+        private meta: Kecubung.MethodMetaData,
+        private metaDataStorage: Core.MetaDataStorage,
+        private validators: Core.ValidatorCommand[]) {}
 
-    valid() {
-        let validators = Validator.getValidators();
-        if(!validators) throw new Error("Validator is not initialized yet")
+    isValid() {
+        let parameterValidator = new ParameterValidator(this.metaDataStorage, this.validators)
         for (let i = 0; i < this.meta.parameters.length; i++) {
             let value = this.parameters[i];
             let meta = this.meta.parameters[i]
-            for (let decorator of meta.decorators) {
-                let validator = Validator.getValidators().filter(x => getDecoratorName(x) == decorator.name)[0];
-                if (validator) {
-                    let errorMessage = validator.validate(value, meta)
-                    if (errorMessage)
-                        this.errors.push(...errorMessage)
-                }
-            }
+            let result = parameterValidator.validate(value, meta)
+            if (result) this.errors.push(...result)
         }
         return this.errors.length > 0;
     }
-
 
     getValidationErrors() {
         return this.errors;

@@ -1,4 +1,5 @@
 import { MetaData, ParentMetaData, MetadataType, MethodMetaData, ClassMetaData } from "kecubung";
+import * as Kecubung from "kecubung"
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 export type TransformStatus = "ExitWithResult" | "Next" | "Exit"
@@ -93,6 +94,11 @@ export interface RouteInfo {
     analysis?: number[]
 }
 
+
+export interface ValidatorCommand {
+    validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?:string): ValidationError[]
+}
+
 export interface TransformResult {
     status: TransformStatus
     info?: RouteInfo[]
@@ -109,7 +115,20 @@ export interface KambojaOption {
     modelPath?: string
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
+    validators?: ValidatorCommand[]
     errorHandler?: (err: HttpError) => void
+}
+
+export interface MetaDataStorage {
+    save(meta: ParentMetaData)
+    get(classId: string):Kecubung.ClassMetaData
+}
+
+export interface Facade{
+    resolver:DependencyResolver,
+    idResolver:IdentifierResolver,
+    validators:ValidatorCommand[],
+    metadataStorage:MetaDataStorage
 }
 
 export interface ExecutorCommand {
@@ -126,7 +145,7 @@ export interface ValidationError {
 }
 
 export interface Validator {
-    valid(): boolean
+    isValid(): boolean
     getValidationErrors(): ValidationError[]
 }
 
@@ -212,8 +231,6 @@ export function getMethodName(info: RouteInfo) {
     const file = tokens[1].trim()
     return `[${method} ${file}]`;
 }
-
-
 
 export const internal = new Decorator().internal;
 export const http = new HttpDecorator();

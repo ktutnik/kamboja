@@ -1,2 +1,3 @@
 export { Validator } from "./validator"
-export { ValidatorCommand, decoratorName, ValidatorCommandBase } from "./baseclasses"
+export { decoratorName, ValidatorCommandBase } from "./baseclasses"
+export { RequiredValidator } from "./required-validator"

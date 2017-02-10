@@ -23,7 +23,7 @@ describe("RequireValidator", () => {
         let test = new RequiredValidator();
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
         let result = test.validate(null, clazz.methods[0].parameters[0])
-        Chai.expect(result[0].field == "model")
+        Chai.expect(result[0].field).eq("model")
         Chai.expect(result[0].message).contain("required")
     })
 
@@ -68,7 +68,7 @@ describe("RequireValidator", () => {
         let test = new RequiredValidator();
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
         let result = test.validate(null, clazz.methods[0].parameters[0])
-        Chai.expect(result[0].field == "model")
+        Chai.expect(result[0].field).eq("model")
         Chai.expect(result[0].message).eq("Hey you must fill this")
     })
 })

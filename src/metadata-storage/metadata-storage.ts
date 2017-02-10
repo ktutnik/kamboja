@@ -1,16 +1,16 @@
 import { MetaData, ParentMetaData, MetadataType, MethodMetaData, ClassMetaData } from "kecubung";
-import {IdentifierResolver} from "../core"
+import * as Core from "../core"
 
 export class MetaDataStorage {
-    static storage: ParentMetaData[] = []
+    private storage: ParentMetaData[] = []
 
-    constructor(private idResolver:IdentifierResolver){}
+    constructor(private idResolver:Core.IdentifierResolver){}
 
     save(meta: ParentMetaData) {
-        let file = MetaDataStorage.storage
+        let file = this.storage
             .filter(x => this.cleanupFileName(x.name) == this.cleanupFileName(meta.name))
         if (!file || file.length == 0)
-            MetaDataStorage.storage.push(meta)
+            this.storage.push(meta)
     }
 
     get(classId: string) {
@@ -19,7 +19,7 @@ export class MetaDataStorage {
         if (tokens.length != 2) throw new Error(`[${qualifiedName}] is not a qualified name`)
         let classNames = tokens[0].trim().split(".")
         let fileName = this.cleanupFileName(tokens[1].trim())
-        let file = MetaDataStorage.storage
+        let file = this.storage
             .filter(x => this.cleanupFileName(x.name) == fileName)[0]
         let result: MetaData = file;
         for (let className of classNames) {

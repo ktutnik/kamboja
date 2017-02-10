@@ -3,7 +3,6 @@ let val = new ValidatorDecorator();
 
 export { val }
 export {
-    ValidatorCommand,
     ValidatorCommandBase,
     decoratorName
 } from "./validator"
@@ -23,7 +22,12 @@ export {
     IdentifierResolver,
     internal,
     KambojaOption,
-    RouteInfo
+    RouteInfo,
+    Facade,
+    ValidatorCommand,
+    Cookie,
+    Validator,
+    ValidationError
 } from "./core"
 export {
     DefaultDependencyResolver,

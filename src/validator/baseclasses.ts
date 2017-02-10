@@ -1,10 +1,7 @@
 import 'reflect-metadata'
 import * as Kecubung from "kecubung"
-import { ValidationError } from "../core"
+import { ValidationError, ValidatorCommand } from "../core"
 
-export interface ValidatorCommand {
-    validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?:string): ValidationError[]
-}
 
 const MetaDataKey = "kamboja:Validator"
 
@@ -22,7 +19,7 @@ export function parameterDecorator(...params) { }
 
 export class ValidatorDecorator {
     required(message?: string) { return parameterDecorator; }
-    range(min: any, max: any, message?: string) { return parameterDecorator; }
+    range(min: number, max?: number, message?: string) { return parameterDecorator; }
     model(qualifiedName: string) { return parameterDecorator; }
     creditCard(message?: string) { return parameterDecorator; }
     email(message?: string) { return parameterDecorator; }
