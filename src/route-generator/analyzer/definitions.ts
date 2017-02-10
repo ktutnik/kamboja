@@ -1,8 +1,8 @@
-import { RouteInfo, RouteAnalysis, getMethodName } from "../../core"
+import { RouteInfo, AnalysisMessage, getMethodName } from "../../core"
 
 
 export interface AnalyzerCommand {
-    analyse(route: RouteInfo): RouteAnalysis[];
+    analyse(route: RouteInfo): AnalysisMessage[];
 }
 
 export { getMethodName }

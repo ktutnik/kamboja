@@ -1,10 +1,10 @@
-import { RouteAnalysis, RouteInfo, RouteAnalysisCode } from "../../core"
+import { AnalysisMessage, RouteInfo, RouteAnalysisCode } from "../../core"
 import { AnalyzerCommand, getMethodName } from "./definitions"
 
 const reservedWords = ["view", "json", "redirect", "file"]
 
 export class ReservedWordUsedAnalyzer implements AnalyzerCommand {
-    analyse(route: RouteInfo): RouteAnalysis[] {
+    analyse(route: RouteInfo): AnalysisMessage[] {
         if (reservedWords.some(x => route.methodMetaData 
             && x == route.methodMetaData.name 
             && route.classMetaData.baseClass == "Controller")) {

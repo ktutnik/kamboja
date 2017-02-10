@@ -1,9 +1,9 @@
-import { RouteAnalysis, RouteInfo, RouteAnalysisCode } from "../../core"
+import { AnalysisMessage, RouteInfo, RouteAnalysisCode } from "../../core"
 import { AnalyzerCommand, getMethodName } from "./definitions"
 
 export class DuplicateRouteAnalyzer implements AnalyzerCommand {
     routes: RouteInfo[] = []
-    analyse(route: RouteInfo): RouteAnalysis[] {
+    analyse(route: RouteInfo): AnalysisMessage[] {
         if(!route.route) return
         let dupe = this.routes.filter(x => x.route.toLowerCase() == route.route.toLowerCase() 
             && route.httpMethod == x.httpMethod);
