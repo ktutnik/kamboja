@@ -12,8 +12,12 @@ import * as Babylon from "babylon"
 import * as Kecubung from "kecubung"
 
 export class Kamboja {
+    private static facade: Core.Facade;
+    static getMetaDataStorage(){
+        return Kamboja.facade.metadataStorage;
+    }
+
     private options: Core.KambojaOption
-    private facade: Core.Facade;
     private log: Logger;
 
     constructor(private engine: Core.Engine, options?: Core.KambojaOption) {
@@ -36,7 +40,7 @@ export class Kamboja {
         if (this.options.validators && this.options.validators.length > 0) {
             defaultValidators = defaultValidators.concat(this.options.validators)
         }
-        this.facade = {
+        Kamboja.facade = {
             idResolver: this.options.identifierResolver,
             metadataStorage: new MetaDataStorage(this.options.identifierResolver),
             resolver: this.options.dependencyResolver,
@@ -56,7 +60,7 @@ export class Kamboja {
             let code = Fs.readFileSync(x).toString()
             let ast = Babylon.parse(code)
             let meta = Kecubung.transform("ASTree", ast, pathResolver.relative(x))
-            this.facade.metadataStorage.save(meta)
+            Kamboja.facade.metadataStorage.save(meta)
         })
         return true
     }
@@ -81,11 +85,11 @@ export class Kamboja {
     }
 
     private generateRoutes() {
-        let route = new RouteGenerator(this.options.controllerPaths, this.facade, Fs.readFileSync)
+        let route = new RouteGenerator(this.options.controllerPaths, Kamboja.facade, Fs.readFileSync)
         let infos = route.getRoutes()
         if (infos.length == 0) {
             let paths = this.options.controllerPaths.join(",")
-            this.log.newLine().error(`No controller found in [${paths}]`)
+            this.log.error(`No controller found in [${paths}]`)
         }
         return infos;
     }
@@ -95,9 +99,9 @@ export class Kamboja {
         let analysis = routeAnalyzer.analyse();
         for (let item of analysis) {
             if (item.type == "Warning")
-                this.log.newLine().warning(item.message)
+                this.log.warning(item.message)
             else
-                this.log.newLine().error(item.message)
+                this.log.error(item.message)
         }
         if (analysis.some(x => x.type == "Error")) {
             return false;
