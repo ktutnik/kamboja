@@ -1,4 +1,4 @@
-import { RouteInfo, RouteAnalysis } from "../../core"
+import { RouteInfo, AnalysisMessage } from "../../core"
 import * as Index from "./definitions"
 import { MissingActionParameterAnalyzer } from "./missing-action-parameter"
 import { MissingRouteParameterAnalyzer } from "./missing-route-parameter"
@@ -26,8 +26,8 @@ export class RouteAnalyzer {
         ]
     }
 
-    analyse(): RouteAnalysis[] {
-        let result: RouteAnalysis[] = []
+    analyse(): AnalysisMessage[] {
+        let result: AnalysisMessage[] = []
         for (let route of this.routes)
             for (let command of this.commands) {
                 let analysis = command.analyse(route)

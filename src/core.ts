@@ -56,7 +56,7 @@ export namespace RouteAnalysisCode {
     export const DuplicateRoutes = 8
 }
 
-export interface RouteAnalysis {
+export interface AnalysisMessage {
     code: number
     type: "Error" | "Warning"
     message: string

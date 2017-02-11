@@ -1,8 +1,8 @@
-import { RouteAnalysis, RouteInfo, RouteAnalysisCode } from "../../core"
+import { AnalysisMessage, RouteInfo, RouteAnalysisCode } from "../../core"
 import { AnalyzerCommand, getMethodName } from "./definitions"
 
 export class MissingActionParameterAnalyzer implements AnalyzerCommand {
-    analyse(route: RouteInfo): RouteAnalysis[] {
+    analyse(route: RouteInfo): AnalysisMessage[] {
         if (route.analysis && route.analysis.some(x => x == RouteAnalysisCode.MissingActionParameters)) {
             let routeParams = route.route.split("/")
                 .filter(x => x.charAt(0) == ":")

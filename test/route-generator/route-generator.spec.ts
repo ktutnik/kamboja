@@ -1,14 +1,26 @@
 import { RouteGenerator } from "../../src/route-generator"
-import { DefaultIdentifierResolver } from "../../src/resolver/identifier-resolver"
+import { DefaultIdentifierResolver, DefaultDependencyResolver } from "../../src/resolver/"
 import * as Chai from "chai"
 import * as H from "../helper"
 import * as Fs from "fs"
+import * as Core from "../../src/core"
+import { MetaDataStorage } from "../../src/metadata-storage"
+import { RequiredValidator } from "../../src/validator"
+
+let facade: Core.Facade = {
+    idResolver: new DefaultIdentifierResolver(),
+    resolver: new DefaultDependencyResolver(),
+    metadataStorage: new MetaDataStorage(new DefaultIdentifierResolver()),
+    validators: [
+        new RequiredValidator()
+    ]
+}
 
 describe("RouteGenerator", () => {
     it("Should load routes from controllers properly", () => {
         let test = new RouteGenerator(["test/route-generator/api",
             "test/route-generator/controller"],
-            new DefaultIdentifierResolver(), Fs.readFileSync)
+            facade, Fs.readFileSync)
         let routes = test.getRoutes()
         let clean = H.cleanUp(routes)
         Chai.expect(routes[0].classId.replace(/\\/g, "/")).eq("DummyApi, test/route-generator/api/dummy-api.js")
@@ -33,24 +45,17 @@ describe("RouteGenerator", () => {
         }])
     })
 
-    it("Should throw error when provided path not found", () => {
+    it("Should skip when provided path not found", () => {
         let test = new RouteGenerator(["test/fake/path",
             "test/route-generator/controller"],
-            new DefaultIdentifierResolver(), Fs.readFileSync)
-        let thrown = false;
-        try {
-            test.getRoutes();
-            thrown = false
-        }
-        catch (e) {
-            thrown = true;
-        }
-        Chai.expect(thrown).true;
+            facade, Fs.readFileSync)
+        let result = test.getRoutes();
+        Chai.expect(result.length).eq(1);
     })
 
     it("Should handle read file error", () => {
         let test = new RouteGenerator(["test/route-generator/api", "test/route-generator/controller"],
-            new DefaultIdentifierResolver(), H.errorReadFile)
+            facade, H.errorReadFile)
         let thrown = false;
         try {
             test.getRoutes();

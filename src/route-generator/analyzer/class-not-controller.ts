@@ -1,8 +1,8 @@
-import { RouteAnalysis, RouteInfo, RouteAnalysisCode } from "../../core"
+import { AnalysisMessage, RouteInfo, RouteAnalysisCode } from "../../core"
 import { AnalyzerCommand, getMethodName } from "./definitions"
 
 export class ClassNotInherritedFromControllerAnalyzer implements AnalyzerCommand {
-    analyse(route: RouteInfo): RouteAnalysis[] {
+    analyse(route: RouteInfo): AnalysisMessage[] {
         if (route.analysis && route.analysis.some(x => x == RouteAnalysisCode.ClassNotInheritedFromController)) {
             return [{
                 code: RouteAnalysisCode.ClassNotInheritedFromController,
