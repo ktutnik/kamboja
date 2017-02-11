@@ -96,4 +96,14 @@ describe("Kamboja", () => {
         kamboja.init()
         let result: KambojaOption = initSpy.getCall(0).args[1]
     })
+
+    it("Should provide metadata storage properly before init", () => {
+        let kamboja = new Kamboja(engine, {
+            controllerPaths: ["test/kamboja/controller"],
+            modelPath: "test/kamboja/model",
+            showConsoleLog:false
+        })
+        let metadata = Kamboja.getMetaDataStorage();
+        Chai.expect(metadata).not.null
+    })
 })
