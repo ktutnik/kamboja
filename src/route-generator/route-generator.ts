@@ -12,7 +12,7 @@ export class RouteGenerator {
     private pathResolver: PathResolver;
     private routes: Core.RouteInfo[];
 
-    constructor(private paths: string[], private identifier: Core.IdentifierResolver,
+    constructor(private paths: string[], private facade:Core.Facade,
         private fileReader: (path: string) => Buffer) {
         this.pathResolver = new PathResolver()
     }
@@ -21,7 +21,7 @@ export class RouteGenerator {
         let result: string[] = []
         for (const path of this.paths) {
             const fileDirectory = this.pathResolver.resolve(path)
-            if (!Fs.existsSync(fileDirectory)) throw new Error(`Directory ${fileDirectory} not found`)
+            if (!Fs.existsSync(fileDirectory)) continue;
             const resultPaths = Fs.readdirSync(fileDirectory)
                 .filter(x => Path.extname(x) == ".js")
                 .map(x => Path.join(fileDirectory, x));
@@ -40,12 +40,12 @@ export class RouteGenerator {
             let meta = Kenanga.transform("ASTree", ast, filename)
             let infos = Transformer.transform(meta);
             for (let route of infos) {
-                route.classId = this.identifier.getClassId(route.qualifiedClassName)
+                route.classId = this.facade.idResolver.getClassId(route.qualifiedClassName)
             }
-            let storage = new MetaDataStorage(this.identifier)
-            storage.save(meta)
+            this.facade.metadataStorage.save(meta)
             routeInfos.push(...infos)
         }
         return routeInfos;
     }
+
 }
