@@ -29,7 +29,7 @@ export class Kamboja {
             viewPath: "view",
             staticFilePath: "public",
             viewEngine: "hbs",
-            dependencyResolver: new DefaultDependencyResolver(),
+            dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
             identifierResolver: new DefaultIdentifierResolver(),
         }, options)
         let defaultValidators: Core.ValidatorCommand[] = [

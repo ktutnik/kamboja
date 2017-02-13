@@ -24,6 +24,7 @@ export function cleanUp(info: Core.RouteInfo[]) {
             methodMetaData: {
                 name: x.methodMetaData ? x.methodMetaData.name : ""
             },
+            //windows hack
             qualifiedClassName: x.qualifiedClassName.replace(/\\/g, "/"),
             classMetaData: {
                 name: x.classMetaData.name

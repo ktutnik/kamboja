@@ -4,7 +4,7 @@ import { MetaDataStorage } from "../src/metadata-storage"
 import { DefaultIdentifierResolver } from "../src/resolver"
 import * as H from "./helper"
 
-describe.only("MetaDataStorage", () => {
+describe("MetaDataStorage", () => {
 
     describe("save", () => {
         let storage: MetaDataStorage;
@@ -136,7 +136,7 @@ describe.only("MetaDataStorage", () => {
             storage.save(meta)
 
             Chai.expect(() => storage.get("MyNameSpace.MyClass"))
-                .throw(/not a qualified name/)
+                .throw(/Provided name is not qualified/)
         })
     })
 })
