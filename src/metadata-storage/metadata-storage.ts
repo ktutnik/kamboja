@@ -1,5 +1,6 @@
 import { MetaData, ParentMetaData, MetadataType, MethodMetaData, ClassMetaData } from "kecubung";
 import * as Core from "../core"
+import * as Path from "path"
 
 export class MetaDataStorage {
     private storage: ParentMetaData[] = []
@@ -8,7 +9,7 @@ export class MetaDataStorage {
 
     save(meta: ParentMetaData) {
         let file = this.storage
-            .filter(x => this.cleanupFileName(x.name) == this.cleanupFileName(meta.name))
+            .filter(x => Path.normalize(x.name) == Path.normalize(meta.name))
         if (!file || file.length == 0)
             this.storage.push(meta)
     }
@@ -18,9 +19,9 @@ export class MetaDataStorage {
         let tokens = qualifiedName.split(",")
         if (tokens.length != 2) throw new Error(`[${qualifiedName}] is not a qualified name`)
         let classNames = tokens[0].trim().split(".")
-        let fileName = this.cleanupFileName(tokens[1].trim())
+        let fileName = Path.normalize(tokens[1].trim())
         let file = this.storage
-            .filter(x => this.cleanupFileName(x.name) == fileName)[0]
+            .filter(x => Path.normalize(x.name) == fileName)[0]
         let result: MetaData = file;
         for (let className of classNames) {
             for (let item of (<ParentMetaData>result).children) {
@@ -35,20 +36,6 @@ export class MetaDataStorage {
                 }
             }
         }
-    }
-
-    cleanupFileName(fileName: string) {
-        //TODO: not windows friendly
-        if (fileName.indexOf(".") == 0) {
-            fileName = fileName.substring(1)
-        }
-        if (fileName.indexOf("/") == 0) {
-            fileName = fileName.substring(1)
-        }
-        if (fileName.toLowerCase().indexOf(".js") > 0) {
-            fileName = fileName.substr(0, fileName.length - 3)
-        }
-        return fileName
     }
 
 }

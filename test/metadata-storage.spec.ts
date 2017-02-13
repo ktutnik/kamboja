@@ -4,33 +4,7 @@ import { MetaDataStorage } from "../src/metadata-storage"
 import { DefaultIdentifierResolver } from "../src/resolver"
 import * as H from "./helper"
 
-describe("MetaDataStorage", () => {
-    describe("cleanupFileName", () => {
-        let storage: MetaDataStorage;
-        beforeEach(() => {
-            storage = new MetaDataStorage(new DefaultIdentifierResolver())
-        })
-
-        it("Should remove preceding ./", () => {
-            let result = storage.cleanupFileName("./the/path/of/files")
-            Chai.expect(result).eq("the/path/of/files")
-        })
-
-        it("Should remove preceding /", () => {
-            let result = storage.cleanupFileName("/the/path/of/files")
-            Chai.expect(result).eq("the/path/of/files")
-        })
-
-        it("Should remove trailing .js", () => {
-            let result = storage.cleanupFileName("the/path/of/files.js")
-            Chai.expect(result).eq("the/path/of/files")
-        })
-
-        it("Should remove trailing .JS", () => {
-            let result = storage.cleanupFileName("the/path/of/files.JS")
-            Chai.expect(result).eq("the/path/of/files")
-        })
-    })
+describe.only("MetaDataStorage", () => {
 
     describe("save", () => {
         let storage: MetaDataStorage;

@@ -13,8 +13,8 @@ import * as Kecubung from "kecubung"
 
 export class Kamboja {
     private static facade: Core.Facade;
-    static getMetaDataStorage(){
-        return Kamboja.facade.metadataStorage;
+    static getFacade(){
+        return Kamboja.facade;
     }
 
     private options: Core.KambojaOption
