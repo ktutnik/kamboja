@@ -5,9 +5,10 @@ node_js:
 - 5.0.0
 - 4.0.0
 after_script: cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
-before_deploy: npm version prerelease
 deploy:
   provider: npm
   email: "ktutnik@gmail.com"
+  on:
+    tags: true
   api_key:
     secure: XK0ghnxW5qZ/ojCtq0kBBigJ7QI1uOUSQ4SE66F8My6YiNdAVEp/AT8GV/H9CZ4Mox3ur6tTi37FAkDmOFGgbTqXAvXuVoMZZkEX36Q3jWaJdMjF0lMkBBOjLJuvkTQotM0t7M5dWs4Rdy7b7/obG3Tm7dLQwz8dDFo/hCVbmZ3VUeR3Opsk1cCJloy12hZbe6HYBLGFuaAwvdnUshcakV5wBN3pfBtHtV8ObBECGzdTxMQloC++VU7KYOWKvrsNH+lTND13Yb8tGgmSqMNDmpHORLYbTeEIwd+fv2yDaSmrFb640xr5J7u6Q1VVPrp/hBASqEknrghn0M/Jvu5cLwrbRvLN9dpWfk6pCbAHIYTt3ZlasdGKzvdwtT046Ir8/M3GsKindkhnBbscw2NEwF9ds7ayLSXJzJPRSv4XQgKIFFK12KV2vte4pV71TwBU8H4zfRENKVO96aK3Kk0wBLFJzQ8tFueK9j+XGFCopbGveUN8xA0HVXPsnYhynG/Dk8TdRaBHlEvVqApddl40/XYdq80n39/gM9jZFT10VeXdm1wi52qHus6HD9Heye8SUpk0iCevv214mOnZ7tnrmKC8Qna4wxy9pAV9p96MmZZyPzXqW7K1i+kCDvBPs/wN6xZvdwVPQadqxRmZYciN86pPnJ7BlAPM7K4gdMh/c8Q=
