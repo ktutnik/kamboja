@@ -43,3 +43,6 @@ export {
 export {
     MetaDataStorage
 } from "./metadata-storage"
+export {
+    Kamboja
+} from "./kamboja"

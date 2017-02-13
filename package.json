@@ -9,7 +9,6 @@
   },
   "scripts": {
     "test": "gulp",
-    "preversion": "gulp",
     "postversion": "git push && git push --tags"
   },
   "repository": {

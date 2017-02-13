@@ -24,7 +24,7 @@ let HttpRequest: any = {
 
 let facade: Core.Facade = {
     idResolver: new DefaultIdentifierResolver(),
-    resolver: new DefaultDependencyResolver(),
+    resolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
     metadataStorage: new MetaDataStorage(new DefaultIdentifierResolver()),
     validators: [
         new RequiredValidator()
