@@ -62,6 +62,18 @@ describe("RequestHandler", () => {
         Chai.expect(result).eq("param1")
     })
 
+    it("Should not error when provided null validator commands", async () => {
+        let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+        let infos = Transformer.transform(meta)
+        let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
+        info.classId = info.qualifiedClassName
+        getParamStub.withArgs("par1").returns("param1")
+        let executor = new RequestHandler(metadataStorage, resolver, null, info, HttpRequest, HttpResponse)
+        await executor.execute()
+        let result = jsonSpy.getCall(0).args[0]
+        Chai.expect(result).eq("param1")
+    })
+
     it("Should allow classId for validators", async () => {
         let meta = H.fromFile("test/request-handler/controller/api-controller.js")
         let infos = Transformer.transform(meta)

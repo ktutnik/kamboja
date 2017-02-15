@@ -16,13 +16,15 @@ export class RequestHandler {
         request: Core.HttpRequest,
         private response: Core.HttpResponse) {
         let commands: Core.ValidatorCommand[] = [];
-        validators.forEach(x => {
-            if (typeof x == "string") {
-                let validator = resolver.resolve(x)
-                commands.push(validator)
-            }
-            else commands.push(x)
-        })
+        if (validators) {
+            validators.forEach(x => {
+                if (typeof x == "string") {
+                    let validator = resolver.resolve(x)
+                    commands.push(validator)
+                }
+                else commands.push(x)
+            })
+        }
         let validator = new Validator(metaDataStorage, commands)
         this.apiCommand = new ApiControllerExecutor(validator, resolver, routeInfo, request)
         this.controllerCommand = new ControllerExecutor(validator, resolver, routeInfo, request)

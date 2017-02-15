@@ -15,6 +15,7 @@ export class Validator implements Core.Validator {
 
     constructor(private metaDataStorage: Core.MetaDataStorage,
         validators: Core.ValidatorCommand[]) { 
+            if(!validators) validators = []
             this.validators = validators;
             this.validators.push(new EmailValidator())
             this.validators.push(new RangeValidator())
