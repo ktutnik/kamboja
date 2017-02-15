@@ -151,4 +151,23 @@ describe("ParameterValidator", () => {
         let result = test.validate(null, clazz.methods[0].parameters[0])
         Chai.expect(result).undefined
     })
+
+    it("Should not error if no decorator specified", () => {
+        let meta = H.fromCode(`
+            var MyClass = (function (_super) {
+                tslib_1.__extends(MyClass, _super);
+                function MyClass() {
+                    return _super !== null && _super.apply(this, arguments) || this;
+                }
+                MyClass.prototype.getByPage = function (model) {
+                };
+                return MyClass;
+            }(controller_1.Controller));
+            exports.MyClass = MyClass;
+            `)
+        let test = new ParameterValidator(storage, validators);
+        let clazz = <Kecubung.ClassMetaData>meta.children[0]
+        let result = test.validate(null, clazz.methods[0].parameters[0])
+        Chai.expect(result).undefined
+    })
 })

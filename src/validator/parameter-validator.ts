@@ -15,6 +15,7 @@ export class ParameterValidator extends ValidatorCommandBase {
     @decoratorName("type")
     validate(value, meta: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?: string) {
         let result: Core.ValidationError[] = []
+        if(!meta.decorators) return
         for (let decorator of meta.decorators) {
             if (decorator.name == "type") {
                 let validationResult = this.validateModel(value, meta, 
