@@ -12,13 +12,9 @@ import * as Babylon from "babylon"
 import * as Kecubung from "kecubung"
 
 export class Kamboja {
-    private static facade: Core.Facade;
-    static getFacade(){
-        return Kamboja.facade;
-    }
-
     private options: Core.KambojaOption
     private log: Logger;
+    private storage:Core.MetaDataStorage;
 
     constructor(private engine: Core.Engine, options?: Core.KambojaOption) {
         this.options = Lodash.assign(<Core.KambojaOption>{
@@ -32,19 +28,9 @@ export class Kamboja {
             dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
             identifierResolver: new DefaultIdentifierResolver(),
         }, options)
-        let defaultValidators: Core.ValidatorCommand[] = [
-            new RangeValidator(),
-            new RequiredValidator(),
-            new EmailValidator()
-        ]
-        if (this.options.validators && this.options.validators.length > 0) {
-            defaultValidators = defaultValidators.concat(this.options.validators)
-        }
-        Kamboja.facade = {
-            idResolver: this.options.identifierResolver,
-            metadataStorage: new MetaDataStorage(this.options.identifierResolver),
-            resolver: this.options.dependencyResolver,
-            validators: defaultValidators,
+        this.storage = new MetaDataStorage(this.options.identifierResolver);
+        this.options.getStorage = () => {
+            return this.storage;
         }
         this.log = new Logger(this.options.showConsoleLog ? "Info" : "Error")
     }
@@ -60,7 +46,7 @@ export class Kamboja {
             let code = Fs.readFileSync(x).toString()
             let ast = Babylon.parse(code)
             let meta = Kecubung.transform("ASTree", ast, pathResolver.relative(x))
-            Kamboja.facade.metadataStorage.save(meta)
+            this.options.getStorage().save(meta)
         })
         return true
     }
@@ -85,7 +71,7 @@ export class Kamboja {
     }
 
     private generateRoutes() {
-        let route = new RouteGenerator(this.options.controllerPaths, Kamboja.facade, Fs.readFileSync)
+        let route = new RouteGenerator(this.options.controllerPaths, this.options.identifierResolver, this.options.getStorage(), Fs.readFileSync)
         let infos = route.getRoutes()
         if (infos.length == 0) {
             let paths = this.options.controllerPaths.join(",")
