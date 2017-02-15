@@ -3,16 +3,29 @@ import * as Core from "../core"
 import { ValidatorCommandBase, getDecoratorName } from "./baseclasses"
 import { ParameterValidator } from "./parameter-validator"
 import { RequiredValidator } from "./required-validator"
+import { EmailValidator } from "./email-validator"
+import { RangeValidator } from "./range-validator"
 import { MetaDataStorage } from "../metadata-storage"
 
 export class Validator implements Core.Validator {
-
+    private parameters: any[]
+    private meta: Kecubung.MethodMetaData
     private errors: Core.ValidationError[] = []
+    private validators: Core.ValidatorCommand[]
 
-    constructor(private parameters: any[],
-        private meta: Kecubung.MethodMetaData,
-        private metaDataStorage: Core.MetaDataStorage,
-        private validators: Core.ValidatorCommand[]) { }
+    constructor(private metaDataStorage: Core.MetaDataStorage,
+        validators: Core.ValidatorCommand[]) { 
+            this.validators = validators;
+            this.validators.push(new EmailValidator())
+            this.validators.push(new RangeValidator())
+            this.validators.push(new RequiredValidator())
+        }
+
+    setValue(parameters: any[],
+        meta: Kecubung.MethodMetaData) {
+        this.parameters = parameters
+        this.meta = meta
+    }
 
     isValid() {
         let parameterValidator = new ParameterValidator(this.metaDataStorage, this.validators)

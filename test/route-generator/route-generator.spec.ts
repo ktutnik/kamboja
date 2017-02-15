@@ -17,10 +17,15 @@ let facade: Core.Facade = {
 }
 
 describe("RouteGenerator", () => {
+    let idResolver: Core.IdentifierResolver;
+    let metadataStorage: Core.MetaDataStorage
+    beforeEach(() => {
+        idResolver = new DefaultIdentifierResolver()
+        metadataStorage = new MetaDataStorage(idResolver)
+    })
     it("Should load routes from controllers properly", () => {
         let test = new RouteGenerator(["test/route-generator/api",
-            "test/route-generator/controller"],
-            facade, Fs.readFileSync)
+            "test/route-generator/controller"], idResolver, metadataStorage, Fs.readFileSync)
         let routes = test.getRoutes()
         let clean = H.cleanUp(routes)
         Chai.expect(routes[0].classId.replace(/\\/g, "/")).eq("DummyApi, test/route-generator/api/dummy-api.js")
@@ -48,14 +53,14 @@ describe("RouteGenerator", () => {
     it("Should skip when provided path not found", () => {
         let test = new RouteGenerator(["test/fake/path",
             "test/route-generator/controller"],
-            facade, Fs.readFileSync)
+            idResolver, metadataStorage, Fs.readFileSync)
         let result = test.getRoutes();
         Chai.expect(result.length).eq(1);
     })
 
     it("Should handle read file error", () => {
         let test = new RouteGenerator(["test/route-generator/api", "test/route-generator/controller"],
-            facade, H.errorReadFile)
+            idResolver, metadataStorage, H.errorReadFile)
         let thrown = false;
         try {
             test.getRoutes();

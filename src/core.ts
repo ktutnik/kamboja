@@ -115,8 +115,9 @@ export interface KambojaOption {
     modelPath?: string
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
-    validators?: ValidatorCommand[]
-    errorHandler?: (err: HttpError) => void
+    validators?: Array<ValidatorCommand|string>
+    errorHandler?: (err: HttpError) => void,
+    getStorage?: () => MetaDataStorage
 }
 
 export interface MetaDataStorage {

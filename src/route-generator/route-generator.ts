@@ -6,13 +6,14 @@ import * as Babylon from "babylon"
 import * as Transformer from "./transformers"
 import * as Analyzer from "./analyzer"
 import { PathResolver } from "../resolver/path-resolver"
-import { MetaDataStorage } from "../metadata-storage"
 
 export class RouteGenerator {
     private pathResolver: PathResolver;
     private routes: Core.RouteInfo[];
 
-    constructor(private paths: string[], private facade:Core.Facade,
+    constructor(private paths: string[], 
+        private idResolver:Core.IdentifierResolver,
+        private metadataStorage:Core.MetaDataStorage,
         private fileReader: (path: string) => Buffer) {
         this.pathResolver = new PathResolver()
     }
@@ -40,9 +41,9 @@ export class RouteGenerator {
             let meta = Kenanga.transform("ASTree", ast, filename)
             let infos = Transformer.transform(meta);
             for (let route of infos) {
-                route.classId = this.facade.idResolver.getClassId(route.qualifiedClassName)
+                route.classId = this.idResolver.getClassId(route.qualifiedClassName)
             }
-            this.facade.metadataStorage.save(meta)
+            this.metadataStorage.save(meta)
             routeInfos.push(...infos)
         }
         return routeInfos;

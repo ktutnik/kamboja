@@ -1,18 +1,31 @@
 import * as Core from "../core"
 import { ApiControllerExecutor } from "./api-controller-executor"
 import { ControllerExecutor } from "./controller-executor"
+import { Validator } from "../validator/validator"
+
 
 
 export class RequestHandler {
     private apiCommand: ApiControllerExecutor;
     private controllerCommand: ControllerExecutor;
 
-    constructor(private facade:Core.Facade, 
+    constructor(private metaDataStorage: Core.MetaDataStorage,
+        private resolver: Core.DependencyResolver,
+        private validators: Array<Core.ValidatorCommand | string>,
         private routeInfo: Core.RouteInfo,
         request: Core.HttpRequest,
         private response: Core.HttpResponse) {
-        this.apiCommand = new ApiControllerExecutor(facade, routeInfo, request)
-        this.controllerCommand = new ControllerExecutor(facade, routeInfo, request)
+        let commands: Core.ValidatorCommand[] = [];
+        validators.forEach(x => {
+            if (typeof x == "string") {
+                let validator = resolver.resolve(x)
+                commands.push(validator)
+            }
+            else commands.push(x)
+        })
+        let validator = new Validator(metaDataStorage, commands)
+        this.apiCommand = new ApiControllerExecutor(validator, resolver, routeInfo, request)
+        this.controllerCommand = new ControllerExecutor(validator, resolver, routeInfo, request)
     }
 
     async execute() {

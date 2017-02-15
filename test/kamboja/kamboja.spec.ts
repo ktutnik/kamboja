@@ -97,13 +97,4 @@ describe("Kamboja", () => {
         let result: KambojaOption = initSpy.getCall(0).args[1]
     })
 
-    it("Should provide facade properly before init", () => {
-        let kamboja = new Kamboja(engine, {
-            controllerPaths: ["test/kamboja/controller"],
-            modelPath: "test/kamboja/model",
-            showConsoleLog:false
-        })
-        let metadata = Kamboja.getFacade();
-        Chai.expect(metadata).not.null
-    })
 })

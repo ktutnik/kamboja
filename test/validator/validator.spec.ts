@@ -34,7 +34,8 @@ describe("Validator", () => {
             exports.MyClass = MyClass;
             `)
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let test = new Validator([20, "Nobita"],clazz.methods[0], storage, validators)
+        let test = new Validator(storage, validators)
+        test.setValue([20, "Nobita"],clazz.methods[0])
         let isValid = test.isValid();
         let result = test.getValidationErrors();
         Chai.expect(result).undefined
@@ -59,7 +60,8 @@ describe("Validator", () => {
             exports.MyClass = MyClass;
             `)
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let test = new Validator([null, null],clazz.methods[0], storage, validators)
+        let test = new Validator(storage, validators)
+        test.setValue([null, null],clazz.methods[0])
         test.isValid();
         let result = test.getValidationErrors();
         Chai.expect(result[0].field).eq("age")
