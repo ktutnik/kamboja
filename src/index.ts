@@ -3,6 +3,7 @@ let val = new ValidatorDecorator();
 
 export { val }
 export {
+    ValidatorImpl,
     ValidatorCommandBase,
     decoratorName
 } from "./validator"

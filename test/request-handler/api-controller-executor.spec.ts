@@ -3,7 +3,7 @@ import { ControllerExecutor } from "../../src/request-handler/controller-executo
 import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
 import { JsonActionResult, ViewActionResult, RedirectActionResult, FileActionResult } from "../../src/controller"
 import { InMemoryMetaDataStorage } from "../../src/metadata-storage"
-import { RequiredValidator, Validator } from "../../src/validator"
+import { RequiredValidator, ValidatorImpl } from "../../src/validator"
 import * as Transformer from "../../src/route-generator/transformers"
 import * as Chai from "chai"
 import * as H from "../helper"
@@ -42,7 +42,7 @@ describe("ApiControllerExecutor", () => {
         let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
         info.classId = info.qualifiedClassName
         getParamStub.withArgs("par1").returns("param1")
-        let executor = new ApiControllerExecutor(new Validator(metadataStorage, []), resolver, info, HttpRequest)
+        let executor = new ApiControllerExecutor(new ValidatorImpl(metadataStorage, []), resolver, info, HttpRequest)
         let result = <JsonActionResult>await executor.execute()
         Chai.expect(result.body).eq("param1")
     })
@@ -53,7 +53,7 @@ describe("ApiControllerExecutor", () => {
         let info = infos.filter(x => x.methodMetaData.name == "returnTheParamWithPromise")[0]
         info.classId = info.qualifiedClassName
         getParamStub.withArgs("par1").returns("param1")
-        let executor = new ApiControllerExecutor(new Validator(metadataStorage, []), resolver, info, HttpRequest)
+        let executor = new ApiControllerExecutor(new ValidatorImpl(metadataStorage, []), resolver, info, HttpRequest)
         let result = <JsonActionResult>await executor.execute()
         Chai.expect(result.body).eq("param1")
     })
@@ -63,7 +63,7 @@ describe("ApiControllerExecutor", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "voidMethod")[0]
         info.classId = info.qualifiedClassName
-        let executor = new ApiControllerExecutor(new Validator(metadataStorage, []), resolver, info, HttpRequest)
+        let executor = new ApiControllerExecutor(new ValidatorImpl(metadataStorage, []), resolver, info, HttpRequest)
         let result = <JsonActionResult>await executor.execute()
         Chai.expect(result.body).undefined
     })

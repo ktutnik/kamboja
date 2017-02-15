@@ -1,7 +1,7 @@
 import * as Kecubung from "kecubung"
 import { ValidatorCommandBase, decoratorName, getDecoratorName } from "./baseclasses"
 import * as Core from "../core"
-import { Validator } from "./validator"
+import { ValidatorImpl } from "./validator"
 import { InMemoryMetaDataStorage } from "../metadata-storage"
 
 export class ParameterValidator extends ValidatorCommandBase {

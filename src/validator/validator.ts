@@ -7,7 +7,7 @@ import { EmailValidator } from "./email-validator"
 import { RangeValidator } from "./range-validator"
 import { InMemoryMetaDataStorage } from "../metadata-storage"
 
-export class Validator implements Core.Validator {
+export class ValidatorImpl implements Core.Validator {
     private parameters: any[]
     private meta: Kecubung.MethodMetaData
     private errors: Core.ValidationError[] = []

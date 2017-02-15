@@ -1,7 +1,7 @@
 import * as Core from "../core"
 import { ApiControllerExecutor } from "./api-controller-executor"
 import { ControllerExecutor } from "./controller-executor"
-import { Validator } from "../validator/validator"
+import { ValidatorImpl } from "../validator/validator"
 
 
 
@@ -25,7 +25,7 @@ export class RequestHandler {
                 else commands.push(x)
             })
         }
-        let validator = new Validator(metaDataStorage, commands)
+        let validator = new ValidatorImpl(metaDataStorage, commands)
         this.apiCommand = new ApiControllerExecutor(validator, resolver, routeInfo, request)
         this.controllerCommand = new ControllerExecutor(validator, resolver, routeInfo, request)
     }

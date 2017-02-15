@@ -1,7 +1,7 @@
 import * as Chai from "chai"
 import * as H from "../helper"
 import * as Kecubung from "kecubung"
-import { Validator } from "../../src/validator/validator"
+import { ValidatorImpl } from "../../src/validator/validator"
 import { DefaultIdentifierResolver } from "../../src/resolver"
 import { InMemoryMetaDataStorage } from "../../src/metadata-storage"
 import { RequiredValidator } from "../../src/validator"
@@ -34,7 +34,7 @@ describe("Validator", () => {
             exports.MyClass = MyClass;
             `)
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let test = new Validator(storage, validators)
+        let test = new ValidatorImpl(storage, validators)
         test.setValue([20, "Nobita"],clazz.methods[0])
         let isValid = test.isValid();
         let result = test.getValidationErrors();
@@ -60,7 +60,7 @@ describe("Validator", () => {
             exports.MyClass = MyClass;
             `)
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let test = new Validator(storage, null)
+        let test = new ValidatorImpl(storage, null)
         test.setValue([20, "Nobita"],clazz.methods[0])
         let isValid = test.isValid();
         let result = test.getValidationErrors();
@@ -86,7 +86,7 @@ describe("Validator", () => {
             exports.MyClass = MyClass;
             `)
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let test = new Validator(storage, validators)
+        let test = new ValidatorImpl(storage, validators)
         test.setValue([null, null],clazz.methods[0])
         test.isValid();
         let result = test.getValidationErrors();

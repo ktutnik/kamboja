@@ -1,11 +1,11 @@
 import * as Core from "../core"
 import { ParameterBinder } from "../parameter-binder"
 import { JsonActionResult, ApiController } from "../controller"
-import { Validator } from "../validator"
+import { ValidatorImpl } from "../validator"
 
 export class ApiControllerExecutor implements Core.ExecutorCommand {
     private binder: ParameterBinder;
-    constructor(private validator:Validator,
+    constructor(private validator:ValidatorImpl,
         private resolver:Core.DependencyResolver,
         private routeInfo: Core.RouteInfo,
         private request: Core.HttpRequest) {
