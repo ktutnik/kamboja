@@ -1,6 +1,6 @@
 import * as Core from "./core"
 import * as Lodash from "lodash"
-import { MetaDataStorage } from "./metadata-storage"
+import { InMemoryMetaDataStorage } from "./metadata-storage"
 import { DefaultDependencyResolver, DefaultIdentifierResolver, PathResolver } from "./resolver"
 import { RangeValidator, RequiredValidator, EmailValidator } from "./validator"
 import { RouteGenerator, RouteAnalyzer } from "./route-generator"
@@ -28,7 +28,7 @@ export class Kamboja {
             dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
             identifierResolver: new DefaultIdentifierResolver(),
         }, options)
-        this.storage = new MetaDataStorage(this.options.identifierResolver);
+        this.storage = new InMemoryMetaDataStorage(this.options.identifierResolver);
         this.options.getStorage = () => {
             return this.storage;
         }
@@ -59,13 +59,13 @@ export class Kamboja {
             let path = pathResolver.resolve(x);
             if (!Fs.existsSync(path)) {
                 result = false;
-                this.log.error(`Controller path ${path} not exist`)
+                this.log.error(`Controller path [${x}] provided in configuration is not exist`)
             }
         })
         //model
         let modelPath = pathResolver.resolve(this.options.modelPath)
         if (!Fs.existsSync(modelPath)) {
-            this.log.warning(`Model path ${modelPath} not exist`)
+            this.log.warning(`Model path [${this.options.modelPath}] provided in configuration is not exist`)
         }
         return result;
     }

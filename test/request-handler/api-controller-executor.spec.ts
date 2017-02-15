@@ -2,7 +2,7 @@ import { ApiControllerExecutor } from "../../src/request-handler/api-controller-
 import { ControllerExecutor } from "../../src/request-handler/controller-executor"
 import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
 import { JsonActionResult, ViewActionResult, RedirectActionResult, FileActionResult } from "../../src/controller"
-import { MetaDataStorage } from "../../src/metadata-storage"
+import { InMemoryMetaDataStorage } from "../../src/metadata-storage"
 import { RequiredValidator, Validator } from "../../src/validator"
 import * as Transformer from "../../src/route-generator/transformers"
 import * as Chai from "chai"
@@ -23,13 +23,13 @@ let HttpRequest: any = {
 
 describe("ApiControllerExecutor", () => {
     let getParamStub: Sinon.SinonStub;
-    let metadataStorage: MetaDataStorage
+    let metadataStorage: InMemoryMetaDataStorage
     let resolver: Core.DependencyResolver;
 
     beforeEach(() => {
         getParamStub = Sinon.stub(HttpRequest, "getParam")
         resolver = new DefaultDependencyResolver(new DefaultIdentifierResolver())
-        metadataStorage = new MetaDataStorage(new DefaultIdentifierResolver())
+        metadataStorage = new InMemoryMetaDataStorage(new DefaultIdentifierResolver())
     })
 
     afterEach(() => {

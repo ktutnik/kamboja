@@ -27,7 +27,8 @@ export {
     ValidatorCommand,
     Cookie,
     Validator,
-    ValidationError
+    ValidationError,
+    MetaDataStorage
 } from "./core"
 export {
     DefaultDependencyResolver,
@@ -41,7 +42,7 @@ export {
     RouteGenerator, RouteAnalyzer
 } from "./route-generator"
 export {
-    MetaDataStorage
+    InMemoryMetaDataStorage
 } from "./metadata-storage"
 export {
     Kamboja

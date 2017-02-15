@@ -1,7 +1,7 @@
 import { RequestHandler } from "../../src/request-handler/request-handler"
 import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
 import { RequiredValidator } from "../../src/validator"
-import { MetaDataStorage } from "../../src/metadata-storage"
+import { InMemoryMetaDataStorage } from "../../src/metadata-storage"
 import * as Transformer from "../../src/route-generator/transformers"
 import {CustomValidation} from "./validator/custom-validator"
 import * as Chai from "chai"
@@ -29,12 +29,12 @@ describe("RequestHandler", () => {
     let errorSpy: Sinon.SinonSpy;
     let fileSpy: Sinon.SinonSpy;
     let setCookieSpy: Sinon.SinonSpy;
-    let metadataStorage: MetaDataStorage
+    let metadataStorage: InMemoryMetaDataStorage
     let resolver: Core.DependencyResolver;
 
     beforeEach(() => {
         resolver = new DefaultDependencyResolver(new DefaultIdentifierResolver())
-        metadataStorage = new MetaDataStorage(new DefaultIdentifierResolver())
+        metadataStorage = new InMemoryMetaDataStorage(new DefaultIdentifierResolver())
         getParamStub = Sinon.stub(HttpRequest, "getParam")
         jsonSpy = Sinon.stub(HttpResponse, "json")
         errorSpy = Sinon.spy(HttpResponse, "error")

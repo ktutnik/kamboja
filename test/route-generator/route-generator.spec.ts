@@ -4,13 +4,13 @@ import * as Chai from "chai"
 import * as H from "../helper"
 import * as Fs from "fs"
 import * as Core from "../../src/core"
-import { MetaDataStorage } from "../../src/metadata-storage"
+import { InMemoryMetaDataStorage } from "../../src/metadata-storage"
 import { RequiredValidator } from "../../src/validator"
 
 let facade: Core.Facade = {
     idResolver: new DefaultIdentifierResolver(),
     resolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
-    metadataStorage: new MetaDataStorage(new DefaultIdentifierResolver()),
+    metadataStorage: new InMemoryMetaDataStorage(new DefaultIdentifierResolver()),
     validators: [
         new RequiredValidator()
     ]
@@ -21,7 +21,7 @@ describe("RouteGenerator", () => {
     let metadataStorage: Core.MetaDataStorage
     beforeEach(() => {
         idResolver = new DefaultIdentifierResolver()
-        metadataStorage = new MetaDataStorage(idResolver)
+        metadataStorage = new InMemoryMetaDataStorage(idResolver)
     })
     it("Should load routes from controllers properly", () => {
         let test = new RouteGenerator(["test/route-generator/api",

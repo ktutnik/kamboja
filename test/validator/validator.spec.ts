@@ -3,17 +3,17 @@ import * as H from "../helper"
 import * as Kecubung from "kecubung"
 import { Validator } from "../../src/validator/validator"
 import { DefaultIdentifierResolver } from "../../src/resolver"
-import { MetaDataStorage } from "../../src/metadata-storage"
+import { InMemoryMetaDataStorage } from "../../src/metadata-storage"
 import { RequiredValidator } from "../../src/validator"
 
 describe("Validator", () => {
-    let storage: MetaDataStorage;
+    let storage: InMemoryMetaDataStorage;
     let validators = [
         new RequiredValidator()
     ]
 
     beforeEach(() => {
-        storage = new MetaDataStorage(new DefaultIdentifierResolver())
+        storage = new InMemoryMetaDataStorage(new DefaultIdentifierResolver())
     })
 
     it("Should return undefined when provided correct value", () => {

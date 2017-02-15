@@ -5,7 +5,7 @@ import { ParameterValidator } from "./parameter-validator"
 import { RequiredValidator } from "./required-validator"
 import { EmailValidator } from "./email-validator"
 import { RangeValidator } from "./range-validator"
-import { MetaDataStorage } from "../metadata-storage"
+import { InMemoryMetaDataStorage } from "../metadata-storage"
 
 export class Validator implements Core.Validator {
     private parameters: any[]

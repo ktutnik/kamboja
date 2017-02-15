@@ -1,15 +1,15 @@
 import * as Chai from "chai"
 import * as Core from "../src/core"
-import { MetaDataStorage } from "../src/metadata-storage"
+import { InMemoryMetaDataStorage } from "../src/metadata-storage"
 import { DefaultIdentifierResolver } from "../src/resolver"
 import * as H from "./helper"
 
 describe("MetaDataStorage", () => {
 
     describe("save", () => {
-        let storage: MetaDataStorage;
+        let storage: InMemoryMetaDataStorage;
         beforeEach(() => {
-            storage = new MetaDataStorage(new DefaultIdentifierResolver())
+            storage = new InMemoryMetaDataStorage(new DefaultIdentifierResolver())
         })
 
         it("Should save class properly", () => {
@@ -57,9 +57,9 @@ describe("MetaDataStorage", () => {
     })
 
     describe("get", () => {
-        let storage: MetaDataStorage;
+        let storage: InMemoryMetaDataStorage;
         beforeEach(() => {
-            storage = new MetaDataStorage(new DefaultIdentifierResolver())
+            storage = new InMemoryMetaDataStorage(new DefaultIdentifierResolver())
         })
 
         it("Should return class by qualified name properly", () => {

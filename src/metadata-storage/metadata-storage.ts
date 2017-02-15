@@ -4,7 +4,7 @@ import * as Path from "path"
 import { QualifiedName } from "../resolver/qualified-name"
 import { PathResolver } from "../resolver/path-resolver"
 
-export class MetaDataStorage {
+export class InMemoryMetaDataStorage {
     private storage: ParentMetaData[] = []
 
     constructor(private idResolver: Core.IdentifierResolver) { }

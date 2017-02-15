@@ -3,17 +3,17 @@ import * as H from "../helper"
 import * as Kecubung from "kecubung"
 import { RequiredValidator } from "../../src/validator/required-validator"
 import { ParameterValidator } from "../../src/validator/parameter-validator"
-import { MetaDataStorage } from "../../src/metadata-storage"
+import { InMemoryMetaDataStorage } from "../../src/metadata-storage"
 import { DefaultIdentifierResolver } from "../../src/resolver"
 
 describe("ParameterValidator", () => {
-    let storage: MetaDataStorage;
+    let storage: InMemoryMetaDataStorage;
     let validators = [
         new RequiredValidator()
     ]
 
     beforeEach(() => {
-        storage = new MetaDataStorage(new DefaultIdentifierResolver())
+        storage = new InMemoryMetaDataStorage(new DefaultIdentifierResolver())
         let modelMeta = H.fromCode(`
             var MyModel = (function () {
                 function MyModel() {

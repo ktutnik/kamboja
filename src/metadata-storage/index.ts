@@ -1,1 +1,1 @@
-export { MetaDataStorage } from "./metadata-storage"
+export { InMemoryMetaDataStorage } from "./metadata-storage"
