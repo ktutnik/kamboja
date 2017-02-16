@@ -118,6 +118,26 @@ describe("MetaDataStorage", () => {
             Chai.expect(result).undefined
         })
 
+        it("Should not error when no file found", () => {
+            let meta = H.fromCode(`
+                    var MyNameSpace;
+                    (function (MyNameSpace) {
+                        var MyClass = (function (_super) {
+                            tslib_1.__extends(MyClass, _super);
+                            function MyClass() {
+                                return _super !== null && _super.apply(this, arguments) || this;
+                            }
+                            MyClass.prototype.getByPage = function () { };
+                            return MyClass;
+                        }(controller_1.Controller));
+                        MyNameSpace.MyClass = MyClass;
+                    })(MyNameSpace = exports.MyNameSpace || (exports.MyNameSpace = {}));
+                    `, "path/namespaced-class.js")
+            storage.save(meta)
+            let result = storage.get("MyNameSpace.MyClass, ./other/file")
+            Chai.expect(result).undefined
+        })
+
         it("Should throw when provided non qualified name", () => {
             let meta = H.fromCode(`
                     var MyNameSpace;
