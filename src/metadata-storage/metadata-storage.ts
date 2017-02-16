@@ -21,6 +21,7 @@ export class InMemoryMetaDataStorage {
         let classInfo = new QualifiedName(qualifiedName)
         let file = this.storage
             .filter(x => PathResolver.normalize(x.name) == classInfo.fileName)[0]
+        if(!file) return
         let result: MetaData = file;
         for (let className of classInfo.className.split(".")) {
             for (let item of (<ParentMetaData>result).children) {
