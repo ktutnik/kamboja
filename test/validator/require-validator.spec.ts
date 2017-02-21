@@ -22,7 +22,12 @@ describe("RequireValidator", () => {
             `)
         let test = new RequiredValidator();
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let result = test.validate(null, clazz.methods[0].parameters[0])
+        let result = test.validate({
+                value: null,
+                classInfo: clazz,
+                decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+                field: "model"
+            })
         Chai.expect(result[0].field).eq("model")
         Chai.expect(result[0].message).contain("required")
     })
@@ -45,7 +50,12 @@ describe("RequireValidator", () => {
             `)
         let test = new RequiredValidator();
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let result = test.validate(100, clazz.methods[0].parameters[0])
+        let result = test.validate({
+                value: 100,
+                classInfo: clazz,
+                decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+                field: "model"
+            })
         Chai.expect(result).undefined
     })
 
@@ -67,7 +77,12 @@ describe("RequireValidator", () => {
             `)
         let test = new RequiredValidator();
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let result = test.validate(null, clazz.methods[0].parameters[0])
+        let result = test.validate({
+                value: null,
+                classInfo: clazz,
+                decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+                field: "model"
+            })
         Chai.expect(result[0].field).eq("model")
         Chai.expect(result[0].message).eq("Hey you must fill this")
     })

@@ -1,42 +1,47 @@
 import * as Kecubung from "kecubung"
 import * as Core from "../core"
-import { ValidatorCommandBase, getDecoratorName } from "./baseclasses"
-import { ParameterValidator } from "./parameter-validator"
+import { ValidatorBase, getDecoratorName, ParametersValidatorArg } from "./baseclasses"
+import { TypeValidator } from "./type-validator"
 import { RequiredValidator } from "./required-validator"
 import { EmailValidator } from "./email-validator"
 import { RangeValidator } from "./range-validator"
-import { InMemoryMetaDataStorage } from "../metadata-storage"
 
-export class ValidatorImpl implements Core.Validator {
+export class ValidatorImpl extends ValidatorBase implements Core.Validator {
     private parameters: any[]
-    private meta: Kecubung.MethodMetaData
+    private classMetaData: Kecubung.ClassMetaData
     private errors: Core.ValidationError[] = []
-    private validators: Core.ValidatorCommand[]
+    private methodName: string
 
     constructor(private metaDataStorage: Core.MetaDataStorage,
-        validators: Core.ValidatorCommand[]) { 
-            if(!validators) validators = []
-            this.validators = validators;
-            this.validators.push(new EmailValidator())
-            this.validators.push(new RangeValidator())
-            this.validators.push(new RequiredValidator())
-        }
+        validators: Core.ValidatorCommand[]) {
+        super()
+        if (!validators) validators = []
+        this.validators = validators;
+        let typeValidator = new TypeValidator(metaDataStorage);
+        typeValidator.validators = this.validators;
+        this.validators.push(typeValidator)
+        this.validators.push(new EmailValidator())
+        this.validators.push(new RangeValidator())
+        this.validators.push(new RequiredValidator())
+    }
 
     setValue(parameters: any[],
-        meta: Kecubung.MethodMetaData) {
+        meta: Kecubung.ClassMetaData, methodName: string) {
         this.parameters = parameters
-        this.meta = meta
+        this.classMetaData = meta
+        this.methodName = methodName
     }
 
     isValid() {
-        let parameterValidator = new ParameterValidator(this.metaDataStorage, this.validators)
-        for (let i = 0; i < this.meta.parameters.length; i++) {
-            let value = this.parameters[i];
-            let meta = this.meta.parameters[i]
-            let result = parameterValidator.validate(value, meta)
-            if (result) this.errors = this.errors.concat(result)
-        }
-        return this.errors.length == 0;
+        let result = this.validateFields(<ParametersValidatorArg>{
+            type: "ParametersValidator",
+            classInfo: this.classMetaData,
+            methodName: this.methodName,
+            parameterValues: this.parameters,
+        })
+        if(result)
+            this.errors = this.errors.concat(result)
+        return this.errors.length == 0
     }
 
     getValidationErrors() {

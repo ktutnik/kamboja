@@ -1,16 +1,16 @@
 import * as Chai from "chai"
 import { Kamboja } from "../../src/kamboja"
 import * as Sinon from "sinon"
-import { ValidatorCommandBase } from "../../src/validator/baseclasses"
+import { ValidatorBase } from "../../src/validator/baseclasses"
 import * as Kecubung from "kecubung"
-import { ValidationError, KambojaOption } from "../../src/core"
+import { ValidationError, KambojaOption, FieldValidatorArg } from "../../src/core"
 
 let engine = {
     init: () => { }
 }
 
-class FakeValidator extends ValidatorCommandBase {
-    validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?: string): ValidationError[] {
+class FakeValidator extends ValidatorBase {
+    validate(arg:FieldValidatorArg): ValidationError[] {
         return;
     }
 }
@@ -95,6 +95,17 @@ describe("Kamboja", () => {
         })
         kamboja.init()
         let result: KambojaOption = initSpy.getCall(0).args[1]
+    })
+
+    it("Should provide options from outside", () => {
+        let kamboja = new Kamboja(engine, {
+            controllerPaths: ["test/kamboja/controller"],
+            modelPath: "test/kamboja/model",
+        })
+        kamboja.init()
+        let options = Kamboja.getOptions();
+        let storage = options.getStorage();
+        Chai.expect(storage).not.null;
     })
 
 })

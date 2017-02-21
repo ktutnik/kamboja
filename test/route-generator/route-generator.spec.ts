@@ -4,13 +4,13 @@ import * as Chai from "chai"
 import * as H from "../helper"
 import * as Fs from "fs"
 import * as Core from "../../src/core"
-import { InMemoryMetaDataStorage } from "../../src/metadata-storage"
+import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
 import { RequiredValidator } from "../../src/validator"
 
 let facade: Core.Facade = {
     idResolver: new DefaultIdentifierResolver(),
     resolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
-    metadataStorage: new InMemoryMetaDataStorage(new DefaultIdentifierResolver()),
+    metadataStorage: new MetaDataLoader(new DefaultIdentifierResolver()),
     validators: [
         new RequiredValidator()
     ]
@@ -18,24 +18,23 @@ let facade: Core.Facade = {
 
 describe("RouteGenerator", () => {
     let idResolver: Core.IdentifierResolver;
-    let metadataStorage: Core.MetaDataStorage
+    let metadataStorage: MetaDataLoader
     beforeEach(() => {
         idResolver = new DefaultIdentifierResolver()
-        metadataStorage = new InMemoryMetaDataStorage(idResolver)
+        metadataStorage = new MetaDataLoader(idResolver)
+        metadataStorage.load(["test/route-generator/api",
+            "test/route-generator/controller"], "Controller")
     })
     it("Should load routes from controllers properly", () => {
-        let test = new RouteGenerator(["test/route-generator/api",
-            "test/route-generator/controller"], idResolver, metadataStorage, Fs.readFileSync)
+        let test = new RouteGenerator(idResolver, metadataStorage.getByCategory("Controller"))
         let routes = test.getRoutes()
         let clean = H.cleanUp(routes)
-        Chai.expect(routes[0].classId.replace(/\\/g, "/")).eq("DummyApi, test/route-generator/api/dummy-api.js")
-        Chai.expect(routes[1].classId.replace(/\\/g, "/")).eq("DummyController, test/route-generator/controller/dummy-controller.js")
         Chai.expect(clean).deep.eq([{
             initiator: 'ApiConvention',
             route: '/dummyapi/page/:offset/:pageSize',
             httpMethod: 'GET',
             methodMetaData: { name: 'getByPage' },
-            qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api.js',
+            qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api',
             classMetaData: { name: 'DummyApi', baseClass: 'ApiController' },
             collaborator: ['Controller']
         },
@@ -44,31 +43,10 @@ describe("RouteGenerator", () => {
             route: '/dummy/getdata/:offset/:pageSize',
             httpMethod: 'GET',
             methodMetaData: { name: 'getData' },
-            qualifiedClassName: 'DummyController, test/route-generator/controller/dummy-controller.js',
+            qualifiedClassName: 'DummyController, test/route-generator/controller/dummy-controller',
             classMetaData: { name: 'DummyController', baseClass: 'Controller' },
             collaborator: ['Controller']
         }])
     })
 
-    it("Should skip when provided path not found", () => {
-        let test = new RouteGenerator(["test/fake/path",
-            "test/route-generator/controller"],
-            idResolver, metadataStorage, Fs.readFileSync)
-        let result = test.getRoutes();
-        Chai.expect(result.length).eq(1);
-    })
-
-    it("Should handle read file error", () => {
-        let test = new RouteGenerator(["test/route-generator/api", "test/route-generator/controller"],
-            idResolver, metadataStorage, H.errorReadFile)
-        let thrown = false;
-        try {
-            test.getRoutes();
-            thrown = false
-        }
-        catch (e) {
-            thrown = true;
-        }
-        Chai.expect(thrown).true;
-    })
 })

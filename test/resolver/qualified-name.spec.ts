@@ -3,6 +3,16 @@ import * as Chai from "chai"
 import * as Path from "path"
 
 describe("QualifiedName", () => {
+    it("Should identify valid qualified name", () => {
+        let test = new QualifiedName("MyNameSpace.MyClass, ./module/class.js")
+        Chai.expect(test.isValid()).true
+    })
+
+    it("Should identify non valid qualified name", () => {
+        let test = new QualifiedName("MyNameSpace.MyClass ./module/class.js")
+        Chai.expect(test.isValid()).false
+    })
+
     it("Should match with file start with ./", () => {
         let test = new QualifiedName("MyNameSpace.MyClass, ./module/class.js")
         Chai.expect(test.equals("MyNameSpace.MyClass, ./module/class")).true

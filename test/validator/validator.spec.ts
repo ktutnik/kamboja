@@ -3,65 +3,43 @@ import * as H from "../helper"
 import * as Kecubung from "kecubung"
 import { ValidatorImpl } from "../../src/validator/validator"
 import { DefaultIdentifierResolver } from "../../src/resolver"
-import { InMemoryMetaDataStorage } from "../../src/metadata-storage"
-import { RequiredValidator } from "../../src/validator"
+import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
+import { RequiredValidator } from "../../src/validator/required-validator"
+import { EmailValidator } from "../../src/validator/email-validator"
+import { RangeValidator } from "../../src/validator/range-validator"
+import { TypeValidator } from "../../src/validator/type-validator"
+import { ValidatorCommand, FieldValidatorArg } from "../../src/core"
+import { UserModel } from "./model/user-model"
+import { ItemModel } from "./model/item-model"
+import {ValidatorBase} from "../../src/validator/baseclasses"
+
+
+export class ExternalValidator extends ValidatorBase{
+    validate(args:FieldValidatorArg){
+        return undefined;
+    }
+}
 
 describe("Validator", () => {
-    let storage: InMemoryMetaDataStorage;
-    let validators = [
-        new RequiredValidator()
-    ]
+    let storage: MetaDataLoader;
+    let validators: ValidatorCommand[]
+    let test: ValidatorImpl;
 
     beforeEach(() => {
-        storage = new InMemoryMetaDataStorage(new DefaultIdentifierResolver())
+        storage = new MetaDataLoader(new DefaultIdentifierResolver())
+        storage.load("test/validator/model", "Model")
+        storage.load("test/validator/controller", "Controller")
+        test = new ValidatorImpl(storage, validators)
     })
 
     it("Should return undefined when provided correct value", () => {
-        let meta = H.fromCode(`
-            var MyClass = (function (_super) {
-                tslib_1.__extends(MyClass, _super);
-                function MyClass() {
-                    return _super !== null && _super.apply(this, arguments) || this;
-                }
-                MyClass.prototype.getByPage = function (age, name) {
-                };
-                return MyClass;
-            }(controller_1.Controller));
-            tslib_1.__decorate([
-                tslib_1.__param(0, src_1.val.required()),
-                tslib_1.__param(1, src_1.val.required()),
-            ], MyClass.prototype, "getByPage", null);
-            exports.MyClass = MyClass;
-            `)
-        let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let test = new ValidatorImpl(storage, validators)
-        test.setValue([20, "Nobita"],clazz.methods[0])
-        let isValid = test.isValid();
-        let result = test.getValidationErrors();
-        Chai.expect(result).undefined
-        Chai.expect(isValid).true
-    })
-
-    it("Should not error when provided null on validators command", () => {
-        let meta = H.fromCode(`
-            var MyClass = (function (_super) {
-                tslib_1.__extends(MyClass, _super);
-                function MyClass() {
-                    return _super !== null && _super.apply(this, arguments) || this;
-                }
-                MyClass.prototype.getByPage = function (age, name) {
-                };
-                return MyClass;
-            }(controller_1.Controller));
-            tslib_1.__decorate([
-                tslib_1.__param(0, src_1.val.required()),
-                tslib_1.__param(1, src_1.val.required()),
-            ], MyClass.prototype, "getByPage", null);
-            exports.MyClass = MyClass;
-            `)
-        let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let test = new ValidatorImpl(storage, null)
-        test.setValue([20, "Nobita"],clazz.methods[0])
+        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let model: UserModel = {
+            email: "email@host.com",
+            displayName: "Nobita Nobi",
+            item: null
+        }
+        test.setValue([model], clazz, "saveUser")
         let isValid = test.isValid();
         let result = test.getValidationErrors();
         Chai.expect(result).undefined
@@ -69,32 +47,58 @@ describe("Validator", () => {
     })
 
     it("Should return messages when provided incorrect value", () => {
-        let meta = H.fromCode(`
-            var MyClass = (function (_super) {
-                tslib_1.__extends(MyClass, _super);
-                function MyClass() {
-                    return _super !== null && _super.apply(this, arguments) || this;
-                }
-                MyClass.prototype.getByPage = function (age, name) {
-                };
-                return MyClass;
-            }(controller_1.Controller));
-            tslib_1.__decorate([
-                tslib_1.__param(0, src_1.val.required()),
-                tslib_1.__param(1, src_1.val.required()),
-            ], MyClass.prototype, "getByPage", null);
-            exports.MyClass = MyClass;
-            `)
-        let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let test = new ValidatorImpl(storage, validators)
-        test.setValue([null, null],clazz.methods[0])
-        test.isValid();
+        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let model: UserModel = {
+            email: "not-an-email",
+            displayName: "Nobita Nobi",
+            item: null
+        }
+        test.setValue([model], clazz, "saveUser")
+        let isValid = test.isValid();
         let result = test.getValidationErrors();
-        Chai.expect(result[0].field).eq("age")
-        Chai.expect(result[0].message).contain("required")
-        Chai.expect(result[1].field).eq("name")
-        Chai.expect(result[1].message).contain("required")
+        Chai.expect(result).deep.eq([{
+            field: 'user.email',
+            message: '[email] is not a valid email address'
+        }])
+        Chai.expect(isValid).false
     })
 
+    it("Should not validate parameter without validation decorator", () => {
+        let test = new ValidatorImpl(storage, [new ExternalValidator()])
+        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let model: UserModel = {
+            email: "not-valid-email",
+            displayName: "Nobita Nobi",
+            item: null
+        }
+        test.setValue([model], clazz, "noValidator")
+        let isValid = test.isValid();
+        Chai.expect(isValid).true
+    })
 
+    it("Should not error if provided other decorator", () => {
+        let test = new ValidatorImpl(storage, [new ExternalValidator()])
+        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let model: UserModel = {
+            email: "not-valid-email",
+            displayName: "Nobita Nobi",
+            item: null
+        }
+        test.setValue([model], clazz, "customDecorator")
+        let isValid = test.isValid();
+        Chai.expect(isValid).true
+    })
+
+    it("Should able to use external validator", () => {
+        let test = new ValidatorImpl(storage, [new ExternalValidator()])
+        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let model: UserModel = {
+            email: "nobita@yahoo.com",
+            displayName: "Nobita Nobi",
+            item: null
+        }
+        test.setValue([model], clazz, "saveUser")
+        let isValid = test.isValid();
+        Chai.expect(isValid).true
+    })
 })

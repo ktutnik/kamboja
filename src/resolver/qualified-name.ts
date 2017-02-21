@@ -5,12 +5,24 @@ import { PathResolver } from "./path-resolver"
 export class QualifiedName {
     className: string
     fileName: string
-    constructor(private qualifiedName: string) {
+    private valid: boolean;
+    constructor(public qualifiedName: string) {
         let tokens = this.qualifiedName.split(",")
-        if (tokens.length != 2) throw new Error("Provided name is not qualified [ClassName, the/path/of/file]")
-        this.className = tokens[0].trim()
-        let fileRaw = tokens[1].trim()
-        this.fileName = PathResolver.normalize(fileRaw)
+        if (tokens.length != 2) {
+            this.valid = false;
+        }
+        else {
+            this.valid = true;
+            this.className = tokens[0].trim()
+            let fileRaw = tokens[1].trim()
+            let pathResolver = new PathResolver()
+            this.fileName = pathResolver.normalize(fileRaw)
+            this.qualifiedName = `${this.className}, ${this.fileName}`
+        }
+    }
+
+    isValid() {
+        return this.valid;
     }
 
     equals(qualifiedName) {

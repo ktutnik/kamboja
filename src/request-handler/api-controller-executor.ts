@@ -15,7 +15,7 @@ export class ApiControllerExecutor implements Core.ExecutorCommand {
     async execute() {
         let controller: ApiController = this.resolver.resolve(this.routeInfo.classId)
         let parameters = this.binder.getParameters();
-        this.validator.setValue(parameters, this.routeInfo.methodMetaData)
+        this.validator.setValue(parameters, this.routeInfo.classMetaData, this.routeInfo.methodMetaData.name)
         controller.validator = this.validator;
         let method = <Function>controller[this.routeInfo.methodMetaData.name]
         let methodResult = method.apply(controller, parameters);

@@ -1,44 +1,45 @@
-import { ValidatorCommandBase, decoratorName } from "./baseclasses"
-import { ValidationError } from "../core"
+import { ValidatorBase, decoratorName } from "./baseclasses"
+import { ValidationError, FieldValidatorArg } from "../core"
 import * as Kecubung from "kecubung"
 import * as Validator from "validator"
 
-export class RangeValidator extends ValidatorCommandBase {
+export class RangeValidator extends ValidatorBase {
 
     @decoratorName("range")
-    validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?: string) {
-        if (!value) return
-        let fieldName = parent ? `${parent}.${metaData.name}` : metaData.name;
-        let minValue = this.getParameter(metaData, 0, "Number")
-        let maxValue = this.getParameter(metaData, 1, "Number")
-        let customMessage = this.getParameter(metaData, 2, "String")
-        if (typeof value == "number") {
-            let numericValue = value;
+    validate(args:FieldValidatorArg) {
+        if (this.isEmpty(args.value)) return
+        let fieldName = args.parentField ? `${args.parentField}.${args.field}` : args.field
+        let minValue:number, maxValue: number, customMessage: string;
+        minValue = (<Kecubung.PrimitiveValueMetaData>args.decoratorArgs[0]).value
+        if(args.decoratorArgs[1]) maxValue = (<Kecubung.PrimitiveValueMetaData>args.decoratorArgs[1]).value
+        if(args.decoratorArgs[2]) customMessage = (<Kecubung.PrimitiveValueMetaData>args.decoratorArgs[2]).value
+        if (typeof args.value == "number") {
+            let numericValue = args.value;
             if (numericValue < minValue) {
                 return [{
                     field: fieldName,
-                    message: customMessage || `[${metaData.name}] must be greater than ${minValue}`
+                    message: customMessage || `[${args.field}] must be greater than ${minValue}`
                 }]
             }
             if (maxValue && numericValue > maxValue) {
                 return [{
                     field: fieldName,
-                    message: customMessage || `[${metaData.name}] must be less than ${maxValue}`
+                    message: customMessage || `[${args.field}] must be less than ${maxValue}`
                 }]
             }
         }
-        else if(typeof value == "string") {
-            let length = value.length;
+        else if(typeof args.value == "string") {
+            let length = args.value.length;
             if (length < minValue){
                 return [{
                     field: fieldName,
-                    message: customMessage || `[${metaData.name}] length must be more than ${minValue} characters`
+                    message: customMessage || `[${args.field}] length must be more than ${minValue} characters`
                 }]
             }
             if (maxValue && length > maxValue) {
                 return [{
                     field: fieldName,
-                    message: customMessage || `[${metaData.name}] length must be less than ${maxValue} characters`
+                    message: customMessage || `[${args.field}] length must be less than ${maxValue} characters`
                 }]
             }
         }

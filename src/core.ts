@@ -4,6 +4,7 @@ import * as Kecubung from "kecubung"
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 export type TransformStatus = "ExitWithResult" | "Next" | "Exit"
 export type TransformerName = "DefaultAction" | "IndexAction" | "HttpMethodDecorator" | "ApiConvention" | "InternalDecorator" | "Controller" | "Module"
+export type MetaDataLoaderCategory = "Controller" | "Model"
 
 export class Decorator {
     internal() { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
@@ -94,14 +95,21 @@ export interface RouteInfo {
     analysis?: number[]
 }
 
-
-export interface ValidatorCommand {
-    validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?:string): ValidationError[]
-}
-
 export interface TransformResult {
     status: TransformStatus
     info?: RouteInfo[]
+}
+
+export interface FieldValidatorArg {
+    value: any
+    field: string
+    parentField?: string
+    decoratorArgs: Kecubung.ValueMetaData[]
+    classInfo: Kecubung.ClassMetaData
+}
+
+export interface ValidatorCommand{
+    validate(args:FieldValidatorArg)
 }
 
 export interface KambojaOption {
@@ -115,21 +123,21 @@ export interface KambojaOption {
     modelPath?: string
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
-    validators?: Array<ValidatorCommand|string>
+    validators?: Array<ValidatorCommand | string>
     errorHandler?: (err: HttpError) => void,
     getStorage?: () => MetaDataStorage
 }
 
 export interface MetaDataStorage {
-    save(meta: ParentMetaData)
-    get(classId: string):Kecubung.ClassMetaData
+    get(classId: string): Kecubung.ClassMetaData
+    getByCategory(category: MetaDataLoaderCategory): Kecubung.ParentMetaData[]
 }
 
-export interface Facade{
-    resolver:DependencyResolver,
-    idResolver:IdentifierResolver,
-    validators:ValidatorCommand[],
-    metadataStorage:MetaDataStorage
+export interface Facade {
+    resolver: DependencyResolver,
+    idResolver: IdentifierResolver,
+    validators: ValidatorCommand[],
+    metadataStorage: MetaDataStorage
 }
 
 export interface ExecutorCommand {
@@ -211,7 +219,7 @@ export interface DependencyResolver {
 
 export interface IdentifierResolver {
     getClassId(qualifiedClassName: string)
-    getClassName(classId:string)
+    getClassName(classId: string)
 }
 
 export class ActionResult {

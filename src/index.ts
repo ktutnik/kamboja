@@ -4,7 +4,7 @@ let val = new ValidatorDecorator();
 export { val }
 export {
     ValidatorImpl,
-    ValidatorCommandBase,
+    ValidatorBase,
     decoratorName
 } from "./validator"
 
@@ -42,9 +42,6 @@ export {
 export {
     RouteGenerator, RouteAnalyzer
 } from "./route-generator"
-export {
-    InMemoryMetaDataStorage
-} from "./metadata-storage"
 export {
     Kamboja
 } from "./kamboja"

@@ -1,8 +1,7 @@
 import 'reflect-metadata'
 import * as Kecubung from "kecubung"
-import { ValidationError, ValidatorCommand } from "../core"
-
-
+import { ValidationError, FieldValidatorArg, ValidatorCommand } from "../core"
+import * as Validator from "validator"
 const MetaDataKey = "kamboja:Validator"
 
 export function decoratorName(decoratorName: string) {
@@ -24,16 +23,91 @@ export class ValidatorDecorator {
     email(message?: string) { return parameterDecorator; }
 }
 
-export abstract class ValidatorCommandBase implements ValidatorCommand {
-    abstract validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?:string): ValidationError[];
+export interface ParametersValidatorArg {
+    type: "ParametersValidator",
+    parameterValues: any[]
+    parentField?: string
+    methodName: string,
+    classInfo: Kecubung.ClassMetaData
+}
 
-    protected getParameter(metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, index: number, type: string) {
-        let decoratorName = getDecoratorName(this)
-        let decorator = metaData.decorators.filter(x => x.name == decoratorName)[0];
-        let decoratorParameter = <Kecubung.PrimitiveValueMetaData>decorator.parameters[index]
-        let customMessage;
-        if (decoratorParameter && decoratorParameter.type == type)
-            customMessage = decoratorParameter.value;
-        return customMessage
+export interface PropertiesValidatorArg {
+    type: "PropertiesValidator",
+    classInstance: any
+    parentField?: string
+    classInfo: Kecubung.ClassMetaData
+}
+
+export class ValidatorBase implements ValidatorCommand {
+    public validators: ValidatorCommand[]
+
+    validate(args: FieldValidatorArg): ValidationError[]{
+        return null;
+    }
+
+    isEmpty(value: any) {
+        return typeof value == "undefined"
+            || value == null
+            || (typeof value == "string" && value.trim() == "")
+    }
+
+    protected validateFields(arg: ParametersValidatorArg | PropertiesValidatorArg): ValidationError[] {
+        if (arg.type == "PropertiesValidator") {
+            let result: ValidationError[] = []
+            for (let property of arg.classInfo.properties) {
+                let value = arg.classInstance[property.name]
+                let valResult = this.useValidators({
+                    decorators:property.decorators,
+                    value: value,
+                    field:property.name,
+                    parentField: arg.parentField,
+                    classInfo: arg.classInfo
+                })
+                result.push(...valResult)
+            }
+            return result.length == 0 ? undefined : result;
+        }
+        else {
+            let result: ValidationError[] = []
+            let method = arg.classInfo.methods.filter(x => x.name == arg.methodName)[0]
+            for (let i = 0; i < method.parameters.length; i++) {
+                let parameterMetadata = method.parameters[i]
+                let value = arg.parameterValues[i]
+                let valResult =  this.useValidators({
+                    decorators: parameterMetadata.decorators,
+                    classInfo: arg.classInfo,
+                    field: parameterMetadata.name,
+                    parentField: arg.parentField,
+                    value: value
+                })
+                result.push(...valResult)
+            }
+            return result.length == 0 ? undefined : result;
+        }
+    }
+
+    private useValidators(arg: {
+        decorators: Kecubung.DecoratorMetaData[],
+        value: any,
+        field: string,
+        parentField?: string,
+        classInfo: Kecubung.ClassMetaData
+    }) {
+        let result: ValidationError[] = []
+        if(!arg.decorators) return
+        for (let decorator of arg.decorators) {
+            let validators = this.validators.filter(x => getDecoratorName(x) == decorator.name)
+            for (let validator of validators) {
+                let validationResult = validator.validate({
+                    classInfo: arg.classInfo,
+                    decoratorArgs: decorator.parameters,
+                    field: arg.field,
+                    parentField: arg.parentField ? `${arg.parentField}` : arg.parentField,
+                    value: arg.value
+                })
+                result.push(...validationResult)
+            }
+        }
+        return result
     }
 }

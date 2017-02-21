@@ -3,7 +3,7 @@ import { ControllerExecutor } from "../../src/request-handler/controller-executo
 import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
 import { JsonActionResult, ViewActionResult, RedirectActionResult, FileActionResult } from "../../src/controller"
 import { RequiredValidator, ValidatorImpl } from "../../src/validator"
-import { InMemoryMetaDataStorage } from "../../src/metadata-storage"
+import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
 import * as Transformer from "../../src/route-generator/transformers"
 import * as Chai from "chai"
 import * as H from "../helper"
@@ -23,12 +23,12 @@ let HttpRequest: any = {
 
 describe("ControllerExecutor", () => {
     let getParamStub: Sinon.SinonStub;
-    let metadataStorage:InMemoryMetaDataStorage
+    let metadataStorage:MetaDataLoader
     let resolver:Core.DependencyResolver;
     
     beforeEach(() => {
         resolver = new DefaultDependencyResolver(new DefaultIdentifierResolver())
-        metadataStorage = new InMemoryMetaDataStorage(new DefaultIdentifierResolver())
+        metadataStorage = new MetaDataLoader(new DefaultIdentifierResolver())
         getParamStub = Sinon.stub(HttpRequest, "getParam")
     })
 

@@ -22,7 +22,12 @@ describe("EmailValidator", () => {
             `)
         let test = new EmailValidator();
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let result = test.validate("username@host.com", clazz.methods[0].parameters[0])
+        let result = test.validate({
+            value: "nobita@nobi.com",
+            classInfo: clazz,
+            decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+            field: "model"
+        })
         Chai.expect(result).undefined
     })
 
@@ -44,11 +49,17 @@ describe("EmailValidator", () => {
             `)
         let test = new EmailValidator();
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let result = test.validate("not_an_email", clazz.methods[0].parameters[0], "parent")
+        let result = test.validate({
+            value: "not-an-email",
+            classInfo: clazz,
+            decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+            field: "model",
+            parentField: "parent"
+        })
         Chai.expect(result[0].field).eq("parent.model")
     })
 
-    it("Should return error message when string length less then specified", () => {
+    it("Should not error if provided null", () => {
         let meta = H.fromCode(`
             var MyClass = (function (_super) {
                 tslib_1.__extends(MyClass, _super);
@@ -66,9 +77,13 @@ describe("EmailValidator", () => {
             `)
         let test = new EmailValidator();
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let result = test.validate("not_an_email", clazz.methods[0].parameters[0])
-        Chai.expect(result[0].field).eq("model")
-        Chai.expect(result[0].message).contain("not a valid email address")
+        let result = test.validate({
+            value: null,
+            classInfo: clazz,
+            decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+            field: "model"
+        })
+        Chai.expect(result).undefined
     })
 
     it("Should able to use custom message", () => {
@@ -89,7 +104,12 @@ describe("EmailValidator", () => {
             `)
         let test = new EmailValidator();
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let result = test.validate("not_an_email", clazz.methods[0].parameters[0])
+        let result = test.validate({
+            value: "not-an-email",
+            classInfo: clazz,
+            decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+            field: "model"
+        })
         Chai.expect(result[0].field).eq("model")
         Chai.expect(result[0].message).eq("Not valid email")
     })

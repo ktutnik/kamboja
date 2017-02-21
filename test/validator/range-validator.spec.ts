@@ -22,7 +22,12 @@ describe("RangeValidator", () => {
             `)
         let test = new RangeValidator();
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let result = test.validate({ data: "hellow" }, clazz.methods[0].parameters[0])
+        let result = test.validate({
+            value: { data: "hellow" },
+            classInfo: clazz,
+            decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+            field: "model"
+        })
         Chai.expect(result).undefined
     })
 
@@ -44,7 +49,12 @@ describe("RangeValidator", () => {
             `)
         let test = new RangeValidator();
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let result = test.validate(null, clazz.methods[0].parameters[0])
+        let result = test.validate({
+            value: null,
+            classInfo: clazz,
+            decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+            field: "model"
+        })
         Chai.expect(result).undefined
     })
 
@@ -66,7 +76,13 @@ describe("RangeValidator", () => {
             `)
         let test = new RangeValidator();
         let clazz = <Kecubung.ClassMetaData>meta.children[0]
-        let result = test.validate("123456789", clazz.methods[0].parameters[0], "parent")
+        let result = test.validate({
+            value: "123456789",
+            classInfo: clazz,
+            decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+            field: "model",
+            parentField: "parent"
+        })
         Chai.expect(result[0].field).eq("parent.model")
     })
 
@@ -89,7 +105,12 @@ describe("RangeValidator", () => {
                 `)
             let test = new RangeValidator();
             let clazz = <Kecubung.ClassMetaData>meta.children[0]
-            let result = test.validate("123456789", clazz.methods[0].parameters[0])
+            let result = test.validate({
+                value: "123456789",
+                classInfo: clazz,
+                decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+                field: "model"
+            })
             Chai.expect(result[0].field).eq("model")
             Chai.expect(result[0].message).contain("more than 10 characters")
         })
@@ -112,7 +133,12 @@ describe("RangeValidator", () => {
                 `)
             let test = new RangeValidator();
             let clazz = <Kecubung.ClassMetaData>meta.children[0]
-            let result = test.validate("123456", clazz.methods[0].parameters[0])
+            let result = test.validate({
+                value: "123456",
+                classInfo: clazz,
+                decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+                field: "model"
+            })
             Chai.expect(result[0].field).eq("model")
             Chai.expect(result[0].message).contain("less than 5 characters")
         })
@@ -135,7 +161,12 @@ describe("RangeValidator", () => {
                 `)
             let test = new RangeValidator();
             let clazz = <Kecubung.ClassMetaData>meta.children[0]
-            let result = test.validate("1234", clazz.methods[0].parameters[0])
+            let result = test.validate({
+                value: "1234",
+                classInfo: clazz,
+                decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+                field: "model"
+            })
             Chai.expect(result).undefined
         })
 
@@ -157,7 +188,12 @@ describe("RangeValidator", () => {
                 `)
             let test = new RangeValidator();
             let clazz = <Kecubung.ClassMetaData>meta.children[0]
-            let result = test.validate("123456", clazz.methods[0].parameters[0])
+            let result = test.validate({
+                value: "123456",
+                classInfo: clazz,
+                decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+                field: "model"
+            })
             Chai.expect(result[0].field).eq("model")
             Chai.expect(result[0].message).eq("The string is too long")
         })
@@ -182,7 +218,12 @@ describe("RangeValidator", () => {
                 `)
             let test = new RangeValidator();
             let clazz = <Kecubung.ClassMetaData>meta.children[0]
-            let result = test.validate(9, clazz.methods[0].parameters[0])
+            let result = test.validate({
+                value: 9,
+                classInfo: clazz,
+                decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+                field: "model"
+            })
             Chai.expect(result[0].field).eq("model")
             Chai.expect(result[0].message).contain("greater than 10")
         })
@@ -205,7 +246,12 @@ describe("RangeValidator", () => {
                 `)
             let test = new RangeValidator();
             let clazz = <Kecubung.ClassMetaData>meta.children[0]
-            let result = test.validate(100, clazz.methods[0].parameters[0])
+            let result = test.validate({
+                value: 100,
+                classInfo: clazz,
+                decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+                field: "model"
+            })
             Chai.expect(result[0].field).eq("model")
             Chai.expect(result[0].message).contain("less than 99")
         })
@@ -228,7 +274,12 @@ describe("RangeValidator", () => {
                 `)
             let test = new RangeValidator();
             let clazz = <Kecubung.ClassMetaData>meta.children[0]
-            let result = test.validate(80, clazz.methods[0].parameters[0])
+            let result = test.validate({
+                value: 80,
+                classInfo: clazz,
+                decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+                field: "model"
+            })
             Chai.expect(result).undefined
         })
 
@@ -250,10 +301,14 @@ describe("RangeValidator", () => {
                 `)
             let test = new RangeValidator();
             let clazz = <Kecubung.ClassMetaData>meta.children[0]
-            let result = test.validate(61, clazz.methods[0].parameters[0])
+            let result = test.validate({
+                value: 61,
+                classInfo: clazz,
+                decoratorArgs: clazz.methods[0].parameters[0].decorators[0].parameters,
+                field: "model"
+            })
             Chai.expect(result[0].field).eq("model")
             Chai.expect(result[0].message).eq("You are too old")
         })
     })
-
 })

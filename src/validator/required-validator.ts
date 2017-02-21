@@ -1,16 +1,17 @@
-import { ValidatorCommandBase, decoratorName } from "./baseclasses"
-import { ValidationError } from "../core"
+import { ValidatorBase, decoratorName } from "./baseclasses"
+import { ValidationError, FieldValidatorArg } from "../core"
 import * as Kecubung from "kecubung"
 
-export class RequiredValidator extends ValidatorCommandBase {
+export class RequiredValidator extends ValidatorBase {
 
     @decoratorName("required")
-    validate(value: any, metaData: Kecubung.ParameterMetaData | Kecubung.PropertyMetaData, parent?:string) {
-        if (!value) {
-            let customMessage: string = this.getParameter(metaData, 0, "String")
+    validate(args: FieldValidatorArg) {
+        if (this.isEmpty(args.value)) {
+            let decoratorArg = <Kecubung.PrimitiveValueMetaData>args.decoratorArgs[0]
+            let customMessage = decoratorArg && decoratorArg.value 
             return [{
-                field: parent ? `${parent}.${metaData.name}` : metaData.name,
-                message: customMessage || `[${metaData.name}] is required`
+                field: args.parentField ? `${args.parentField}.${args.field}` : args.field,
+                message: customMessage || `[${args.field}] is required`
             }]
         }
     }

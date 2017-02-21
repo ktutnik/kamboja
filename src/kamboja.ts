@@ -1,8 +1,7 @@
 import * as Core from "./core"
 import * as Lodash from "lodash"
-import { InMemoryMetaDataStorage } from "./metadata-storage"
+import { MetaDataLoader } from "./metadata-loader/metadata-loader"
 import { DefaultDependencyResolver, DefaultIdentifierResolver, PathResolver } from "./resolver"
-import { RangeValidator, RequiredValidator, EmailValidator } from "./validator"
 import { RouteGenerator, RouteAnalyzer } from "./route-generator"
 import * as Fs from "fs"
 import * as Path from "path"
@@ -12,9 +11,14 @@ import * as Babylon from "babylon"
 import * as Kecubung from "kecubung"
 
 export class Kamboja {
+    private static options:Core.KambojaOption;
     private options: Core.KambojaOption
     private log: Logger;
-    private storage:Core.MetaDataStorage;
+    private storage:MetaDataLoader;
+
+    static getOptions(){
+        return Kamboja.options;
+    }
 
     constructor(private engine: Core.Engine, options?: Core.KambojaOption) {
         this.options = Lodash.assign(<Core.KambojaOption>{
@@ -28,27 +32,12 @@ export class Kamboja {
             dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
             identifierResolver: new DefaultIdentifierResolver(),
         }, options)
-        this.storage = new InMemoryMetaDataStorage(this.options.identifierResolver);
+        this.storage = new MetaDataLoader(this.options.identifierResolver);
         this.options.getStorage = () => {
             return this.storage;
         }
         this.log = new Logger(this.options.showConsoleLog ? "Info" : "Error")
-    }
-
-    private loadModels() {
-        let pathResolver = new PathResolver();
-        let path = pathResolver.resolve(this.options.modelPath)
-        if (!Fs.existsSync(path)) return true;
-        let modelPaths = Fs.readdirSync(path)
-            .filter(x => Path.extname(x) == ".js")
-            .map(x => Path.join(path, x));
-        modelPaths.forEach(x => {
-            let code = Fs.readFileSync(x).toString()
-            let ast = Babylon.parse(code)
-            let meta = Kecubung.transform("ASTree", ast, pathResolver.relative(x))
-            this.options.getStorage().save(meta)
-        })
-        return true
+        Kamboja.options = this.options;
     }
 
     private isFolderProvided() {
@@ -70,8 +59,8 @@ export class Kamboja {
         return result;
     }
 
-    private generateRoutes() {
-        let route = new RouteGenerator(this.options.controllerPaths, this.options.identifierResolver, this.options.getStorage(), Fs.readFileSync)
+    private generateRoutes(controllerMeta:Kecubung.ParentMetaData[]) {
+        let route = new RouteGenerator(this.options.identifierResolver, controllerMeta)
         let infos = route.getRoutes()
         if (infos.length == 0) {
             let paths = this.options.controllerPaths.join(",")
@@ -109,8 +98,9 @@ export class Kamboja {
 
     init() {
         if (!this.isFolderProvided()) throw new Error("Fatal error")
-        this.loadModels()
-        let routeInfos = this.generateRoutes()
+        this.storage.load(this.options.controllerPaths, "Controller")
+        this.storage.load(this.options.modelPath, "Model")
+        let routeInfos = this.generateRoutes(this.storage.getByCategory("Controller"))
         if (routeInfos.length == 0) throw new Error("Fatal error")
         if (!this.analyzeRoutes(routeInfos)) throw new Error("Fatal Error")
         return this.engine.init(routeInfos, this.options)
