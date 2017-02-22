@@ -33,9 +33,7 @@ export class Kamboja {
             identifierResolver: new DefaultIdentifierResolver(),
         }, options)
         this.storage = new MetaDataLoader(this.options.identifierResolver);
-        this.options.getStorage = () => {
-            return this.storage;
-        }
+        this.options.metaDataStorage = this.storage;
         this.log = new Logger(this.options.showConsoleLog ? "Info" : "Error")
         Kamboja.options = this.options;
     }
