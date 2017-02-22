@@ -7,14 +7,6 @@ import * as Core from "../../src/core"
 import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
 import { RequiredValidator } from "../../src/validator"
 
-let facade: Core.Facade = {
-    idResolver: new DefaultIdentifierResolver(),
-    resolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
-    metadataStorage: new MetaDataLoader(new DefaultIdentifierResolver()),
-    validators: [
-        new RequiredValidator()
-    ]
-}
 
 describe("RouteGenerator", () => {
     let idResolver: Core.IdentifierResolver;

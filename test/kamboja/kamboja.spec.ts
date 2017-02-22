@@ -104,7 +104,7 @@ describe("Kamboja", () => {
         })
         kamboja.init()
         let options = Kamboja.getOptions();
-        let storage = options.getStorage();
+        let storage = options.metaDataStorage;
         Chai.expect(storage).not.null;
     })
 
