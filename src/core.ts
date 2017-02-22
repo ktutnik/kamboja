@@ -213,6 +213,20 @@ export class HttpError {
         public response: HttpResponse) { }
 }
 
+export interface Invocation {
+    execute(): void
+    methodName:string
+    classMetaData: Kecubung.ClassMetaData
+    httpRequest:HttpRequest
+    httpResponse:HttpResponse
+    returnValue: any;
+    parameters: any[]
+}
+
+export interface Interceptor{
+    intercept(invocation:Invocation);
+}
+
 export interface DependencyResolver {
     resolve<T>(qualifiedClassName: string);
 }
