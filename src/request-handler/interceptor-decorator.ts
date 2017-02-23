@@ -3,14 +3,30 @@ import * as Core from "../core"
 const InterceptorMetadataKey = "kamboja:interceptor"
 
 export function interceptor(interceptor: Core.Interceptor | string) {
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        let interceptors: (Core.Interceptor | string)[] = Reflect.getMetadata(InterceptorMetadataKey, target, propertyKey) || []
-        interceptors.push(interceptor);
-        Reflect.defineMetadata(InterceptorMetadataKey, interceptors, target, propertyKey)
+    return (...args: any[]) => {
+        if (args.length == 1) {
+            let interceptors: (Core.Interceptor | string)[] = Reflect.getMetadata(InterceptorMetadataKey, args[0]) || []
+            interceptors.push(interceptor);
+            Reflect.defineMetadata(InterceptorMetadataKey, interceptors, args[0])
+        }
+        else if (args.length == 3) {
+            let interceptors: (Core.Interceptor | string)[] = Reflect.getMetadata(InterceptorMetadataKey, args[0], args[1]) || []
+            interceptors.push(interceptor);
+            Reflect.defineMetadata(InterceptorMetadataKey, interceptors, args[0], args[1])
+        }
+        else {
+            throw new Error("Interceptors only allowed on class and method")
+        }
     }
 }
 
-export function getInterceptors(target, methodName: string) {
-    let interceptors: (Core.Interceptor | string)[] = Reflect.getMetadata(InterceptorMetadataKey, target, methodName) || []
-    return interceptors
+export function getInterceptors(target, methodName?: string) {
+    if (!methodName) {
+        let interceptors: (Core.Interceptor | string)[] = Reflect.getMetadata(InterceptorMetadataKey, target.constructor) || []
+        return interceptors
+    }
+    else {
+        let interceptors: (Core.Interceptor | string)[] = Reflect.getMetadata(InterceptorMetadataKey, target, methodName) || []
+        return interceptors
+    }
 }

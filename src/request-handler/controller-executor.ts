@@ -6,7 +6,7 @@ import { ParameterBinder } from "../parameter-binder"
 import { JsonActionResult } from "../controller/json-action-result"
 
 export class ControllerExecutor {
-    private controller:Core.Controller
+    controller:Core.Controller
     constructor(private facade: Core.Facade,
         private routeInfo: Core.RouteInfo,
         private request: Core.HttpRequest) {

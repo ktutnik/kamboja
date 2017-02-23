@@ -1,5 +1,6 @@
 import * as Core from "../core"
-import { ControllerInvocation, InterceptorInvocation } from "./adapters"
+import { ControllerInvocation } from "./controller-invocation"
+import { InterceptorInvocation } from "./interceptor-invocation"
 import "reflect-metadata"
 import * as Kecubung from "kecubung"
 import { ValidatorImpl } from "../validator/validator"
