@@ -1,9 +1,14 @@
-import { ValidatorBase } from "../../../src/validator/baseclasses"
+import { ValidatorBase, decoratorName } from "../../../src/validator/baseclasses"
 import { ValidationError, FieldValidatorArg } from "../../../src/core"
 import * as Kecubung from "kecubung"
 
 export class CustomValidation extends ValidatorBase {
+
+    @decoratorName("customValidation")
     validate(arg:FieldValidatorArg): ValidationError[] {
-        return null
+        return [{
+            field: "any.field",
+            message: "This is error"
+        }]
     }
 }

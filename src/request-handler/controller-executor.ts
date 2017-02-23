@@ -48,7 +48,7 @@ export class ControllerExecutor {
                         commands.push(validator)
                     }
                     catch (e) {
-                        throw new Error(`Can not instantiate custom validator ${x}`)
+                        throw new Error(`Can not instantiate custom validator [${x}]`)
                     }
                 }
                 else commands.push(x)

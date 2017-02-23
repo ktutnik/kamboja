@@ -5,14 +5,8 @@ import * as Kecubung from "kecubung"
 import { getInterceptors } from "./interceptor-decorator"
 import { ParameterBinder } from "../parameter-binder"
 
-export class InterceptorInvocation implements Core.Invocation {
-    methodName: string
-    classMetaData: Kecubung.ClassMetaData
-    returnValue: Core.ActionResult;
-    parameters: any[]
-    interceptors: Core.Interceptor[]
-
-    constructor(private invocation: Core.Invocation, private interceptor: Core.Interceptor) { }
+export class InterceptorInvocation extends Core.Invocation {
+    constructor(private invocation: Core.Invocation, private interceptor: Core.Interceptor) { super() }
 
     async execute(): Promise<void> {
         await this.interceptor.intercept(this.invocation)

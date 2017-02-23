@@ -9,24 +9,21 @@ export function interceptor(interceptor: Core.Interceptor | string) {
             interceptors.push(interceptor);
             Reflect.defineMetadata(InterceptorMetadataKey, interceptors, args[0])
         }
-        else if (args.length == 3) {
+        else {
             let interceptors: (Core.Interceptor | string)[] = Reflect.getMetadata(InterceptorMetadataKey, args[0], args[1]) || []
             interceptors.push(interceptor);
             Reflect.defineMetadata(InterceptorMetadataKey, interceptors, args[0], args[1])
-        }
-        else {
-            throw new Error("Interceptors only allowed on class and method")
         }
     }
 }
 
 export function getInterceptors(target, methodName?: string) {
     if (!methodName) {
-        let interceptors: (Core.Interceptor | string)[] = Reflect.getMetadata(InterceptorMetadataKey, target.constructor) || []
+        let interceptors: (Core.Interceptor | string)[] = Reflect.getMetadata(InterceptorMetadataKey, target.constructor)
         return interceptors
     }
     else {
-        let interceptors: (Core.Interceptor | string)[] = Reflect.getMetadata(InterceptorMetadataKey, target, methodName) || []
+        let interceptors: (Core.Interceptor | string)[] = Reflect.getMetadata(InterceptorMetadataKey, target, methodName)
         return interceptors
     }
 }

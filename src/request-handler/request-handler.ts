@@ -5,6 +5,7 @@ import "reflect-metadata"
 import * as Kecubung from "kecubung"
 import { ValidatorImpl } from "../validator/validator"
 import { ControllerExecutor } from "./controller-executor"
+import { InterceptorBuilder } from "./interceptor-builder"
 
 export class RequestHandler {
     constructor(private facade: Core.Facade,
@@ -15,7 +16,9 @@ export class RequestHandler {
     async execute() {
         try {
             let invocation: Core.Invocation = new ControllerInvocation(this.facade, this.routeInfo, this.request)
-            let interceptors = invocation.interceptors;
+            let interceptorBuilder = new InterceptorBuilder((<ControllerInvocation>invocation).controller, this.facade, this.routeInfo)
+            let interceptors = interceptorBuilder.getInterceptors();
+            invocation.interceptors = interceptors
             for (let interceptor of interceptors) {
                 invocation = new InterceptorInvocation(invocation, interceptor)
             }

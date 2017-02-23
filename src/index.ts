@@ -31,6 +31,7 @@ export {
     ValidationError,
     MetaDataStorage,
     Interceptor,
+    Invocation
 } from "./core"
 export {
     DefaultDependencyResolver,
@@ -46,3 +47,9 @@ export {
 export {
     Kamboja
 } from "./kamboja"
+export {
+    JsonActionResult,
+    ViewActionResult,
+    FileActionResult,
+    RedirectActionResult
+} from "./controller"

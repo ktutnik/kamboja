@@ -206,8 +206,8 @@ export class HttpError {
         public response: HttpResponse) { }
 }
 
-export interface Invocation {
-    execute(): Promise<void>
+export abstract class Invocation {
+    abstract execute(): Promise<void>
     methodName:string
     classMetaData: Kecubung.ClassMetaData
     returnValue: ActionResult
