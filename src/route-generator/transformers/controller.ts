@@ -45,6 +45,7 @@ export class ControllerTransformer extends TransformerBase {
         result.forEach(x => {
             x.qualifiedClassName = meta.name
             x.classMetaData = meta
+            if(x.initiator != "HttpMethodDecorator") x.classPath = parent
             if (!x.collaborator) x.collaborator = []
             x.collaborator.push("Controller")
         })

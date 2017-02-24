@@ -10,7 +10,7 @@ export class HttpDecoratorTransformer extends TransformerBase {
     transform(meta: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
         if (prevResult) {
             //too complex to handle,
-            //just past previous result
+            //just pass previous result
             return this.next(prevResult);
         }
         if (meta.decorators && meta.decorators.length > 0) {

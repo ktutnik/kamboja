@@ -9,13 +9,13 @@ export class InterceptorBuilder {
     getInterceptors() {
         let result:Core.Interceptor[] = []
         result = result.concat(this.getGlobalInterceptors())
-        result = result.concat(this.getClassInterceptors(this.controller))
-        result = result.concat(this.getMethodInterceptors(this.controller))
+        result = result.concat(this.getClassInterceptors())
+        result = result.concat(this.getMethodInterceptors())
         return result;
     }
 
-    private getMethodInterceptors(controller: Core.Controller) {
-        let interceptors = getInterceptors(controller, this.routeInfo.methodMetaData.name)
+    getMethodInterceptors() {
+        let interceptors = getInterceptors(this.controller, this.routeInfo.methodMetaData.name)
         let result: Core.Interceptor[] = []
         for (let intercept of interceptors) {
             if (typeof intercept == "string") {
@@ -34,8 +34,8 @@ export class InterceptorBuilder {
         return result;
     }
 
-    private getClassInterceptors(controller: Core.Controller) {
-        let interceptors = getInterceptors(controller)
+    getClassInterceptors() {
+        let interceptors = getInterceptors(this.controller)
         if(!interceptors) interceptors = []
         let result: Core.Interceptor[] = []
         for (let intercept of interceptors) {
@@ -55,10 +55,11 @@ export class InterceptorBuilder {
         return result;
     }
 
-    private getGlobalInterceptors() {
+    getGlobalInterceptors() {
         let result: Core.Interceptor[] = []
         if(!this.facade.interceptors) this.facade.interceptors = []
-        for (let intercept of this.facade.interceptors) {
+        for (let i = this.facade.interceptors.length - 1; i >= 0; i--) {
+            let intercept = this.facade.interceptors[i]
             if (typeof intercept == "string") {
                 try {
                     let instance = this.facade.dependencyResolver.resolve(intercept)

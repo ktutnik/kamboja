@@ -93,6 +93,8 @@ export interface RouteInfo {
     qualifiedClassName?: string
     classId?: any
     analysis?: number[]
+    classPath?:string
+    methodPath?:string
 }
 
 export interface TransformResult {
