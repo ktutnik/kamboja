@@ -22,6 +22,7 @@ export class ControllerExecutor {
         }
         else {
             let apiResult = await <Promise<any>>Promise.resolve(result);
+            if(typeof apiResult == "undefined" || apiResult == null) return;
             let actionResult = new JsonActionResult(apiResult, undefined, undefined)
             return <Promise<Core.ActionResult>>Promise.resolve(actionResult);
         }

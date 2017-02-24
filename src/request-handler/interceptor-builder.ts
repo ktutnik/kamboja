@@ -24,7 +24,7 @@ export class InterceptorBuilder {
                     result.push(instance)
                 }
                 catch (e) {
-                    throw new Error(`Can not instantiate interceptor [${intercept}] on [${this.routeInfo.qualifiedClassName}] on method [${Core.getMethodName(this.routeInfo)}]`)
+                    throw new Error(`Can not instantiate interceptor [${intercept}] on ${Core.getMethodName(this.routeInfo)}`)
                 }
             }
             else {
@@ -36,6 +36,7 @@ export class InterceptorBuilder {
 
     private getClassInterceptors(controller: Core.Controller) {
         let interceptors = getInterceptors(controller)
+        if(!interceptors) interceptors = []
         let result: Core.Interceptor[] = []
         for (let intercept of interceptors) {
             if (typeof intercept == "string") {
@@ -56,6 +57,7 @@ export class InterceptorBuilder {
 
     private getGlobalInterceptors() {
         let result: Core.Interceptor[] = []
+        if(!this.facade.interceptors) this.facade.interceptors = []
         for (let intercept of this.facade.interceptors) {
             if (typeof intercept == "string") {
                 try {

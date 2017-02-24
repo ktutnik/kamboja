@@ -1,9 +1,9 @@
-import { Controller } from "../../../src/controller"
+import { Controller, JsonActionResult } from "../../../src/controller"
 import { interceptor } from "../../../src/request-handler/interceptor-decorator"
 import { val, decoratorName, Interceptor, Invocation } from "../../../src"
 
-export class DefaultInterceptor implements Interceptor{
+export class ChangeToHello implements Interceptor{
     async intercept(invocation:Invocation):Promise<void> {
-        await invocation.execute()
+        invocation.returnValue = new JsonActionResult("Hello world!", undefined, undefined)
     }
 }

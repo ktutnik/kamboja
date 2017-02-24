@@ -19,19 +19,7 @@ describe("ControllerExecutor", () => {
     let facade: Core.Facade;
 
     beforeEach(() => {
-        validators = [
-            new RequiredValidator(),
-            new RangeValidator(),
-            new EmailValidator()
-        ]
-        facade = {
-            identifierResolver: new DefaultIdentifierResolver(),
-            dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
-            metaDataStorage: new MetaDataLoader(new DefaultIdentifierResolver()),
-            validators: validators
-        }
-        let typeValidator = new TypeValidator(facade.metaDataStorage);
-        validators.push(typeValidator)
+        facade = H.createFacade()
     })
 
     describe("General", () => {
@@ -156,8 +144,8 @@ describe("ControllerExecutor", () => {
             let info = infos.filter(x => x.methodMetaData.name == "voidMethod")[0]
             info.classId = info.qualifiedClassName
             let executor = new ControllerExecutor(facade, info, HttpRequest)
-            let result = <JsonActionResult>await executor.execute([])
-            Chai.expect(result.body).undefined
+            let result = await executor.execute([])
+            Chai.expect(result).undefined
         })
     })
 })

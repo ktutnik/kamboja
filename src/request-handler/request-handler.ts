@@ -1,10 +1,7 @@
+import "reflect-metadata"
 import * as Core from "../core"
 import { ControllerInvocation } from "./controller-invocation"
 import { InterceptorInvocation } from "./interceptor-invocation"
-import "reflect-metadata"
-import * as Kecubung from "kecubung"
-import { ValidatorImpl } from "../validator/validator"
-import { ControllerExecutor } from "./controller-executor"
 import { InterceptorBuilder } from "./interceptor-builder"
 
 export class RequestHandler {
@@ -23,8 +20,10 @@ export class RequestHandler {
                 invocation = new InterceptorInvocation(invocation, interceptor)
             }
             await invocation.execute()
-            if (invocation.returnValue)
+            if (invocation.returnValue){
+                if(typeof invocation.returnValue["execute"] != "function") throw new Error(`Controller not return type of ActionResult in ${Core.getMethodName(this.routeInfo)}`)
                 invocation.returnValue.execute(this.response, this.routeInfo)
+            }
             else
                 this.response.end()
         }

@@ -18,6 +18,7 @@ export function interceptor(interceptor: Core.Interceptor | string) {
 }
 
 export function getInterceptors(target, methodName?: string) {
+    if(!target) return []
     if (!methodName) {
         let interceptors: (Core.Interceptor | string)[] = Reflect.getMetadata(InterceptorMetadataKey, target.constructor)
         return interceptors
