@@ -152,8 +152,8 @@ describe("RequestHandler", () => {
         })
     })
 
-    describe.only("Interception Function", () => {
-        it("Should execute global interception on every actions", async () => {
+    describe("Interception Function", () => {
+        it("Should execute global interception on all actions", async () => {
             let meta = H.fromFile("test/request-handler/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             facade.interceptors = ["ChangeToHello, test/request-handler/interceptor/change-to-hello"]
