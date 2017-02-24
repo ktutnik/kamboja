@@ -23,7 +23,7 @@ export class HttpDecoratorTransformer extends TransformerBase {
                 result.push(info);
             }
             //pass to the default action generator to fill decorator without parameter
-            return this.next(result)
+            return this.next(result.length > 0 ? result : undefined)
         }
         else return this.next()
     }

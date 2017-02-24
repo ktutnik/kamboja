@@ -182,6 +182,6 @@ describe("TypeValidator", () => {
             classInfo: clazz,
             decoratorArgs: method.parameters[0].decorators[0].parameters,
             field: "user"
-        })).throw("Invalid qualified class name parameter in @val.type decorator in [UserController]")
+        })).throw("Invalid qualified class name [NonValidClassName] in @val.type decorator in [UserController]")
     })
 })

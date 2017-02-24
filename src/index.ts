@@ -29,7 +29,9 @@ export {
     Cookie,
     Validator,
     ValidationError,
-    MetaDataStorage
+    MetaDataStorage,
+    Interceptor,
+    Invocation
 } from "./core"
 export {
     DefaultDependencyResolver,
@@ -37,7 +39,7 @@ export {
     PathResolver
 } from "./resolver"
 export {
-    RequestHandler
+    RequestHandler, interceptor
 } from "./request-handler"
 export {
     RouteGenerator, RouteAnalyzer
@@ -45,3 +47,9 @@ export {
 export {
     Kamboja
 } from "./kamboja"
+export {
+    JsonActionResult,
+    ViewActionResult,
+    FileActionResult,
+    RedirectActionResult
+} from "./controller"

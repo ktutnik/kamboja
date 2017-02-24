@@ -112,7 +112,15 @@ export interface ValidatorCommand{
     validate(args:FieldValidatorArg)
 }
 
-export interface KambojaOption {
+export interface Facade{
+    dependencyResolver?: DependencyResolver
+    identifierResolver?: IdentifierResolver
+    validators?: (ValidatorCommand | string)[]
+    metaDataStorage?:MetaDataStorage,
+    interceptors?:(Interceptor | string)[]
+}
+
+export interface KambojaOption extends Facade {
     skipAnalysis?: boolean
     showConsoleLog?: boolean
     overrideAppEngine?: (app) => void
@@ -121,27 +129,12 @@ export interface KambojaOption {
     viewEngine?: string
     staticFilePath?: string
     modelPath?: string
-    dependencyResolver?: DependencyResolver
-    identifierResolver?: IdentifierResolver
-    validators?: Array<ValidatorCommand | string>
     errorHandler?: (err: HttpError) => void,
-    getStorage?: () => MetaDataStorage
 }
 
 export interface MetaDataStorage {
     get(classId: string): Kecubung.ClassMetaData
     getByCategory(category: MetaDataLoaderCategory): Kecubung.ParentMetaData[]
-}
-
-export interface Facade {
-    resolver: DependencyResolver,
-    idResolver: IdentifierResolver,
-    validators: ValidatorCommand[],
-    metadataStorage: MetaDataStorage
-}
-
-export interface ExecutorCommand {
-    execute(parameters: any[]): Promise<ActionResult>
 }
 
 export interface Engine {
@@ -211,6 +204,19 @@ export class HttpError {
         public error,
         public request: HttpRequest,
         public response: HttpResponse) { }
+}
+
+export abstract class Invocation {
+    abstract execute(): Promise<void>
+    methodName:string
+    classMetaData: Kecubung.ClassMetaData
+    returnValue: ActionResult
+    parameters: any[]
+    interceptors: Interceptor[]
+}
+
+export interface Interceptor{
+    intercept(invocation:Invocation):Promise<void>;
 }
 
 export interface DependencyResolver {

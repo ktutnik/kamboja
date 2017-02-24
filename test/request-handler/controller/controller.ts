@@ -1,5 +1,9 @@
 import { Controller, ApiController } from "../../../src/controller"
-import { val } from "../../../src"
+import { val, decoratorName } from "../../../src"
+
+export function customValidation(){
+    return (...args) => {}
+}
 
 export class DummyApi extends Controller {
     returnView() {
@@ -25,6 +29,13 @@ export class DummyApi extends Controller {
     validationTest(@val.required() age){
         if(this.validator.isValid()){
             return this.json(true)
+        }
+        return this.json(this.validator.getValidationErrors())
+    }
+
+    customValidationTest(@customValidation() par1){
+        if(this.validator.isValid()){
+             return this.json(true)
         }
         return this.json(this.validator.getValidationErrors())
     }
