@@ -10,7 +10,7 @@ let engine = {
 }
 
 class FakeValidator extends ValidatorBase {
-    validate(arg:FieldValidatorArg): ValidationError[] {
+    validate(arg: FieldValidatorArg): ValidationError[] {
         return;
     }
 }
@@ -42,6 +42,16 @@ describe("Kamboja", () => {
         kamboja.init()
         let result = initSpy.getCall(0).args
         Chai.expect(result.length).eq(2)
+    })
+
+    it("Should throw if provided model directory not exists", () => {
+        let kamboja = new Kamboja(engine, {
+            controllerPaths: ["test/kamboja/controller"],
+            modelPath: "not/a/valid/path"
+        })
+        Chai.expect(() => {
+            kamboja.init()
+        }).throw("Fatal error")
     })
 
     it("Should throw if controller path not found", () => {
@@ -91,7 +101,7 @@ describe("Kamboja", () => {
         let kamboja = new Kamboja(engine, {
             controllerPaths: ["test/kamboja/controller"],
             modelPath: "test/kamboja/model",
-            showConsoleLog:false
+            showConsoleLog: false
         })
         kamboja.init()
         let result: KambojaOption = initSpy.getCall(0).args[1]

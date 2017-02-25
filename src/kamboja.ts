@@ -11,12 +11,13 @@ import * as Babylon from "babylon"
 import * as Kecubung from "kecubung"
 
 export class Kamboja {
-    private static options:Core.KambojaOption;
+    private static options: Core.KambojaOption;
     private options: Core.KambojaOption
     private log: Logger;
-    private storage:MetaDataLoader;
+    private storage: MetaDataLoader;
+    private defaultModelPath: string = "model"
 
-    static getOptions(){
+    static getOptions() {
         return Kamboja.options;
     }
 
@@ -25,7 +26,7 @@ export class Kamboja {
             skipAnalysis: false,
             showConsoleLog: true,
             controllerPaths: ["controller"],
-            modelPath: "model",
+            modelPath: this.defaultModelPath,
             viewPath: "view",
             staticFilePath: "public",
             viewEngine: "hbs",
@@ -51,13 +52,14 @@ export class Kamboja {
         })
         //model
         let modelPath = pathResolver.resolve(this.options.modelPath)
-        if (!Fs.existsSync(modelPath)) {
-            this.log.warning(`Model path [${this.options.modelPath}] provided in configuration is not exist`)
+        if (!Fs.existsSync(modelPath) && this.options.modelPath != this.defaultModelPath) {
+            this.log.error(`Model path [${this.options.modelPath}] provided in configuration is not exist`)
+            result = false;
         }
         return result;
     }
 
-    private generateRoutes(controllerMeta:Kecubung.ParentMetaData[]) {
+    private generateRoutes(controllerMeta: Kecubung.ParentMetaData[]) {
         let route = new RouteGenerator(this.options.identifierResolver, controllerMeta)
         let infos = route.getRoutes()
         if (infos.length == 0) {

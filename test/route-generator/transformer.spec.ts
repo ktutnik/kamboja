@@ -13,8 +13,8 @@ describe("Transformer", () => {
             let result = Transformer.transform(meta);
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
-                initiator: 'IndexAction',
-                route: '/simple/:par1/:par2',
+                initiator: 'DefaultAction',
+                route: '/simple/index/:par1/:par2',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'index' },
                 qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/simple-controller.js',

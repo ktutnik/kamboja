@@ -66,7 +66,7 @@ export class ControllerTransformer extends TransformerBase {
             this.transformers = [
                 new InternalDecoratorTransformer(),
                 new HttpDecoratorTransformer(),
-                new IndexActionTransformer(),
+                //new IndexActionTransformer(),
                 new DefaultActionTransformer()
             ]
         }
