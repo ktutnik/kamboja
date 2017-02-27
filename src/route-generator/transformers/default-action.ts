@@ -5,14 +5,15 @@ import { TransformerBase, when } from "./transformer-base"
 export class DefaultActionTransformer extends TransformerBase {
     @when("Method")
     transform(method: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
-        parent += "/" + method.name.toLowerCase()
+        let path = "/" + method.name.toLowerCase()
         method.parameters.forEach(x => {
-            parent += `/:${x.name}`
+            path += `/:${x.name}`
         })
         if (prevResult) {
             prevResult.forEach(x => {
                 if (Kecubung.flag(x.overrideRequest, Core.OverrideRequest.Route)) {
-                    x.route = parent;
+                    x.route = parent + path;
+                    x.methodPath = path
                 }
                 x.collaborator = [];
                 x.collaborator.push("DefaultAction")
@@ -22,9 +23,10 @@ export class DefaultActionTransformer extends TransformerBase {
         else {
             return this.exit([<Core.RouteInfo>{
                 initiator: "DefaultAction",
-                route: parent,
+                route: parent + path,
                 httpMethod: "GET",
-                methodMetaData: method
+                methodMetaData: method,
+                methodPath: path
             }]);
         }
     }

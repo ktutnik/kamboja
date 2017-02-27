@@ -42,24 +42,26 @@ export class ApiConventionTransformer extends TransformerBase {
 
 
     private getByPage(meta: Kecubung.MethodMetaData, parent: string) {
-        parent += "/page";
-        meta.parameters.forEach(x => parent += `/:${x.name}`)
+        let path = "/page"
+        meta.parameters.forEach(x => path += `/:${x.name}`)
         return this.exit({
             httpMethod: "GET",
             initiator: "ApiConvention",
             methodMetaData: meta,
-            route: parent
+            route: parent + path,
+            methodPath: path
         });
     }
 
 
     private singleParam(meta: Kecubung.MethodMetaData, parent: string, method: Core.HttpMethod) {
-        parent += "/:" + meta.parameters[0].name;
+        let path = "/:" + meta.parameters[0].name;
         return this.exit({
             httpMethod: method,
             initiator: "ApiConvention",
             methodMetaData: meta,
-            route: parent
+            route: parent + path,
+            methodPath: path
         });
     }
 
@@ -68,7 +70,8 @@ export class ApiConventionTransformer extends TransformerBase {
             httpMethod: "POST",
             initiator: "ApiConvention",
             methodMetaData: meta,
-            route: parent
+            route: parent,
+            methodPath: "/"
         });
     }
 }
