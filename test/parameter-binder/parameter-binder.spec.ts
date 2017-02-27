@@ -82,19 +82,19 @@ describe("ParameterBinder", () => {
         })
 
         it("Should fallback to default binding on GET Http Method", () => {
-            //dummy/page/:offset/:pageWidth        
+            //dummy?offset=1&limit=10  
             let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
             let infos = Transformer.transform(meta)
             getParamStub.withArgs("offset").returns(1)
-            getParamStub.withArgs("pageWidth").returns(10)
+            getParamStub.withArgs("limit").returns(10)
 
-            let binder = new ParameterBinder(infos.filter(x => x.methodMetaData.name == "getByPage")[0], HttpRequest);
+            let binder = new ParameterBinder(infos.filter(x => x.methodMetaData.name == "list")[0], HttpRequest);
             let result = binder.getParameters();
             Chai.expect(result).deep.eq([1, 10])
         })
 
         it("Should assign HttpRequest Body on first parameter on POST method", () => {
-            //dummy/page       
+            //dummy       
             let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
             let infos = Transformer.transform(meta)
             let binder = new ParameterBinder(infos.filter(x => x.methodMetaData.name == "add")[0], HttpRequest);
@@ -103,7 +103,7 @@ describe("ParameterBinder", () => {
         })
 
         it("Should assign HttpRequest Body on second parameter on PUT method", () => {
-            //dummy/page/id     
+            //dummy/id     
             let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
             let infos = Transformer.transform(meta)
             let binder = new ParameterBinder(infos.filter(x => x.methodMetaData.name == "modify")[0], HttpRequest);

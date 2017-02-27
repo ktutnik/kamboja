@@ -6,10 +6,8 @@ export class DefaultParameterBinder {
 
     getParameters(): BinderResult {
         let result: any[] = []
-        let routeParams = this.routeInfo.route
-            .split("/")
-            .filter(x => x.charAt(0) == ":")
-            .map(x => x.substring(1))
+        let routeParams = this.routeInfo.methodMetaData
+            .parameters.map(x => x.name)
         for (let item of routeParams) {
             result.push(autoConvert(this.request.getParam(item)))
         }

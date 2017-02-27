@@ -1,23 +1,22 @@
 import * as Core from "../core"
 import {BinderCommand, BinderResult, autoConvert} from "./baseclasses"
+import { MethodConventionType } from "../route-generator"
 
 export class ApiConventionParameterBinder {
     constructor(private routeInfo: Core.RouteInfo, private request: Core.HttpRequest) { }
 
     getParameters(): BinderResult {
         if (this.routeInfo.initiator == "ApiConvention") {
-            let routeParams = this.routeInfo.route
-                .split("/")
-                .filter(x => x.charAt(0) == ":")
-                .map(x => x.substring(1))
-
             switch (this.routeInfo.httpMethod) {
                 case "GET":
                 case "DELETE":
                     return { status: "Next" };
+                case "PATCH":
                 case "PUT":
                     let result = [];
-                    result.push(autoConvert(this.request.getParam(routeParams[0])))
+                    let id = this.routeInfo.methodMetaData
+                        .parameters[0].name
+                    result.push(autoConvert(this.request.getParam(id)))
                     result.push(this.request.body)
                     return { status: "Exit", result: result };
                 case "POST":
