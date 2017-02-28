@@ -201,9 +201,9 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'ApiConvention',
-                route: '/simple/page/:offset/:pageWidth',
+                route: '/simple',
                 httpMethod: 'GET',
-                methodMetaData: { name: 'getByPage' },
+                methodMetaData: { name: 'list' },
                 qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
                 classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
                 collaborator: ['Controller']
@@ -230,6 +230,15 @@ describe("Transformer", () => {
                 initiator: 'ApiConvention',
                 route: '/simple/:id',
                 httpMethod: 'PUT',
+                methodMetaData: { name: 'replace' },
+                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
+                collaborator: ['Controller']
+            },
+            {
+                initiator: 'ApiConvention',
+                route: '/simple/:id',
+                httpMethod: 'PATCH',
                 methodMetaData: { name: 'modify' },
                 qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
                 classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
@@ -249,7 +258,7 @@ describe("Transformer", () => {
         it("Should identify missing parameter and give Convention Fail warning", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/api-convention-parameter-issue.js")
             let result = Transformer.transform(meta);
-            Chai.expect(result[0].route).eq("/simple/getbypage")
+            Chai.expect(result[0].route).eq("/simple/list")
             Chai.expect(result[0].httpMethod).eq("GET")
             Chai.expect(result[0].analysis).deep.eq([Core.RouteAnalysisCode.ConventionFail])
             Chai.expect(result[1].route).eq("/simple/get")
@@ -261,9 +270,12 @@ describe("Transformer", () => {
             Chai.expect(result[3].route).eq("/simple/modify")
             Chai.expect(result[3].httpMethod).eq("GET")
             Chai.expect(result[3].analysis).deep.eq([Core.RouteAnalysisCode.ConventionFail])
-            Chai.expect(result[4].route).eq("/simple/delete")
+            Chai.expect(result[4].route).eq("/simple/replace")
             Chai.expect(result[4].httpMethod).eq("GET")
             Chai.expect(result[4].analysis).deep.eq([Core.RouteAnalysisCode.ConventionFail])
+            Chai.expect(result[5].route).eq("/simple/delete")
+            Chai.expect(result[5].httpMethod).eq("GET")
+            Chai.expect(result[5].analysis).deep.eq([Core.RouteAnalysisCode.ConventionFail])
         })
 
         it("Should fall back to default transformer if name doesn't match", () => {

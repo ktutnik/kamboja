@@ -90,3 +90,33 @@ export function restore<T>(object: Spies<T> | Stubs<T>) {
         object[key].restore()
     }
 }
+
+export class HttpResponse implements Core.HttpResponse {
+    setCookie(key: string, value: string, option?: Core.CookieOptions) { }
+    status(status: number, message?: string) { }
+    json(body, status?: number) { }
+    jsonp(body, status?: number) { }
+    error(error, status?: number) { }
+    view(name, model?) { }
+    redirect(url: string) { }
+    file(path: string) { }
+    end() { }
+    clearCookie() { }
+    setContentType(type: string) { }
+    send(body) { }
+};
+
+export class HttpRequest implements Core.HttpRequest {
+    httpVersion: string
+    httpMethod: Core.HttpMethod
+    headers: { [key: string]: string }
+    cookies: { [key: string]: string }
+    params: { [key: string]: string }
+    body: any
+    referrer: string
+    url: string
+    getHeader(key: string): string { return }
+    getCookie(key: string): string { return }
+    getParam(key: string): string { return }
+    isAccept(mime: string) { return false }
+}

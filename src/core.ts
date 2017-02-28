@@ -170,7 +170,7 @@ export interface HttpRequest {
     getHeader(key: string): string
     getCookie(key: string): string
     getParam(key: string): string
-    isAccept(mime:string):boolean
+    isAccept(mime: string): boolean
 }
 
 
@@ -237,8 +237,11 @@ export interface IdentifierResolver {
 export class ActionResult {
     private cookieCleared = false;
     private contentType: string;
+    cookies: Cookie[]
 
-    constructor(public cookies: Cookie[]) { }
+    constructor(cookies: Cookie[]) {
+        this.cookies = cookies || []
+    }
 
     setCookie(cookie: Cookie) {
         this.cookies.push(cookie)
@@ -270,4 +273,3 @@ export function getMethodName(info: RouteInfo) {
 
 export const internal = new Decorator().internal;
 export const http = new HttpDecorator();
-export { ApiController, Controller } from "./controller"

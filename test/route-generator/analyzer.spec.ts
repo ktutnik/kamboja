@@ -165,8 +165,8 @@ describe("Analyzer", () => {
             function MyClass() {
                 return _super !== null && _super.apply(this, arguments) || this;
             }
-            MyClass.prototype.getByPage = function () { };
-            return MyClass;
+            MyClass.prototype.list = function () { };
+            return MyClass; 
         }(core_1.ApiController));
         exports.MyClass = MyClass;
         `, "example-file.js")
@@ -175,22 +175,25 @@ describe("Analyzer", () => {
         let result = Analyzer.analyze(info);
         Chai.expect(result).deep.eq([{
             code: Core.RouteAnalysisCode.ConventionFail,
-            message: "Method name match API Convention but has lack of parameters in [MyClass.getByPage example-file.js]",
+            message: "Method name match API Convention but has lack of parameters in [MyClass.list example-file.js]",
             type: 'Warning'
         }])
     })
 
-    it("Should not use 'view', 'json', 'redirect', 'file' as action because it will override existing ", () => {
+    it("Should not override existing method/property in Controller", () => {
         let meta = H.fromCode(`
         var MyClass = (function (_super) {
             tslib_1.__extends(MyClass, _super);
             function MyClass() {
                 return _super !== null && _super.apply(this, arguments) || this;
             }
+            MyClass.prototype.request = function () { };
+            MyClass.prototype.validator = function () { };
             MyClass.prototype.view = function () { };
             MyClass.prototype.json = function () { };
             MyClass.prototype.redirect = function () { };
             MyClass.prototype.file = function () { };
+            MyClass.prototype.ok = function () { };
             return MyClass;
         }(core_1.Controller));
         exports.MyClass = MyClass;
@@ -199,6 +202,16 @@ describe("Analyzer", () => {
         let info = Transformer.transform(meta);
         let result = Analyzer.analyze(info);
         Chai.expect(result).deep.eq([{
+            code: 1,
+            type: 'Error',
+            message: '[request] must not be used as action, because it will override the Controller method, in [[MyClass.request example-file.js]]'
+        },
+        {
+            code: 1,
+            type: 'Error',
+            message: '[validator] must not be used as action, because it will override the Controller method, in [[MyClass.validator example-file.js]]'
+        },
+        {
             code: 1,
             type: 'Error',
             message: '[view] must not be used as action, because it will override the Controller method, in [[MyClass.view example-file.js]]'
@@ -217,6 +230,47 @@ describe("Analyzer", () => {
             code: 1,
             type: 'Error',
             message: '[file] must not be used as action, because it will override the Controller method, in [[MyClass.file example-file.js]]'
+        }])
+    })
+
+    it("Should not override existing method/property in ApiController", () => {
+        let meta = H.fromCode(`
+        var MyClass = (function (_super) {
+            tslib_1.__extends(MyClass, _super);
+            function MyClass() {
+                return _super !== null && _super.apply(this, arguments) || this;
+            }
+            MyClass.prototype.request = function () { };
+            MyClass.prototype.validator = function () { };
+            MyClass.prototype.ok = function () { };
+            MyClass.prototype.invalid = function () { };
+            MyClass.prototype.json = function () { };
+            return MyClass;
+        }(core_1.ApiController));
+        exports.MyClass = MyClass;
+        `, "example-file.js")
+
+        let info = Transformer.transform(meta);
+        let result = Analyzer.analyze(info);
+        Chai.expect(result).deep.eq([{
+            code: 1,
+            type: 'Error',
+            message: '[request] must not be used as action, because it will override the Controller method, in [[MyClass.request example-file.js]]'
+        },
+        {
+            code: 1,
+            type: 'Error',
+            message: '[validator] must not be used as action, because it will override the Controller method, in [[MyClass.validator example-file.js]]'
+        },
+        {
+            code: 1,
+            type: 'Error',
+            message: '[ok] must not be used as action, because it will override the Controller method, in [[MyClass.ok example-file.js]]'
+        },
+        {
+            code: 1,
+            type: 'Error',
+            message: '[invalid] must not be used as action, because it will override the Controller method, in [[MyClass.invalid example-file.js]]'
         }])
     })
 

@@ -6,44 +6,19 @@ import * as H from "../helper"
 import * as Sinon from "sinon"
 import * as Core from "../../src/core"
 
-class HttpResponse implements Core.HttpResponse {
-    setCookie(key: string, value: string, option?: Core.CookieOptions) { }
-    status(status: number, message?: string) { }
-    json(body, status?: number) { }
-    jsonp(body, status?: number) { }
-    error(error, status?: number) { }
-    view(name, model?) { }
-    redirect(url: string) { }
-    file(path: string) { }
-    end() { }
-};
-
-class HttpRequest implements Core.HttpRequest {
-    httpVersion: string
-    httpMethod: Core.HttpMethod
-    headers: { [key: string]: string }
-    cookies: { [key: string]: string }
-    params: { [key: string]: string }
-    body: any
-    referrer: string
-    url: string
-    getHeader(key: string): string { return }
-    getCookie(key: string): string { return }
-    getParam(key: string): string { return }
-}
 
 describe("RequestHandler", () => {
-    let responseMock: H.Spies<HttpResponse>
-    let httpResponse: HttpResponse
-    let requestMock: H.Stubs<HttpRequest>
-    let httpRequest: HttpRequest
+    let responseMock: H.Spies<H.HttpResponse>
+    let httpResponse: H.HttpResponse
+    let requestMock: H.Stubs<H.HttpRequest>
+    let httpRequest: H.HttpRequest
     let facade: Core.Facade;
 
     beforeEach(() => {
-        responseMock = H.spy(new HttpResponse());
-        httpResponse = <HttpResponse><any>responseMock
-        requestMock = H.stub(new HttpRequest())
-        httpRequest = <HttpRequest><any>requestMock
+        responseMock = H.spy(new H.HttpResponse());
+        httpResponse = <H.HttpResponse><any>responseMock
+        requestMock = H.stub(new H.HttpRequest())
+        httpRequest = <H.HttpRequest><any>requestMock
         facade = H.createFacade()
     })
 

@@ -1,12 +1,11 @@
 import * as Core from "../core"
 import { ValidatorImpl } from "../validator"
 import * as Kecubung from "kecubung"
-import { Controller } from "../controller"
 import { ParameterBinder } from "../parameter-binder"
 import { ApiActionResult } from "../controller/api-action-result"
 
 export class ControllerExecutor {
-    controller:Core.Controller
+    controller: Core.BaseController
     constructor(private facade: Core.Facade,
         private routeInfo: Core.RouteInfo,
         private request: Core.HttpRequest) {
@@ -31,7 +30,7 @@ export class ControllerExecutor {
     }
 
     private getController() {
-        let controller: Core.Controller;
+        let controller: Core.BaseController;
         try {
             controller = this.facade.dependencyResolver.resolve(this.routeInfo.classId)
             return controller

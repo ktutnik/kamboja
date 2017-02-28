@@ -14,4 +14,8 @@ export class DummyApi extends ApiController{
     internalError(){
         throw new Error("Internal error from DummyApi")
     }
+
+    returnOk(){
+        return this.ok("OK!")
+    }
 }

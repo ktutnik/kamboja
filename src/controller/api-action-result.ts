@@ -8,15 +8,16 @@ export class ApiActionResult extends ActionResult {
 
     execute(response: HttpResponse, routeInfo: RouteInfo) {
         super.execute(response, routeInfo);
-        if(this.status == 400)
         if (this.request.isAccept("text/xml")) {
             response.setContentType("text/xml")
             if (this.status) response.status(this.status)
-            if (this.body) response.send(this.body)
+            if (this.body) response.send(Xml(this.body))
+            else response.end()
         }
         else {
             if (this.status) response.status(this.status)
             if (this.body) response.json(this.body)
+            else response.end()
         }
     }
 }

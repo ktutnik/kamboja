@@ -82,11 +82,11 @@ describe("ParameterBinder", () => {
         })
 
         it("Should fallback to default binding on GET Http Method", () => {
-            //dummy?offset=1&limit=10  
+            //dummy?offset=1&pageWidth=10  
             let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
             let infos = Transformer.transform(meta)
             getParamStub.withArgs("offset").returns(1)
-            getParamStub.withArgs("limit").returns(10)
+            getParamStub.withArgs("pageWidth").returns(10)
 
             let binder = new ParameterBinder(infos.filter(x => x.methodMetaData.name == "list")[0], HttpRequest);
             let result = binder.getParameters();

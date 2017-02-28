@@ -6,6 +6,7 @@ import * as Fs from "fs"
 import * as Core from "../../src/core"
 import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
 import { RequiredValidator } from "../../src/validator"
+import * as Util from "util"
 
 
 describe("RouteGenerator", () => {
@@ -23,9 +24,45 @@ describe("RouteGenerator", () => {
         let clean = H.cleanUp(routes)
         Chai.expect(clean).deep.eq([{
             initiator: 'ApiConvention',
-            route: '/dummyapi/page/:offset/:pageSize',
+            route: '/dummyapi',
             httpMethod: 'GET',
-            methodMetaData: { name: 'getByPage' },
+            methodMetaData: { name: 'list' },
+            qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api',
+            classMetaData: { name: 'DummyApi', baseClass: 'ApiController' },
+            collaborator: ['Controller']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/dummyapi/:id',
+            httpMethod: 'GET',
+            methodMetaData: { name: 'get' },
+            qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api',
+            classMetaData: { name: 'DummyApi', baseClass: 'ApiController' },
+            collaborator: ['Controller']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/dummyapi/:id',
+            httpMethod: 'PUT',
+            methodMetaData: { name: 'replace' },
+            qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api',
+            classMetaData: { name: 'DummyApi', baseClass: 'ApiController' },
+            collaborator: ['Controller']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/dummyapi/:id',
+            httpMethod: 'PATCH',
+            methodMetaData: { name: 'modify' },
+            qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api',
+            classMetaData: { name: 'DummyApi', baseClass: 'ApiController' },
+            collaborator: ['Controller']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/dummyapi/:id',
+            httpMethod: 'DELETE',
+            methodMetaData: { name: 'delete' },
             qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api',
             classMetaData: { name: 'DummyApi', baseClass: 'ApiController' },
             collaborator: ['Controller']
