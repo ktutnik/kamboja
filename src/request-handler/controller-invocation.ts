@@ -1,5 +1,5 @@
 import * as Core from "../core"
-import { ControllerExecutor } from "./controller-executor"
+import { ControllerExecutor } from "../controller/controller-executor"
 import "reflect-metadata"
 import * as Kecubung from "kecubung"
 import { getInterceptors } from "./interceptor-decorator"

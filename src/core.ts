@@ -93,8 +93,8 @@ export interface RouteInfo {
     qualifiedClassName?: string
     classId?: any
     analysis?: number[]
-    classPath?:string
-    methodPath?:string
+    classPath?: string
+    methodPath?: string
 }
 
 export interface TransformResult {
@@ -110,16 +110,16 @@ export interface FieldValidatorArg {
     classInfo: Kecubung.ClassMetaData
 }
 
-export interface ValidatorCommand{
-    validate(args:FieldValidatorArg)
+export interface ValidatorCommand {
+    validate(args: FieldValidatorArg)
 }
 
-export interface Facade{
+export interface Facade {
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
     validators?: (ValidatorCommand | string)[]
-    metaDataStorage?:MetaDataStorage,
-    interceptors?:(Interceptor | string)[]
+    metaDataStorage?: MetaDataStorage,
+    interceptors?: (Interceptor | string)[]
 }
 
 export interface KambojaOption extends Facade {
@@ -170,6 +170,7 @@ export interface HttpRequest {
     getHeader(key: string): string
     getCookie(key: string): string
     getParam(key: string): string
+    isAccept(mime:string):boolean
 }
 
 
@@ -191,6 +192,8 @@ export interface CookieOptions {
 
 export interface HttpResponse {
     setCookie(key: string, value: string, option?: CookieOptions)
+    clearCookie()
+    setContentType(type: string)
     status(status: number, message?: string)
     json(body, status?: number)
     jsonp(body, status?: number)
@@ -198,6 +201,7 @@ export interface HttpResponse {
     view(name, model?)
     redirect(url: string)
     file(path: string)
+    send(body?)
     end()
 }
 
@@ -210,15 +214,15 @@ export class HttpError {
 
 export abstract class Invocation {
     abstract execute(): Promise<void>
-    methodName:string
+    methodName: string
     classMetaData: Kecubung.ClassMetaData
     returnValue: ActionResult
     parameters: any[]
     interceptors: Interceptor[]
 }
 
-export interface Interceptor{
-    intercept(invocation:Invocation):Promise<void>;
+export interface Interceptor {
+    intercept(invocation: Invocation): Promise<void>;
 }
 
 export interface DependencyResolver {
@@ -231,12 +235,27 @@ export interface IdentifierResolver {
 }
 
 export class ActionResult {
+    private cookieCleared = false;
+    private contentType: string;
+
     constructor(public cookies: Cookie[]) { }
 
-    execute(response: HttpResponse,
-        routeInfo: RouteInfo) {
-        if (!this.cookies) return
-        for (let cookie of this.cookies) {
+    setCookie(cookie: Cookie) {
+        this.cookies.push(cookie)
+    }
+
+    clearCookie() {
+        this.cookieCleared = true;
+    }
+
+    setContentType(type: string) {
+        this.contentType = type;
+    }
+
+    execute(response: HttpResponse, routeInfo: RouteInfo) {
+        if (this.contentType) response.setContentType(this.contentType)
+        if (this.cookieCleared) response.clearCookie();
+        for (let cookie of this.cookies || []) {
             response.setCookie(cookie.key, cookie.value, cookie.options)
         }
     }
@@ -252,4 +271,3 @@ export function getMethodName(info: RouteInfo) {
 export const internal = new Decorator().internal;
 export const http = new HttpDecorator();
 export { ApiController, Controller } from "./controller"
-
