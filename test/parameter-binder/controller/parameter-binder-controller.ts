@@ -5,7 +5,7 @@ export class DummyApi extends ApiController{
     }
     noParam(){}
 
-    getByPage(offset, pageWidth){}
+    list(offset, pageWidth){}
     modify(id, body){}
     add(body){}
 }

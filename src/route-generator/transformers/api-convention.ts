@@ -2,10 +2,10 @@ import * as Kecubung from "kecubung"
 import * as Core from "../../core"
 import { TransformerBase, when } from "./transformer-base"
 
-export type MethodConventionType = "getByPage" | "get" | "add" | "modify" | "delete"
+export type MethodConventionType = "get" | "list" | "add" | "replace" | "modify" | "delete"
 
 export class ApiConventionTransformer extends TransformerBase {
-    private conventions: Array<MethodConventionType> = ["getByPage", "get", "add", "modify", "delete"]
+    private conventions: Array<MethodConventionType> = ["get", "list", "add", "replace", "modify", "delete"]
     
     @when("Method")
     transform(meta: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
@@ -25,14 +25,16 @@ export class ApiConventionTransformer extends TransformerBase {
                 });
             }
             switch (<MethodConventionType>meta.name) {
-                case "getByPage":
-                    return this.getByPage(meta, parent);
+                case "list":
+                    return this.list(meta, parent);
                 case "get":
                     return this.singleParam(meta, parent, "GET");
                 case "delete":
                     return this.singleParam(meta, parent, "DELETE");
+                case "replace":
+                    return this.singleParam(meta, parent, "PUT")
                 case "modify":
-                    return this.singleParam(meta, parent, "PUT");
+                    return this.singleParam(meta, parent, "PATCH");
                 case "add":
                     return this.add(meta, parent);
             }
@@ -41,15 +43,13 @@ export class ApiConventionTransformer extends TransformerBase {
     }
 
 
-    private getByPage(meta: Kecubung.MethodMetaData, parent: string) {
-        let path = "/page"
-        meta.parameters.forEach(x => path += `/:${x.name}`)
+    private list(meta: Kecubung.MethodMetaData, parent: string) {
         return this.exit({
             httpMethod: "GET",
             initiator: "ApiConvention",
             methodMetaData: meta,
-            route: parent + path,
-            methodPath: path
+            route: parent,
+            methodPath: "/"
         });
     }
 

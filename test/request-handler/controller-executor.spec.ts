@@ -1,6 +1,6 @@
 import { ControllerExecutor } from "../../src/request-handler/controller-executor"
 import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
-import { JsonActionResult, ViewActionResult, RedirectActionResult, FileActionResult } from "../../src/controller"
+import { JsonActionResult, ViewActionResult, RedirectActionResult, FileActionResult, ApiActionResult } from "../../src/controller"
 import { RequiredValidator, RangeValidator, EmailValidator, TypeValidator, ValidatorImpl } from "../../src/validator"
 import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
 import * as Transformer from "../../src/route-generator/transformers"
@@ -146,6 +146,16 @@ describe("ControllerExecutor", () => {
             let executor = new ControllerExecutor(facade, info, HttpRequest)
             let result = await executor.execute([])
             Chai.expect(result).undefined
+        })
+
+        it("Should able to return ActionResult (ok/invalid)", async () => {
+            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "returnOk")[0]
+            info.classId = info.qualifiedClassName
+            let executor = new ControllerExecutor(facade, info, HttpRequest)
+            let result:ApiActionResult = await executor.execute([])
+            Chai.expect(result.body).eq("OK!")
         })
     })
 })

@@ -1,6 +1,5 @@
-import * as Core from "../../../src/core"
+import { ApiController } from "../../../src/controller"
 
-
-export class UserController extends Core.ApiController{
+export class UserController extends ApiController{
     getByPage(offset, take){}
 }

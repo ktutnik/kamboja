@@ -1,5 +1,5 @@
 import * as Core from "../core"
-import { ControllerExecutor } from "./controller-executor"
+import { ControllerExecutor } from "../request-handler/controller-executor"
 import "reflect-metadata"
 import * as Kecubung from "kecubung"
 import { getInterceptors } from "./interceptor-decorator"
@@ -7,7 +7,7 @@ import { ParameterBinder } from "../parameter-binder"
 
 export class ControllerInvocation extends Core.Invocation {
     private executor: ControllerExecutor
-    controller: Core.Controller;
+    controller: Core.BaseController;
 
     constructor(private facade: Core.Facade,
         private routeInfo: Core.RouteInfo,

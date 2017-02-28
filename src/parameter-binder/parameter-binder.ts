@@ -14,6 +14,9 @@ export class ParameterBinder {
     }
 
     getParameters(): Array<any> {
+        if(!this.routeInfo.methodMetaData.parameters 
+            || this.routeInfo.methodMetaData.parameters.length == 0)
+            return []
         for (let command of this.commands) {
             let commandResult = command.getParameters();
             if (commandResult.status == "Exit")

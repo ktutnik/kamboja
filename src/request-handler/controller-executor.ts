@@ -1,12 +1,11 @@
 import * as Core from "../core"
 import { ValidatorImpl } from "../validator"
 import * as Kecubung from "kecubung"
-import { Controller } from "../controller"
 import { ParameterBinder } from "../parameter-binder"
-import { JsonActionResult } from "../controller/json-action-result"
+import { ApiActionResult } from "../controller/api-action-result"
 
 export class ControllerExecutor {
-    controller:Core.Controller
+    controller: Core.BaseController
     constructor(private facade: Core.Facade,
         private routeInfo: Core.RouteInfo,
         private request: Core.HttpRequest) {
@@ -21,15 +20,17 @@ export class ControllerExecutor {
             return <Promise<Core.ActionResult>>Promise.resolve(result);
         }
         else {
-            let apiResult = await <Promise<any>>Promise.resolve(result);
-            if(typeof apiResult == "undefined" || apiResult == null) return;
-            let actionResult = new JsonActionResult(apiResult, undefined, undefined)
-            return <Promise<Core.ActionResult>>Promise.resolve(actionResult);
+            //return immediately if VOID
+            if(typeof result == "undefined" || result == null) return;
+            //return if it is already ActionResult variant
+            if(result["execute"]) return result
+            let apiResult = await Promise.resolve(result)
+            return new ApiActionResult(this.request, apiResult, 200)
         }
     }
 
     private getController() {
-        let controller: Core.Controller;
+        let controller: Core.BaseController;
         try {
             controller = this.facade.dependencyResolver.resolve(this.routeInfo.classId)
             return controller

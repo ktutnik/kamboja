@@ -2,7 +2,7 @@ import * as Core from "../core"
 import { getInterceptors } from "./interceptor-decorator"
 
 export class InterceptorBuilder {
-    constructor(private controller: Core.Controller,
+    constructor(private controller: Core.BaseController,
         private facade: Core.Facade,
         private routeInfo: Core.RouteInfo) { }
 

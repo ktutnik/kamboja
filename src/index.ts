@@ -10,8 +10,6 @@ export {
 
 export {
     ActionResult,
-    ApiController,
-    Controller,
     CookieOptions,
     DependencyResolver,
     Engine,
@@ -48,8 +46,11 @@ export {
     Kamboja
 } from "./kamboja"
 export {
+    Controller,
+    ApiController,
     JsonActionResult,
     ViewActionResult,
     FileActionResult,
-    RedirectActionResult
+    RedirectActionResult,
+    ApiActionResult
 } from "./controller"
