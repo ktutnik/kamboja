@@ -51,5 +51,6 @@ export {
     JsonActionResult,
     ViewActionResult,
     FileActionResult,
-    RedirectActionResult
+    RedirectActionResult,
+    ApiActionResult
 } from "./controller"
