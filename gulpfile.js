@@ -95,24 +95,17 @@ gulp.task("build", function (cb) {
 
 
 //******** TEST *************
-gulp.task("mocha", function () {
-    return gulp.src([
-        "test/**/*.js"
-    ])
-        .pipe(mocha({ ui: "bdd" }))
-        .pipe(istanbul.writeReports());
-});
-
-gulp.task("istanbul:hook", function () {
-    return gulp.src(["src/**/*.js"])
-        // Covering files
-        .pipe(istanbul())
-        // Force `require` to return covered files
+gulp.task('pre-test', function () {
+    return gulp.src(['src/**/*.js'])
+        .pipe(istanbul({ includeUntested: false }))
         .pipe(istanbul.hookRequire());
 });
 
-gulp.task("test", function (cb) {
-    runSequence("istanbul:hook", "mocha", cb);
+gulp.task('test', ['pre-test'], function () {
+    return gulp.src(['test/**/*.js'])
+        .pipe(mocha())
+        .pipe(istanbul.writeReports())
+        .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }));
 });
 
 //******** DISTRIBUTION *************
