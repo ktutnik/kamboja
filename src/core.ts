@@ -192,7 +192,7 @@ export interface CookieOptions {
 
 export interface HttpResponse {
     setCookie(key: string, value: string, option?: CookieOptions)
-    clearCookie()
+    removeCookie(key: string, option?: CookieOptions)
     setContentType(type: string)
     status(status: number, message?: string)
     json(body, status?: number)
@@ -235,8 +235,8 @@ export interface IdentifierResolver {
 }
 
 export class ActionResult {
-    private cookieCleared = false;
     private contentType: string;
+    private removedCookie: { key: string, options?: CookieOptions }[] = []
     cookies: Cookie[]
 
     constructor(cookies: Cookie[]) {
@@ -247,8 +247,8 @@ export class ActionResult {
         this.cookies.push(cookie)
     }
 
-    clearCookie() {
-        this.cookieCleared = true;
+    removeCookie(key: string, options?: CookieOptions) {
+        this.removedCookie.push({key:key, options:options})
     }
 
     setContentType(type: string) {
@@ -257,10 +257,8 @@ export class ActionResult {
 
     execute(response: HttpResponse, routeInfo: RouteInfo) {
         if (this.contentType) response.setContentType(this.contentType)
-        if (this.cookieCleared) response.clearCookie();
-        for (let cookie of this.cookies || []) {
-            response.setCookie(cookie.key, cookie.value, cookie.options)
-        }
+        this.removedCookie.forEach(x => response.removeCookie(x.key, x.options))
+        this.cookies.forEach(x => response.setCookie(x.key, x.value, x.options))
     }
 }
 

@@ -101,7 +101,7 @@ export class HttpResponse implements Core.HttpResponse {
     redirect(url: string) { }
     file(path: string) { }
     end() { }
-    clearCookie() { }
+    removeCookie(key:string, option?:Core.CookieOptions) { }
     setContentType(type: string) { }
     send(body) { }
 };

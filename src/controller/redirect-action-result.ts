@@ -1,7 +1,7 @@
 import { HttpRequest, HttpResponse, ActionResult, RouteInfo, Cookie } from "../core"
 
 export class RedirectActionResult extends ActionResult{
-    constructor(public redirectUrl:string, public cookies:Cookie[]){
+    constructor(public redirectUrl:string, cookies:Cookie[]){
         super(cookies)
     }
 
