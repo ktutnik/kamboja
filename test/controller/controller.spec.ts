@@ -54,9 +54,9 @@ describe("ActionResult", () => {
 
     it("Should be able to clearCookie from result", () => {
         let result = new Core.ActionResult([])
-        result.clearCookie()
+        result.removeCookie("key")
         result.execute(httpResponse, null)
-        Chai.expect(responseMock.clearCookie.calledOnce).true
+        Chai.expect(responseMock.removeCookie.calledOnce).true
     })
 
     it("Should be able to setContentType from result", () => {

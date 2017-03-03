@@ -1,3 +1,5 @@
 {
-    "vsicons.presets.angular": false
+    "vsicons.presets.angular": false,
+    "explorer.openEditors.visible": 0,
+    "workbench.editor.showTabs": false
 }
