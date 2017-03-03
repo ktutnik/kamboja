@@ -13,6 +13,7 @@ export class ControllerExecutor {
 
     async execute(parameters: any[]) {
         this.controller = this.getController()
+        this.controller.request = this.request
         this.controller.validator = this.getValidator(parameters)
         let method = <Function>this.controller[this.routeInfo.methodMetaData.name]
         let result = method.apply(this.controller, parameters);

@@ -5,6 +5,7 @@ import * as Chai from "chai"
 import * as H from "../helper"
 import * as Sinon from "sinon"
 import * as Core from "../../src/core"
+import { ConcatInterceptor } from "./controller/interception-order-controller"
 
 
 describe("RequestHandler", () => {
@@ -166,5 +167,21 @@ describe("RequestHandler", () => {
             result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).eq("Hello world!")
         })
+
+        /*
+        it.only("Should execute interception in proper order", async () => {
+            let meta = H.fromFile("test/request-handler/controller/interception-order-controller.js")
+            let infos = Transformer.transform(meta)
+            facade.interceptors = [
+                new ConcatInterceptor("4"),
+                new ConcatInterceptor("5")
+            ]
+            let info = infos.filter(x => x.classMetaData.name == "InterceptedTestController" && x.methodMetaData.name == "returnHello")[0]
+            info.classId = info.qualifiedClassName
+            let executor = new RequestHandler(facade, info, httpRequest, httpResponse)
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).eq("5, 4, 3, 2, 1, 0, Hello")
+        })*/
     })
 })

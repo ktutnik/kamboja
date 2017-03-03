@@ -11,7 +11,7 @@ import * as Core from "../../src/core"
 
 let HttpRequest: any = {
     body: {},
-    getParam: (key: string) => { }
+    getParam: (key: string) => { },
 }
 
 describe("ControllerExecutor", () => {
@@ -23,6 +23,7 @@ describe("ControllerExecutor", () => {
     })
 
     describe("General", () => {
+        
         it("Should throw when provided invalid class name", async () => {
             let meta = H.fromFile("test/request-handler/controller/controller.js")
             let infos = Transformer.transform(meta)
@@ -76,6 +77,17 @@ describe("ControllerExecutor", () => {
     })
 
     describe("Controller", () => {
+        it("Should instantiate controller properly", () => {
+            let meta = H.fromFile("test/request-handler/controller/controller.js")
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
+            info.classId = info.qualifiedClassName
+            let executor = new ControllerExecutor(facade, info, HttpRequest)
+            executor.execute([])
+            Chai.expect(executor.controller.request).not.null;
+            Chai.expect(executor.controller.validator).not.null
+        })
+        
         it("Should return View properly", async () => {
             let meta = H.fromFile("test/request-handler/controller/controller.js")
             let infos = Transformer.transform(meta)
@@ -118,6 +130,17 @@ describe("ControllerExecutor", () => {
     })
 
     describe("ApiController", () => {
+        it("Should instantiate properly", async () => {
+            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
+            info.classId = info.qualifiedClassName
+            let executor = new ControllerExecutor(facade, info, HttpRequest)
+            executor.execute([])
+            Chai.expect(executor.controller.request).not.null
+            Chai.expect(executor.controller.validator).not.null
+        })
+
         it("Should return value properly", async () => {
             let meta = H.fromFile("test/request-handler/controller/api-controller.js")
             let infos = Transformer.transform(meta)
