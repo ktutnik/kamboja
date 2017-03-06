@@ -1,4 +1,5 @@
 import { ControllerExecutor } from "../../src/request-handler/controller-executor"
+import { Container } from "../../src/request-handler/container"
 import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
 import { JsonActionResult, ViewActionResult, RedirectActionResult, FileActionResult, ApiActionResult } from "../../src/controller"
 import { RequiredValidator, RangeValidator, EmailValidator, TypeValidator, ValidatorImpl } from "../../src/validator"
@@ -8,6 +9,7 @@ import * as Chai from "chai"
 import * as H from "../helper"
 import * as Sinon from "sinon"
 import * as Core from "../../src/core"
+import * as Util from "util"
 
 let HttpRequest: any = {
     body: {},
@@ -23,28 +25,14 @@ describe("ControllerExecutor", () => {
     })
 
     describe("General", () => {
-        
-        it("Should throw when provided invalid class name", async () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
-            let infos = Transformer.transform(meta)
-            let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
-            info.classId = info.qualifiedClassName = "NoNQualifiedName, non/valid/path"
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
-            try {
-                let result = <ViewActionResult>await executor.execute([])
-            }
-            catch (e) {
-                Chai.expect(e.message).eq("Can not instantiate [NoNQualifiedName, non/valid/path] as Controller")
-            }
-        })
-
         it("Should not error if validators in facade is null", async () => {
             let meta = H.fromFile("test/request-handler/controller/controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
             info.classId = info.qualifiedClassName
             facade.validators = null
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
+            let builder = new Container(facade, info)
+            let executor = new ControllerExecutor(builder.controller, info, HttpRequest, true)
             let result = <ViewActionResult>await executor.execute([])
             Chai.expect(result).not.null
         })
@@ -54,46 +42,24 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "customValidationTest")[0]
             info.classId = info.qualifiedClassName
+            facade.validators = []
             facade.validators.push("CustomValidation, test/request-handler/validator/custom-validator")
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
+            let builder = new Container(facade, info)
+            let executor = new ControllerExecutor(builder.controller, info, HttpRequest, true)
             let result = <JsonActionResult>await executor.execute(["par1"])
-            Chai.expect(result.body).deep.eq([ { field: 'any.field', message: 'This is error' } ])
-        })
-
-        it("Should throw when provided invalid class name", async () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
-            let infos = Transformer.transform(meta)
-            let info = infos.filter(x => x.methodMetaData.name == "customValidationTest")[0]
-            info.classId = info.qualifiedClassName
-            facade.validators.push("InvalidName, invalid/path")
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
-            try {
-                let result = <JsonActionResult>await executor.execute(["par1"])
-            }
-            catch (e) {
-                Chai.expect(e.message).eq("Can not instantiate custom validator [InvalidName, invalid/path]")
-            }
+            Chai.expect(result.body).deep.eq([{ field: 'any.field', message: 'This is error' }])
         })
     })
 
     describe("Controller", () => {
-        it("Should instantiate controller properly", () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
-            let infos = Transformer.transform(meta)
-            let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
-            info.classId = info.qualifiedClassName
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
-            executor.execute([])
-            Chai.expect(executor.controller.request).not.null;
-            Chai.expect(executor.controller.validator).not.null
-        })
-        
+
         it("Should return View properly", async () => {
             let meta = H.fromFile("test/request-handler/controller/controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
             info.classId = info.qualifiedClassName
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
+            let builder = new Container(facade, info)
+            let executor = new ControllerExecutor(builder.controller, info, HttpRequest, true)
             let result = <ViewActionResult>await executor.execute([])
             Chai.expect(result.viewName).eq("index")
         })
@@ -103,7 +69,8 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnFile")[0]
             info.classId = info.qualifiedClassName
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
+            let builder = new Container(facade, info)
+            let executor = new ControllerExecutor(builder.controller, info, HttpRequest, true)
             let result = <FileActionResult>await executor.execute([])
             Chai.expect(result.filePath).eq("/go/go/kamboja.js")
         })
@@ -113,7 +80,8 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnRedirect")[0]
             info.classId = info.qualifiedClassName
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
+            let builder = new Container(facade, info)
+            let executor = new ControllerExecutor(builder.controller, info, HttpRequest, true)
             let result = <RedirectActionResult>await executor.execute([])
             Chai.expect(result.redirectUrl).eq("/go/go/kamboja.js")
         })
@@ -123,30 +91,22 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "setTheCookie")[0]
             info.classId = info.qualifiedClassName
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
+            let builder = new Container(facade, info)
+            let executor = new ControllerExecutor(builder.controller, info, HttpRequest, true)
             let result = <ViewActionResult>await executor.execute([])
             Chai.expect(result.cookies[0]).deep.eq({ key: "TheKey", value: "TheValue", options: { expires: true } })
         })
     })
 
     describe("ApiController", () => {
-        it("Should instantiate properly", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
-            let infos = Transformer.transform(meta)
-            let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
-            info.classId = info.qualifiedClassName
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
-            executor.execute([])
-            Chai.expect(executor.controller.request).not.null
-            Chai.expect(executor.controller.validator).not.null
-        })
 
         it("Should return value properly", async () => {
             let meta = H.fromFile("test/request-handler/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
             info.classId = info.qualifiedClassName
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
+            let builder = new Container(facade, info)
+            let executor = new ControllerExecutor(builder.controller, info, HttpRequest, true)
             let result = <JsonActionResult>await executor.execute(["param1"])
             Chai.expect(result.body).eq("param1")
         })
@@ -156,9 +116,32 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnTheParamWithPromise")[0]
             info.classId = info.qualifiedClassName
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
+            let builder = new Container(facade, info)
+            let executor = new ControllerExecutor(builder.controller, info, HttpRequest, true)
             let result = <JsonActionResult>await executor.execute(["param1"])
             Chai.expect(result.body).eq("param1")
+        })
+
+        it("Should auto validate properly", async () => {
+            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
+            info.classId = info.qualifiedClassName
+            let builder = new Container(facade, info)
+            let executor = new ControllerExecutor(builder.controller, info, HttpRequest, true)
+            let result = <JsonActionResult>await executor.execute([])
+            Chai.expect(result.body).deep.eq([ { field: 'required', message: '[required] is required' } ])
+        })
+
+        it("Should not auto validate if the setting is turned off", async () => {
+            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
+            info.classId = info.qualifiedClassName
+            let builder = new Container(facade, info)
+            let executor = new ControllerExecutor(builder.controller, info, HttpRequest, false)
+            let result = <JsonActionResult>await executor.execute([])
+            Chai.expect(result.body).eq("OK")
         })
 
         it("Should able to use VOID method", async () => {
@@ -166,7 +149,8 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "voidMethod")[0]
             info.classId = info.qualifiedClassName
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
+            let builder = new Container(facade, info)
+            let executor = new ControllerExecutor(builder.controller, info, HttpRequest, true)
             let result = await executor.execute([])
             Chai.expect(result).undefined
         })
@@ -176,8 +160,9 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnOk")[0]
             info.classId = info.qualifiedClassName
-            let executor = new ControllerExecutor(facade, info, HttpRequest)
-            let result:ApiActionResult = await executor.execute([])
+            let builder = new Container(facade, info)
+            let executor = new ControllerExecutor(builder.controller, info, HttpRequest, true)
+            let result: ApiActionResult = await executor.execute([])
             Chai.expect(result.body).eq("OK!")
         })
     })

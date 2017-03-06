@@ -119,7 +119,8 @@ export interface Facade {
     identifierResolver?: IdentifierResolver
     validators?: (ValidatorCommand | string)[]
     metaDataStorage?: MetaDataStorage,
-    interceptors?: (Interceptor | string)[]
+    interceptors?: (Interceptor | string)[],
+    autoValidation?:boolean
 }
 
 export interface KambojaOption extends Facade {
