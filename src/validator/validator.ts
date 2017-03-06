@@ -40,7 +40,7 @@ export class ValidatorImpl extends ValidatorBase implements Core.Validator {
             parameterValues: this.parameters,
         })
         if(result)
-            this.errors = this.errors.concat(result)
+            this.errors = result;
         return this.errors.length == 0
     }
 
