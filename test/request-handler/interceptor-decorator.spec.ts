@@ -28,6 +28,12 @@ describe("Interceptor Decorator", () => {
         Chai.expect(result[1]).eq("MethodInterceptor, interceptor/path")
     })
 
+    it("Should return empty array if provided null target", () => {
+        let target = new MyTargetClass();
+        let result = getInterceptors(null, "theMethod");
+        Chai.expect(result.length).eq(0)
+    })
+
     it("Should throw exception if used in property", () => {
         let target = new MyTargetClass();
         let result = getInterceptors(target, "theMethod");

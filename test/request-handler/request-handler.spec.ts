@@ -181,8 +181,7 @@ describe("RequestHandler", () => {
             Chai.expect(result).eq("Hello world!")
         })
 
-        /*
-        it.only("Should execute interception in proper order", async () => {
+        it("Should execute interception in proper order", async () => {
             let meta = H.fromFile("test/request-handler/controller/interception-order-controller.js")
             let infos = Transformer.transform(meta)
             facade.interceptors = [
@@ -191,10 +190,11 @@ describe("RequestHandler", () => {
             ]
             let info = infos.filter(x => x.classMetaData.name == "InterceptedTestController" && x.methodMetaData.name == "returnHello")[0]
             info.classId = info.qualifiedClassName
+            let container = new Container(facade, info)
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
-            Chai.expect(result).eq("5, 4, 3, 2, 1, 0, Hello")
-        })*/
+            Chai.expect(result).eq("0, 1, 2, 3, 4, 5, Hello")
+        })
     })
 })

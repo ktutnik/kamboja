@@ -46,18 +46,12 @@ export function errorReadFile(path: string): Buffer {
 }
 
 export function createFacade() {
-    let validators: Core.ValidatorCommand[] = [
-        new RequiredValidator(),
-        new RangeValidator(),
-        new EmailValidator()
-    ]
     let facade: Core.Facade = {
         identifierResolver: new DefaultIdentifierResolver(),
         dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
         metaDataStorage: new MetaDataLoader(new DefaultIdentifierResolver()),
-        validators: validators
+        autoValidation : true
     }
-    validators.push(new TypeValidator(facade.metaDataStorage))
     return facade;
 }
 

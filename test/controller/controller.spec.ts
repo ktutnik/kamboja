@@ -163,6 +163,17 @@ describe("ApiController", () => {
         let endCalled = responseMock.end.calledOnce
         Chai.expect(endCalled).true
     })
+
+    it("Should return JSON if provided multiple Accept Header", () => {
+        let api = new ApiActionResult(httpRequest, { data: "hello" }, 200)
+        requestMock.isAccept.withArgs("text/xml").returns(true)
+        requestMock.isAccept.withArgs("application/json").returns(true)
+        api.execute(httpResponse, null)
+        let status = responseMock.status.getCall(0).args[0]
+        let send = responseMock.json.getCall(0).args[0]
+        Chai.expect(status).eq(200)
+        Chai.expect(send).deep.eq({ data: "hello" })
+    })
 })
 
 describe("Controller", () => {

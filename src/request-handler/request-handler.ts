@@ -2,6 +2,7 @@ import "reflect-metadata"
 import * as Core from "../core"
 import { ControllerInvocation } from "./controller-invocation"
 import { InterceptorInvocation } from "./interceptor-invocation"
+import { ControllerExecutor } from "./controller-executor"
 import { Container } from "./container"
 
 export class RequestHandler {
@@ -11,7 +12,9 @@ export class RequestHandler {
 
     async execute() {
         try {
-            let invocation: Core.Invocation = new ControllerInvocation(this.container.controller, this.container.routeInfo, this.request)
+            let controllerExecutor = new ControllerExecutor(
+                this.container.controller, this.container.routeInfo, this.request, this.container.facade.autoValidation )
+            let invocation: Core.Invocation = new ControllerInvocation(controllerExecutor, this.container.routeInfo, this.request)
             invocation.interceptors = this.container.interceptors
             for (let interceptor of this.container.interceptors) {
                 invocation = new InterceptorInvocation(invocation, interceptor)

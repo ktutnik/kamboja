@@ -7,7 +7,8 @@ import { ApiActionResult } from "../controller/api-action-result"
 export class ControllerExecutor {
     constructor(private controller: Core.BaseController,
         private routeInfo: Core.RouteInfo,
-        private request: Core.HttpRequest) {
+        private request: Core.HttpRequest,
+        private autoValidation:boolean) {
     }
 
     async execute(parameters: any[]) {
@@ -15,6 +16,9 @@ export class ControllerExecutor {
         (<ValidatorImpl>this.controller.validator)
             .setValue(parameters, this.routeInfo.classMetaData, this.routeInfo.methodMetaData.name)
         let method = <Function>this.controller[this.routeInfo.methodMetaData.name]
+        if(this.autoValidation && !this.controller.validator.isValid()){
+            return new ApiActionResult(this.request, this.controller.validator.getValidationErrors(), 400)
+        }
         let result = method.apply(this.controller, parameters);
         if (this.routeInfo.classMetaData.baseClass == "Controller") {
             return <Promise<Core.ActionResult>>Promise.resolve(result);

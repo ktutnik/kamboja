@@ -52,7 +52,7 @@ export class Container {
     }
 
     private getMethodInterceptors() {
-        let interceptors = getInterceptors(this.controller, this.routeInfo.methodMetaData.name)
+        let interceptors = getInterceptors(this.controller, this.routeInfo.methodMetaData.name) || []
         let result: Core.Interceptor[] = []
         for (let intercept of interceptors) {
             if (typeof intercept == "string") {

@@ -6,8 +6,8 @@ import { getInterceptors } from "./interceptor-decorator"
 import { ParameterBinder } from "../parameter-binder"
 
 export class ControllerInvocation extends Core.Invocation {
-    private executor: ControllerExecutor
-    constructor(public controller: Core.BaseController,
+    
+    constructor(private executor: ControllerExecutor,
         private routeInfo: Core.RouteInfo,
         private request: Core.HttpRequest) {
         super()
@@ -15,7 +15,6 @@ export class ControllerInvocation extends Core.Invocation {
         this.classMetaData = routeInfo.classMetaData
         let parameterBinder = new ParameterBinder(this.routeInfo, this.request)
         this.parameters = parameterBinder.getParameters()
-        this.executor = new ControllerExecutor(controller, this.routeInfo, this.request)
     }
 
     async execute(): Promise<void> {

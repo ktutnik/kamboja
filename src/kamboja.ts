@@ -32,6 +32,7 @@ export class Kamboja {
             viewEngine: "hbs",
             dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
             identifierResolver: new DefaultIdentifierResolver(),
+            autoValidation: true,
         }, options)
         this.storage = new MetaDataLoader(this.options.identifierResolver);
         this.options.metaDataStorage = this.storage;
