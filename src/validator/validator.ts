@@ -12,6 +12,27 @@ export class ValidatorImpl extends ValidatorBase implements Core.Validator {
     private errors: Core.ValidationError[] = []
     private methodName: string
 
+    static create(facade:Core.Facade, routeInfo:Core.RouteInfo, values:any[]): Core.Validator{
+        let commands: Core.ValidatorCommand[] = [];
+        if (facade.validators) {
+            facade.validators.forEach(x => {
+                if (typeof x == "string") {
+                    try {
+                        let validator = facade.dependencyResolver.resolve(x)
+                        commands.push(validator)
+                    }
+                    catch (e) {
+                        throw new Error(`Can not instantiate custom validator [${x}]`)
+                    }
+                }
+                else commands.push(x)
+            })
+        }
+        let validator = new ValidatorImpl(facade.metaDataStorage, commands)
+        validator.setValue(values, routeInfo.classMetaData, routeInfo.methodMetaData.name)
+        return validator
+    }
+
     constructor(private metaDataStorage: Core.MetaDataStorage,
         validators: Core.ValidatorCommand[]) {
         super()
