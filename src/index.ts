@@ -39,7 +39,7 @@ export {
 export {
     RequestHandler, 
     interceptor,
-    Container
+    Factory
 } from "./request-handler"
 export {
     RouteGenerator, 

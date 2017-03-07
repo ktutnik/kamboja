@@ -3,20 +3,20 @@ import * as Core from "../core"
 import { ControllerInvocation } from "./controller-invocation"
 import { InterceptorInvocation } from "./interceptor-invocation"
 import { ControllerExecutor } from "./controller-executor"
-import { Container } from "./container"
+import { Factory } from "./factory"
 
 export class RequestHandler {
-    constructor(private container: Container,
+    constructor(private container: Factory,
         private request: Core.HttpRequest,
         private response: Core.HttpResponse) { }
 
     async execute() {
         try {
-            let controllerExecutor = new ControllerExecutor(
-                this.container.controller, this.container.routeInfo, this.request, this.container.facade.autoValidation )
+            let controllerExecutor = new ControllerExecutor(this.container, this.request )
             let invocation: Core.Invocation = new ControllerInvocation(controllerExecutor, this.container.routeInfo, this.request)
-            invocation.interceptors = this.container.interceptors
-            for (let interceptor of this.container.interceptors) {
+            let interceptors = this.container.createInterceptors()
+            invocation.interceptors = this.container.createInterceptors()
+            for (let interceptor of interceptors) {
                 invocation = new InterceptorInvocation(invocation, interceptor)
             }
             await invocation.execute()
