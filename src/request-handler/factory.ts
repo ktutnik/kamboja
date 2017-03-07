@@ -2,28 +2,38 @@ import * as Core from "../core"
 import { ValidatorImpl } from "../validator"
 import { getInterceptors } from "./interceptor-decorator"
 
-export class Container {
-    public controller: Core.BaseController;
-    public interceptors: Core.Interceptor[]
-
+export class Factory {
+    validatorCommands:Core.ValidatorCommand[]
     constructor(public facade: Core.Facade,
         public routeInfo: Core.RouteInfo) {
-        this.controller = this.createController()
-        this.interceptors = this.getInterceptors()
+            this.validatorCommands = this.getValidatorCommands()
     }
 
-    private createController() {
+    createController():Core.BaseController {
         try {
-            this.controller = this.facade.dependencyResolver.resolve(this.routeInfo.classId)
+            return this.facade.dependencyResolver.resolve(this.routeInfo.classId)
         }
         catch (e) {
             throw new Error(`Can not instantiate [${this.routeInfo.classId}] as Controller`)
         }
-        this.controller.validator = this.getValidator();
-        return this.controller;
     }
 
-    private getValidator() {
+    createValidatorForValue(values:any[]){
+        let validator = new ValidatorImpl(this.facade.metaDataStorage,this.validatorCommands)
+        validator.setValue(values, this.routeInfo.classMetaData, this.routeInfo.methodMetaData.name)
+        return validator
+    }
+
+    createInterceptors() {
+        let controller = this.createController()
+        let result: Core.Interceptor[] = []
+        result = result.concat(this.getGlobalInterceptors())
+        result = result.concat(this.getClassInterceptors(controller))
+        result = result.concat(this.getMethodInterceptors(controller))
+        return result;
+    }
+
+    private getValidatorCommands() {
         let commands: Core.ValidatorCommand[] = [];
         if (this.facade.validators) {
             this.facade.validators.forEach(x => {
@@ -39,20 +49,11 @@ export class Container {
                 else commands.push(x)
             })
         }
-        let validator = new ValidatorImpl(this.facade.metaDataStorage, commands)
-        return validator
+        return commands
     }
 
-    private getInterceptors() {
-        let result: Core.Interceptor[] = []
-        result = result.concat(this.getGlobalInterceptors())
-        result = result.concat(this.getClassInterceptors())
-        result = result.concat(this.getMethodInterceptors())
-        return result;
-    }
-
-    private getMethodInterceptors() {
-        let interceptors = getInterceptors(this.controller, this.routeInfo.methodMetaData.name) || []
+    private getMethodInterceptors(controller:Core.BaseController) {
+        let interceptors = getInterceptors(controller, this.routeInfo.methodMetaData.name) || []
         let result: Core.Interceptor[] = []
         for (let intercept of interceptors) {
             if (typeof intercept == "string") {
@@ -71,8 +72,8 @@ export class Container {
         return result;
     }
 
-    private getClassInterceptors() {
-        let interceptors = getInterceptors(this.controller)
+    private getClassInterceptors(controller:Core.BaseController) {
+        let interceptors = getInterceptors(controller)
         if (!interceptors) interceptors = []
         let result: Core.Interceptor[] = []
         for (let intercept of interceptors) {
