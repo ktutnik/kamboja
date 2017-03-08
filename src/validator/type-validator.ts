@@ -4,6 +4,8 @@ import { ValidationError, MetaDataStorage, FieldValidatorArg } from "../core"
 import { QualifiedName } from "../resolver/qualified-name"
 
 
+const IgnoreTypes = ["string", "number", "boolean"]
+
 export class TypeValidator extends ValidatorBase {
     constructor(private storage: MetaDataStorage) {
         super()
@@ -16,6 +18,7 @@ export class TypeValidator extends ValidatorBase {
         if(!args.decoratorArgs) return;
         let decoratorArg = <Kecubung.PrimitiveValueMetaData>args.decoratorArgs[0]
         if(this.isEmpty(decoratorArg.value)) throw new Error(`Qualified class name should be specified in @val.type in [${args.classInfo.name}]`)
+        if(IgnoreTypes.some(x => x == decoratorArg.value.toLowerCase())) return
         let qualified = new QualifiedName(decoratorArg.value);
         if (!qualified.isValid()) throw new Error(`Invalid qualified class name [${decoratorArg.value}] in @val.type decorator in [${args.classInfo.name}]`)
         let clazz = this.storage.get(qualified.qualifiedName)

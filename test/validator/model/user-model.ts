@@ -3,6 +3,7 @@ import { ItemModel } from "./item-model"
 export class UserModel {
     @val.email()
     @val.required()
+    @val.type("string")
     email: string
 
     @val.required()

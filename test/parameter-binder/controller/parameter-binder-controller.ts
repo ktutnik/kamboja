@@ -1,11 +1,25 @@
-import {Controller, ApiController} from "../../../src/controller"
+import { Controller, ApiController } from "../../../src/controller"
+import { val } from "../../../src"
 
-export class DummyApi extends ApiController{
-    myMethod(par1, par2){
+export class DummyApi extends ApiController {
+    myMethod(par1, par2) {
     }
-    noParam(){}
+    noParam() { }
 
-    list(offset, pageWidth){}
-    modify(id, body){}
-    add(body){}
+    list(offset, pageWidth) { }
+    modify(id, body) { }
+    add(body) { }
+
+    //value converter
+    defaultConversion(par){
+
+    }
+
+    decoratedConversion(@val.type("string") str, @val.type("number") num, @val.type("boolean") bool){
+
+    }
+
+    conventionConversion(strName, intAge, boolIsDirty, strname, intage, boolisdirty){
+
+    }
 }

@@ -14,4 +14,5 @@ export class UserController extends Controller{
     nestedError(@val.type("UserModel, test/validator/model/fail-user-model") user:UserModel){}
     notSpecifiedClassName(@val.type("") user){}
     invalidClassName(@val.type("NonValidClassName") user){}
+    primitiveType(@val.type("string") str, @val.type("number") num, @val.type("boolean") bool){}
 }
