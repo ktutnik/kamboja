@@ -31,6 +31,12 @@ describe("QualifiedName", () => {
         Chai.expect(test.className).eq("MyNameSpace.MyClass")
     })
 
+    it("Should identify type with array", () => {
+        let test = new QualifiedName("MyNameSpace.MyClass[], ./module/class.js")
+        Chai.expect(test.isArray()).true
+        Chai.expect(test.className).eq("MyNameSpace.MyClass")
+    })
+
     /*
     it("Should work with windows file name", () => {
         let test = new QualifiedName("MyNameSpace.MyClass, ./module/class.js")

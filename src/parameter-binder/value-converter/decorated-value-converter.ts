@@ -1,14 +1,14 @@
 import * as Kecubung from "kecubung"
 import { autoConvert } from "../baseclasses"
 import { BaseConverter, ConverterResult } from "./base-converter"
-import {getMethodName} from "../../core"
+import {getMethodName, ValidationTypesAccepted} from "../../core"
 
 /*
 @val.type("string")
 @val.type("number")
 @val.type("boolean")
 */
-const AcceptedTypes = ["string", "number", "boolean"]
+
 export class DecoratedValueConverter extends BaseConverter {
 
     convert(meta: Kecubung.ParameterMetaData, value: string): ConverterResult {
@@ -17,7 +17,7 @@ export class DecoratedValueConverter extends BaseConverter {
         if (!decorators || decorators.length == 0) return this.next()
         if (typeof value == "undefined" || value == null) return this.exit(value);
         let type = this.getParameter(decorators[0]);
-        if (typeof value == "object") 
+        if (typeof value == "object" && !Array.isArray(value)) 
             throw new Error(`Expected parameter type of [@val.type('${type}') ${meta.name}] but got object in ${getMethodName(this.routeInfo)}`)
         switch (type) {
             case "string":
@@ -27,10 +27,12 @@ export class DecoratedValueConverter extends BaseConverter {
             case "boolean":
                 return this.exit(value.toLowerCase() === "true")
         }
+        //all array types (string[], number[], boolean[]) is passed to the default conversion
+        return this.next()
     }
 
     filterTypes(x: Kecubung.DecoratorMetaData) {
-        return x.name == "type" && AcceptedTypes.some(y => this.getParameter(x) == y)
+        return x.name == "type" && ValidationTypesAccepted.some(y => this.getParameter(x) == y)
     }
 
     getParameter(x: Kecubung.DecoratorMetaData) {
