@@ -118,6 +118,60 @@ describe("TypeValidator", () => {
         Chai.expect(result).undefined
     })
 
+    it("Should not error if provided @val.type('string')", () => {
+        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let model: UserModel = {
+            email: null,
+            displayName: "Nobita Nobi",
+            item: null
+        }
+        let method = clazz.methods.filter(x => x.name == "primitiveType")[0]
+        let parameter = method.parameters[0]
+        let result = test.validate({
+            value: "halo",
+            classInfo: clazz,
+            decoratorArgs: parameter.decorators[0].parameters,
+            field: parameter.name
+        })
+        Chai.expect(result).undefined
+    })
+
+    it("Should not error if provided @val.type('number')", () => {
+        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let model: UserModel = {
+            email: null,
+            displayName: "Nobita Nobi",
+            item: null
+        }
+        let method = clazz.methods.filter(x => x.name == "primitiveType")[0]
+        let parameter = method.parameters[1]
+        let result = test.validate({
+            value: "halo",
+            classInfo: clazz,
+            decoratorArgs: parameter.decorators[0].parameters,
+            field: parameter.name
+        })
+        Chai.expect(result).undefined
+    })
+
+    it("Should not error if provided @val.type('boolean')", () => {
+        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let model: UserModel = {
+            email: null,
+            displayName: "Nobita Nobi",
+            item: null
+        }
+        let method = clazz.methods.filter(x => x.name == "primitiveType")[0]
+        let parameter = method.parameters[2]
+        let result = test.validate({
+            value: "halo",
+            classInfo: clazz,
+            decoratorArgs: parameter.decorators[0].parameters,
+            field: parameter.name
+        })
+        Chai.expect(result).undefined
+    })
+
     it("Should give correct error information if model name not found in controller parameter", () => {
         let clazz = storage.get("UserController, test/validator/controller/user-controller")
         let model: UserModel = {
