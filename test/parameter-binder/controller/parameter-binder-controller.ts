@@ -15,11 +15,8 @@ export class DummyApi extends ApiController {
 
     }
 
-    decoratedConversion(@val.type("string") str, @val.type("number") num, @val.type("boolean") bool){
-
-    }
-
-    conventionConversion(strName, intAge, boolIsDirty, strname, intage, boolisdirty){
-
-    }
+    decoratedConversion(@val.type("string") str, @val.type("number") num, @val.type("boolean") bool){}
+    conventionConversion(strName, intAge, boolIsDirty, strname, intage, boolisdirty){}
+    arrayDecorated(@val.type("string[]") str, @val.type("number[]") num, @val.type("boolean[]") bool){}
+    priority(@val.type("number") strName){}
 }

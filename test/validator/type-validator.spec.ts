@@ -9,6 +9,7 @@ import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
 import { DefaultIdentifierResolver } from "../../src/resolver"
 import { UserModel } from "./model/user-model"
 import { ItemModel } from "./model/item-model"
+import { CategoryModel } from "./model/category-model"
 import { ValidatorCommand } from "../../src/core"
 
 
@@ -82,6 +83,59 @@ describe("TypeValidator", () => {
         })
         Chai.expect(result[1].field).eq("user.item.barCode")
         Chai.expect(result[1].message).contain("required")
+    })
+
+    it("Should validate nested model with array type of children", () => {
+        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let model: CategoryModel = {
+            name: "The category",
+            items: [{
+                barCode: null,
+                name: "Item Name"
+            }, {
+                barCode: "fdasfa",
+                name: null
+            }]
+        }
+        let method = clazz.methods.filter(x => x.name == "nestedWithArray")[0]
+        let parameter = method.parameters[0]
+        let result = test.validate({
+            value: model,
+            classInfo: clazz,
+            decoratorArgs: parameter.decorators[0].parameters,
+            field: parameter.name
+        })
+        Chai.expect(result).deep.eq([{
+            field: 'category.items[1].name',
+            message: '[name] is required'
+        },
+        {
+            field: 'category.items[0].barCode',
+            message: '[barCode] is required'
+        }])
+    })
+
+    it("Should validate nested model with array type of children but provided non array", () => {
+        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let model = {
+            name: "The category",
+            items: {
+                barCode: null,
+                name: "Item Name"
+            }
+        }
+        let method = clazz.methods.filter(x => x.name == "nestedWithArray")[0]
+        let parameter = method.parameters[0]
+        let result = test.validate({
+            value: model,
+            classInfo: clazz,
+            decoratorArgs: parameter.decorators[0].parameters,
+            field: parameter.name
+        })
+        Chai.expect(result).deep.eq([{
+            field: 'category.items',
+            message: '[category.items] must be a type of Array'
+        }])
     })
 
     it("Should validate all decorators in field", () => {

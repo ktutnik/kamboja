@@ -1,10 +1,9 @@
 import * as Kecubung from "kecubung"
 import { decoratorName, ValidatorBase } from "./baseclasses"
-import { ValidationError, MetaDataStorage, FieldValidatorArg } from "../core"
+import { ValidationError, MetaDataStorage, FieldValidatorArg, ValidationTypesAccepted } from "../core"
 import { QualifiedName } from "../resolver/qualified-name"
 
 
-const IgnoreTypes = ["string", "number", "boolean"]
 
 export class TypeValidator extends ValidatorBase {
     constructor(private storage: MetaDataStorage) {
@@ -18,7 +17,7 @@ export class TypeValidator extends ValidatorBase {
         if(!args.decoratorArgs) return;
         let decoratorArg = <Kecubung.PrimitiveValueMetaData>args.decoratorArgs[0]
         if(this.isEmpty(decoratorArg.value)) throw new Error(`Qualified class name should be specified in @val.type in [${args.classInfo.name}]`)
-        if(IgnoreTypes.some(x => x == decoratorArg.value.toLowerCase())) return
+        if(ValidationTypesAccepted.some(x => x == decoratorArg.value.toLowerCase())) return
         let qualified = new QualifiedName(decoratorArg.value);
         if (!qualified.isValid()) throw new Error(`Invalid qualified class name [${decoratorArg.value}] in @val.type decorator in [${args.classInfo.name}]`)
         let clazz = this.storage.get(qualified.qualifiedName)
@@ -27,7 +26,8 @@ export class TypeValidator extends ValidatorBase {
             type: "PropertiesValidator",
             classInfo: clazz,
             parentField: args.parentField ? `${args.parentField}.${args.field}` : args.field,
-            classInstance: args.value
+            classInstance: args.value,
+            isArray: qualified.isArray()
         })
     }
 }

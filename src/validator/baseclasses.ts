@@ -36,12 +36,13 @@ export interface PropertiesValidatorArg {
     classInstance: any
     parentField?: string
     classInfo: Kecubung.ClassMetaData
+    isArray: boolean
 }
 
 export class ValidatorBase implements ValidatorCommand {
     public validators: ValidatorCommand[]
 
-    validate(args: FieldValidatorArg): ValidationError[]{
+    validate(args: FieldValidatorArg): ValidationError[] {
         return null;
     }
 
@@ -55,15 +56,38 @@ export class ValidatorBase implements ValidatorCommand {
         if (arg.type == "PropertiesValidator") {
             let result: ValidationError[] = []
             for (let property of arg.classInfo.properties) {
-                let value = arg.classInstance[property.name]
-                let valResult = this.useValidators({
-                    decorators:property.decorators,
-                    value: value,
-                    field:property.name,
-                    parentField: arg.parentField,
-                    classInfo: arg.classInfo
-                })
-                result.push(...valResult)
+                if (arg.isArray) {
+                    if(!Array.isArray(arg.classInstance))
+                        return [{
+                            field: arg.parentField,
+                            message: `[${arg.parentField}] must be a type of Array`
+                        }]
+                    let instances: any[] = arg.classInstance;
+                    for (let i = 0; i < instances.length; i++) {
+                        let instance = instances[i]
+                        let value = instance[property.name]
+                        let valResult = this.useValidators({
+                            decorators: property.decorators,
+                            value: value,
+                            field: property.name,
+                            parentField: `${arg.parentField}[${i}]` ,
+                            classInfo: arg.classInfo
+                        })
+                        result.push(...valResult)
+                    }
+                }
+                else {
+                    let value = arg.classInstance[property.name]
+                    let valResult = this.useValidators({
+                        decorators: property.decorators,
+                        value: value,
+                        field: property.name,
+                        parentField: arg.parentField,
+                        classInfo: arg.classInfo
+                    })
+                    result.push(...valResult)
+                }
+
             }
             return result.length == 0 ? undefined : result;
         }
@@ -73,7 +97,7 @@ export class ValidatorBase implements ValidatorCommand {
             for (let i = 0; i < method.parameters.length; i++) {
                 let parameterMetadata = method.parameters[i]
                 let value = arg.parameterValues[i]
-                let valResult =  this.useValidators({
+                let valResult = this.useValidators({
                     decorators: parameterMetadata.decorators,
                     classInfo: arg.classInfo,
                     field: parameterMetadata.name,
@@ -94,7 +118,7 @@ export class ValidatorBase implements ValidatorCommand {
         classInfo: Kecubung.ClassMetaData
     }) {
         let result: ValidationError[] = []
-        if(!arg.decorators) return
+        if (!arg.decorators) return
         for (let decorator of arg.decorators) {
             let validators = this.validators.filter(x => getDecoratorName(x) == decorator.name)
             for (let validator of validators) {

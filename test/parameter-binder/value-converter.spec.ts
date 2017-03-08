@@ -98,6 +98,32 @@ describe("Value Converter", () => {
                 .throw("Expected parameter type of [@val.type('string') str] but got object in [DummyApi.decoratedConversion test/parameter-binder/controller/parameter-binder-controller.js]")
         })
 
+        it("Should ignore string[]", () => {
+            let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "arrayDecorated")[0]
+            let parameterMeta = info.methodMetaData.parameters[0]
+            Chai.expect(convert(info, parameterMeta, [{ data: "Hello" }]))
+                .deep.eq([{ data: "Hello" }])
+        })
+
+        it("Should ignore number[]", () => {
+            let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "arrayDecorated")[0]
+            let parameterMeta = info.methodMetaData.parameters[1]
+            Chai.expect(convert(info, parameterMeta, [{ data: "Hello" }]))
+                .deep.eq([{ data: "Hello" }])
+        })
+
+        it("Should ignore boolean[]", () => {
+            let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "arrayDecorated")[0]
+            let parameterMeta = info.methodMetaData.parameters[2]
+            Chai.expect(convert(info, parameterMeta, [{ data: "Hello" }]))
+                .deep.eq([{ data: "Hello" }])
+        })
     })
 
     describe("Convention Value Converter", () => {
@@ -170,7 +196,7 @@ describe("Value Converter", () => {
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[3]
             Chai.expect(convert(info, parameterMeta, { data: "Hello" }))
-                .deep.eq({data: "Hello"})
+                .deep.eq({ data: "Hello" })
         })
 
         it("Should not convert if parameter name after 'int' is lower case", () => {
@@ -179,7 +205,7 @@ describe("Value Converter", () => {
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[4]
             Chai.expect(convert(info, parameterMeta, { data: "Hello" }))
-                .deep.eq({data: "Hello"})
+                .deep.eq({ data: "Hello" })
         })
 
         it("Should not convert if parameter name after 'bool' is lower case", () => {
@@ -188,9 +214,17 @@ describe("Value Converter", () => {
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[5]
             Chai.expect(convert(info, parameterMeta, { data: "Hello" }))
-                .deep.eq({data: "Hello"})
+                .deep.eq({ data: "Hello" })
         })
 
     })
 
+    it("Should prioritize @val.type decorator vs naming convention", () => {
+        let meta = H.fromFile("test/parameter-binder/controller/parameter-binder-controller.js")
+        let infos = Transformer.transform(meta)
+        let info = infos.filter(x => x.methodMetaData.name == "priority")[0]
+        let parameterMeta = info.methodMetaData.parameters[0]
+        let result = convert(info, parameterMeta, "abc")
+        Chai.expect(typeof result).eq("number")
+    })
 })

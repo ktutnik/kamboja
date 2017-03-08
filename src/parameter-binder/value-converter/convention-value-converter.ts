@@ -16,7 +16,7 @@ export class ConventionValueConverter extends BaseConverter {
     }
 
     isUppercase(char: string) {
-        return char == char.toUpperCase()
+        return char && char == char.toUpperCase()
     }
 
     toString(value, meta: Kecubung.ParameterMetaData) {

@@ -16,7 +16,6 @@ describe("Interceptor Decorator", () => {
     it("Should get class interceptors", () => {
         let target = new MyTargetClass();
         let result = getInterceptors(target);
-        console.log(result)
         Chai.expect(result[0]).eq("SecondInterceptor, interceptor/path")
         Chai.expect(result[1]).eq("Interceptor, interceptor/path")
     })
