@@ -1,5 +1,5 @@
-import { ControllerExecutor } from "../../src/request-handler/controller-executor"
-import { Factory } from "../../src/request-handler/factory"
+import { ControllerExecutor } from "../../src/engine/controller-executor"
+import { ControllerFactory } from "../../src/engine/factory"
 import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
 import { JsonActionResult, ViewActionResult, RedirectActionResult, FileActionResult, ApiActionResult } from "../../src/controller"
 import { RequiredValidator, RangeValidator, EmailValidator, TypeValidator, ValidatorImpl } from "../../src/validator"
@@ -31,7 +31,7 @@ describe("ControllerExecutor", () => {
             let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
             info.classId = info.qualifiedClassName
             facade.validators = null
-            let builder = new Factory(facade, info)
+            let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result = <ViewActionResult>await executor.execute([])
             Chai.expect(result).not.null
@@ -44,7 +44,7 @@ describe("ControllerExecutor", () => {
             info.classId = info.qualifiedClassName
             facade.validators = []
             facade.validators.push("CustomValidation, test/request-handler/validator/custom-validator")
-            let builder = new Factory(facade, info)
+            let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result = <JsonActionResult>await executor.execute(["par1"])
             Chai.expect(result.body).deep.eq([{ field: 'any.field', message: 'This is error' }])
@@ -58,7 +58,7 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
             info.classId = info.qualifiedClassName
-            let builder = new Factory(facade, info)
+            let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result = <ViewActionResult>await executor.execute([])
             Chai.expect(result.viewName).eq("index")
@@ -69,7 +69,7 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnFile")[0]
             info.classId = info.qualifiedClassName
-            let builder = new Factory(facade, info)
+            let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result = <FileActionResult>await executor.execute([])
             Chai.expect(result.filePath).eq("/go/go/kamboja.js")
@@ -80,7 +80,7 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnRedirect")[0]
             info.classId = info.qualifiedClassName
-            let builder = new Factory(facade, info)
+            let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result = <RedirectActionResult>await executor.execute([])
             Chai.expect(result.redirectUrl).eq("/go/go/kamboja.js")
@@ -91,7 +91,7 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "setTheCookie")[0]
             info.classId = info.qualifiedClassName
-            let builder = new Factory(facade, info)
+            let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result = <ViewActionResult>await executor.execute([])
             Chai.expect(result.cookies[0]).deep.eq({ key: "TheKey", value: "TheValue", options: { expires: true } })
@@ -105,7 +105,7 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
             info.classId = info.qualifiedClassName
-            let builder = new Factory(facade, info)
+            let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result = <JsonActionResult>await executor.execute(["param1"])
             Chai.expect(result.body).eq("param1")
@@ -116,7 +116,7 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnTheParamWithPromise")[0]
             info.classId = info.qualifiedClassName
-            let builder = new Factory(facade, info)
+            let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result = <JsonActionResult>await executor.execute(["param1"])
             Chai.expect(result.body).eq("param1")
@@ -127,7 +127,7 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
             info.classId = info.qualifiedClassName
-            let builder = new Factory(facade, info)
+            let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result = <JsonActionResult>await executor.execute([])
             Chai.expect(result.body).deep.eq([ { field: 'required', message: '[required] is required' } ])
@@ -139,7 +139,7 @@ describe("ControllerExecutor", () => {
             let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
             info.classId = info.qualifiedClassName
             facade.autoValidation = false;
-            let builder = new Factory(facade, info)
+            let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result = <JsonActionResult>await executor.execute([])
             Chai.expect(result.body).eq("OK")
@@ -150,7 +150,7 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "voidMethod")[0]
             info.classId = info.qualifiedClassName
-            let builder = new Factory(facade, info)
+            let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result = await executor.execute([])
             Chai.expect(result).undefined
@@ -161,7 +161,7 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnOk")[0]
             info.classId = info.qualifiedClassName
-            let builder = new Factory(facade, info)
+            let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result: ApiActionResult = await executor.execute([])
             Chai.expect(result.body).eq("OK!")

@@ -5,7 +5,7 @@ export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
 export type TransformStatus = "ExitWithResult" | "Next" | "Exit"
 export type TransformerName = "DefaultAction" | "IndexAction" | "HttpMethodDecorator" | "ApiConvention" | "InternalDecorator" | "Controller" | "Module"
 export type MetaDataLoaderCategory = "Controller" | "Model"
-export const ValidationTypesAccepted = ["string", "string[]", "number", "number[]", "boolean", "boolean[]"]
+export const ValidationTypesAccepted = ["string", "string[]", "number", "number[]", "boolean", "boolean[]", "date", "date[]"]
 
 export class Decorator {
     internal() { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
@@ -264,12 +264,9 @@ export class ActionResult {
     }
 }
 
-export function getMethodName(info: RouteInfo) {
+export function getRouteDetail(info: RouteInfo) {
     const tokens = info.qualifiedClassName.split(",")
     const method = `${tokens[0].trim()}.${info.methodMetaData.name}`
     const file = tokens[1].trim()
     return `[${method} ${file}]`;
 }
-
-export const internal = new Decorator().internal;
-export const http = new HttpDecorator();

@@ -1,5 +1,5 @@
 import { AnalysisMessage, RouteInfo, RouteAnalysisCode } from "../../core"
-import { AnalyzerCommand, getMethodName } from "./definitions"
+import { AnalyzerCommand, getRouteDetail } from "./definitions"
 
 export class MissingActionParameterAnalyzer implements AnalyzerCommand {
     analyse(route: RouteInfo): AnalysisMessage[] {
@@ -10,7 +10,7 @@ export class MissingActionParameterAnalyzer implements AnalyzerCommand {
             return [{
                 code: RouteAnalysisCode.MissingActionParameters,
                 type: "Warning",
-                message: `Parameters [${routeParams.join(", ")}] in [${route.route}] doesn't have associated parameters in ${getMethodName(route)}`
+                message: `Parameters [${routeParams.join(", ")}] in [${route.route}] doesn't have associated parameters in ${getRouteDetail(route)}`
             }]
         }
     }

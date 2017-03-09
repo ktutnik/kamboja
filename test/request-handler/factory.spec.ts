@@ -1,4 +1,4 @@
-import { Factory } from "../../src/request-handler/factory"
+import { ControllerFactory } from "../../src/engine/factory"
 import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../../src/resolver"
 import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
 import { DummyApi, ChangeValueToHelloWorld } from "./controller/controller-intercepted"
@@ -27,7 +27,7 @@ describe("Factory", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnTheParam")[0]
         info.classId = info.qualifiedClassName
-        let container = new Factory(facade, info)
+        let container = new ControllerFactory(facade, info)
         Chai.expect(container.createController()).not.null
     })
 
@@ -36,7 +36,7 @@ describe("Factory", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnTheParam")[0]
         info.classId = "InvalidClass, invalid/path"
-        let container = new Factory(facade, info)
+        let container = new ControllerFactory(facade, info)
         Chai.expect(() => {
             container.createController()
         }).throw("Can not instantiate [InvalidClass, invalid/path] as Controller")
@@ -49,7 +49,7 @@ describe("Factory", () => {
         info.classId = info.qualifiedClassName
         facade.validators = []
         facade.validators.push(new CustomValidation())
-        let container = new Factory(facade, info)
+        let container = new ControllerFactory(facade, info)
         Chai.expect(container.validatorCommands.length).eq(1)
     })
 
@@ -60,7 +60,7 @@ describe("Factory", () => {
         info.classId = info.qualifiedClassName
         facade.validators = []
         facade.validators.push("CustomValidation, test/request-handler/validator/custom-validator")
-        let container = new Factory(facade, info)
+        let container = new ControllerFactory(facade, info)
         Chai.expect(container.validatorCommands.length).eq(1)
     })
 
@@ -71,7 +71,7 @@ describe("Factory", () => {
         info.classId = info.qualifiedClassName
         facade.validators = []
         facade.validators.push("Invalid, test/invalid/path")
-        Chai.expect(() => new Factory(facade, info)).throw("Can not instantiate custom validator [Invalid, test/invalid/path]")
+        Chai.expect(() => new ControllerFactory(facade, info)).throw("Can not instantiate custom validator [Invalid, test/invalid/path]")
     })
 
     it("Should provide interceptors properly", () => {
@@ -82,7 +82,7 @@ describe("Factory", () => {
         facade.interceptors = [];
         facade.interceptors.push("DefaultInterceptor, test/request-handler/interceptor/default-interceptor")
         facade.interceptors.push(new ChangeValueToHelloWorld())
-        let factory = new Factory(facade, info)
+        let factory = new ControllerFactory(facade, info)
         let result = factory.createInterceptors()
         Chai.expect(result.length).eq(6)
     })
@@ -94,7 +94,7 @@ describe("Factory", () => {
         info.classId = info.qualifiedClassName
         facade.interceptors = [];
         facade.interceptors.push("UnqualifiedName, path/of/nowhere")
-        let factory = new Factory(facade, info);
+        let factory = new ControllerFactory(facade, info);
         Chai.expect(() => factory.createInterceptors()).throw("Can not instantiate interceptor [UnqualifiedName, path/of/nowhere] in global interceptors")
     })
 
@@ -103,7 +103,7 @@ describe("Factory", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "UnQualifiedNameOnClassController")[0]
         info.classId = info.qualifiedClassName
-        let factory = new Factory(facade, info)
+        let factory = new ControllerFactory(facade, info)
         Chai.expect(() => factory.createInterceptors()).throw("Can not instantiate interceptor [UnqualifiedName, path/of/nowhere] on [UnQualifiedNameOnClassController, test/request-handler/controller/controller-intercepted-invalid-class.js]")
     })
 
@@ -112,7 +112,7 @@ describe("Factory", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "UnQualifiedNameOnMethodController")[0]
         info.classId = info.qualifiedClassName
-        let factory = new Factory(facade, info)
+        let factory = new ControllerFactory(facade, info)
         Chai.expect(() => factory.createInterceptors()).throw("Can not instantiate interceptor [UnqualifiedName, path/of/nowhere] on [UnQualifiedNameOnMethodController.returnView test/request-handler/controller/controller-intercepted-invalid-method.js]")
     })
 
@@ -124,7 +124,7 @@ describe("Factory", () => {
         facade.interceptors = [];
         facade.interceptors.push("DefaultInterceptor, test/request-handler/interceptor/default-interceptor")
         facade.interceptors.push(new ChangeValueToHelloWorld())
-        let executor: any = new Factory(facade, info)
+        let executor: any = new ControllerFactory(facade, info)
         let result = executor.getGlobalInterceptors();
         Chai.expect(getId(result[0])).eq("ChangeValueToHelloWorld")
         Chai.expect(getId(result[1])).eq("DefaultInterceptor")
@@ -135,7 +135,7 @@ describe("Factory", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "DummyApi")[0]
         info.classId = info.qualifiedClassName
-        let executor: any = new Factory(facade, info)
+        let executor: any = new ControllerFactory(facade, info)
         let result = executor.getClassInterceptors(executor.createController());
         Chai.expect(getId(result[0])).eq("ChangeValueToHelloWorld")
         Chai.expect(getId(result[1])).eq("DefaultInterceptor")
@@ -146,7 +146,7 @@ describe("Factory", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "DummyApi")[0]
         info.classId = info.qualifiedClassName
-        let executor: any = new Factory(facade, info)
+        let executor: any = new ControllerFactory(facade, info)
         let result = executor.getMethodInterceptors(executor.createController());
         Chai.expect(getId(result[0])).eq("ChangeValueToHelloWorld")
         Chai.expect(getId(result[1])).eq("DefaultInterceptor")

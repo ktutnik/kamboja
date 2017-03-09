@@ -3,10 +3,10 @@ import { ValidatorImpl } from "../validator"
 import * as Kecubung from "kecubung"
 import { ParameterBinder } from "../parameter-binder"
 import { ApiActionResult } from "../controller/api-action-result"
-import { Factory } from "./factory"
+import { ControllerFactory } from "./factory"
 
 export class ControllerExecutor {
-    constructor(private factory: Factory,
+    constructor(private factory: ControllerFactory,
         private request: Core.HttpRequest) {
     }
 

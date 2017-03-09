@@ -1,5 +1,5 @@
-import { RequestHandler } from "../../src/request-handler/request-handler"
-import { Factory } from "../../src/request-handler/factory"
+import { RequestHandler } from "../../src/engine/request-handler"
+import { ControllerFactory } from "../../src/engine/factory"
 import * as Transformer from "../../src/route-generator/transformers"
 import { CustomValidation } from "./validator/custom-validator"
 import * as Chai from "chai"
@@ -39,7 +39,7 @@ describe("RequestHandler", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
             info.classId = info.qualifiedClassName
-            let container = new Factory(facade, info)
+            let container = new ControllerFactory(facade, info)
             requestMock.getParam.withArgs("par1").returns("param1")
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
@@ -52,7 +52,7 @@ describe("RequestHandler", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
             info.classId = info.qualifiedClassName
-            let container = new Factory(facade, info)
+            let container = new ControllerFactory(facade, info)
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             let result = responseMock.error.getCall(0).args[0]
@@ -64,7 +64,7 @@ describe("RequestHandler", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "voidMethod")[0]
             info.classId = info.qualifiedClassName
-            let container = new Factory(facade, info)
+            let container = new ControllerFactory(facade, info)
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             Chai.expect(responseMock.end.called).true
@@ -75,7 +75,7 @@ describe("RequestHandler", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
             info.classId = info.qualifiedClassName
-            let container = new Factory(facade, info)
+            let container = new ControllerFactory(facade, info)
             requestMock.getParam.withArgs("required").returns(undefined)
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
@@ -94,7 +94,7 @@ describe("RequestHandler", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnFile")[0]
             info.classId = info.qualifiedClassName
-            let container = new Factory(facade, info)
+            let container = new ControllerFactory(facade, info)
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             let result = responseMock.file.getCall(0).args[0]
@@ -106,7 +106,7 @@ describe("RequestHandler", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "setTheCookie")[0]
             info.classId = info.qualifiedClassName
-            let container = new Factory(facade, info)
+            let container = new ControllerFactory(facade, info)
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             let result = responseMock.setCookie.getCall(0).args
@@ -118,7 +118,7 @@ describe("RequestHandler", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnNonActionResult")[0]
             info.classId = info.qualifiedClassName
-            let container = new Factory(facade, info)
+            let container = new ControllerFactory(facade, info)
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             let result = responseMock.error.getCall(0).args[0]
@@ -133,7 +133,7 @@ describe("RequestHandler", () => {
             let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
             info.classId = info.qualifiedClassName
             requestMock.getParam.withArgs("age").returns(undefined)
-            let container = new Factory(facade, info)
+            let container = new ControllerFactory(facade, info)
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
@@ -146,7 +146,7 @@ describe("RequestHandler", () => {
             let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
             info.classId = info.qualifiedClassName
             requestMock.getParam.withArgs("par1").returns("param1")
-            let container = new Factory(facade, info)
+            let container = new ControllerFactory(facade, info)
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
@@ -163,7 +163,7 @@ describe("RequestHandler", () => {
             let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
             info.classId = info.qualifiedClassName
             requestMock.getParam.withArgs("par1").returns("param1")
-            let container = new Factory(facade, info)
+            let container = new ControllerFactory(facade, info)
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
@@ -173,7 +173,7 @@ describe("RequestHandler", () => {
             info = infos.filter(x => x.methodMetaData.name == "returnTheParamWithPromise")[0]
             info.classId = info.qualifiedClassName
             requestMock.getParam.withArgs("par1").returns("param1")
-            container = new Factory(facade, info)
+            container = new ControllerFactory(facade, info)
             executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             result = responseMock.json.getCall(0).args[0]
@@ -182,7 +182,7 @@ describe("RequestHandler", () => {
             //voidMethod
             info = infos.filter(x => x.methodMetaData.name == "voidMethod")[0]
             info.classId = info.qualifiedClassName
-            container = new Factory(facade, info)
+            container = new ControllerFactory(facade, info)
             executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             result = responseMock.json.getCall(0).args[0]
@@ -191,7 +191,7 @@ describe("RequestHandler", () => {
             //internalError
             info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
             info.classId = info.qualifiedClassName
-            container = new Factory(facade, info)
+            container = new ControllerFactory(facade, info)
             executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             result = responseMock.json.getCall(0).args[0]
@@ -207,7 +207,7 @@ describe("RequestHandler", () => {
             ]
             let info = infos.filter(x => x.classMetaData.name == "InterceptedTestController" && x.methodMetaData.name == "returnHello")[0]
             info.classId = info.qualifiedClassName
-            let container = new Factory(facade, info)
+            let container = new ControllerFactory(facade, info)
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]

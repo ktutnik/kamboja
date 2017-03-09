@@ -1,5 +1,5 @@
 import { Controller, ApiController } from "../../../src/controller"
-import { val, decoratorName } from "../../../src"
+import { val } from "../../../src"
 
 export function customValidation(){
     return (...args) => {}

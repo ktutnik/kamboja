@@ -1,6 +1,6 @@
 import * as Kecubung from "kecubung"
 import { BaseConverter, ConverterResult } from "./base-converter"
-import { getMethodName } from "../../core"
+import { getRouteDetail } from "../../core"
 
 export class ConventionValueConverter extends BaseConverter {
     convert(meta: Kecubung.ParameterMetaData, value: string): ConverterResult {
@@ -21,19 +21,19 @@ export class ConventionValueConverter extends BaseConverter {
 
     toString(value, meta: Kecubung.ParameterMetaData) {
         if (typeof value == "object")
-            throw new Error(`Expected parameter type of 'string'  but got object in [${meta.name}] ${getMethodName(this.routeInfo)}`)
+            throw new Error(`Expected parameter type of 'string'  but got object in [${meta.name}] ${getRouteDetail(this.routeInfo)}`)
         return this.exit(value.toString())
     }
 
     toNumber(value, meta: Kecubung.ParameterMetaData) {
         if (typeof value == "object")
-            throw new Error(`Expected parameter type of 'number'  but got object in [${meta.name}] ${getMethodName(this.routeInfo)}`)
+            throw new Error(`Expected parameter type of 'number'  but got object in [${meta.name}] ${getRouteDetail(this.routeInfo)}`)
         return this.exit(parseInt(value))
     }
 
     toBoolean(value, meta: Kecubung.ParameterMetaData) {
         if (typeof value == "object")
-            throw new Error(`Expected parameter type of 'boolean'  but got object in [${meta.name}] ${getMethodName(this.routeInfo)}`)
+            throw new Error(`Expected parameter type of 'boolean'  but got object in [${meta.name}] ${getRouteDetail(this.routeInfo)}`)
         return this.exit(value.toLowerCase() === "true")
     }
 }

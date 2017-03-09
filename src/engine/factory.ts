@@ -2,7 +2,7 @@ import * as Core from "../core"
 import { ValidatorImpl } from "../validator"
 import { getInterceptors } from "./interceptor-decorator"
 
-export class Factory {
+export class ControllerFactory {
     validatorCommands:Core.ValidatorCommand[]
     constructor(public facade: Core.Facade,
         public routeInfo: Core.RouteInfo) {
@@ -62,7 +62,7 @@ export class Factory {
                     result.push(instance)
                 }
                 catch (e) {
-                    throw new Error(`Can not instantiate interceptor [${intercept}] on ${Core.getMethodName(this.routeInfo)}`)
+                    throw new Error(`Can not instantiate interceptor [${intercept}] on ${Core.getRouteDetail(this.routeInfo)}`)
                 }
             }
             else {
