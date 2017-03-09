@@ -14,7 +14,7 @@ export function interceptor(interceptor: Core.Interceptor | string) {
             interceptors.push(interceptor);
             Reflect.defineMetadata(InterceptorMetadataKey, interceptors, args[0], args[1])
         }
-    }
+    } 
 }
 
 export function getInterceptors(target, methodName?: string) {

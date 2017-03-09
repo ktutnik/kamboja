@@ -1,4 +1,4 @@
-import { http } from "../../../src/core"
+import { http } from "../../../src"
 import { ApiController } from "../../../src/controller"
 
 

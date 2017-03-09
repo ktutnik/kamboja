@@ -1,4 +1,4 @@
-import { http, internal } from "../src/core"
+import { http, internal } from "../src"
 import { Controller, ApiController } from "../src/controller"
 import { val } from "../src"
 

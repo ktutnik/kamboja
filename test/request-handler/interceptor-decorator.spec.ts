@@ -1,4 +1,4 @@
-import { getInterceptors, interceptor } from "../../src/request-handler/interceptor-decorator"
+import { getInterceptors, interceptor } from "../../src/engine/interceptor-decorator"
 import * as Chai from "chai"
 
 @interceptor("Interceptor, interceptor/path")

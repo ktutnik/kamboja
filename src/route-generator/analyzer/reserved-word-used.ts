@@ -1,5 +1,5 @@
 import { AnalysisMessage, RouteInfo, RouteAnalysisCode } from "../../core"
-import { AnalyzerCommand, getMethodName } from "./definitions"
+import { AnalyzerCommand, getRouteDetail } from "./definitions"
 import {ApiController, Controller} from "../../controller"
 
 type ControllerMemberNames = keyof Controller 
@@ -25,7 +25,7 @@ export class ReservedWordUsedAnalyzer implements AnalyzerCommand {
             return [{
                 code: RouteAnalysisCode.UnAssociatedParameters,
                 type: "Error",
-                message: `[${route.methodMetaData.name}] must not be used as action, because it will override the Controller method, in [${getMethodName(route)}]`
+                message: `[${route.methodMetaData.name}] must not be used as action, because it will override the Controller method, in [${getRouteDetail(route)}]`
             }]
         }
     }

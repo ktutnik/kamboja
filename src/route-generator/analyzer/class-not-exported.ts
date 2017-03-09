@@ -1,5 +1,5 @@
 import { AnalysisMessage, RouteInfo, RouteAnalysisCode } from "../../core"
-import { AnalyzerCommand, getMethodName } from "./definitions"
+import { AnalyzerCommand, getRouteDetail } from "./definitions"
 
 export class ClassNotExportedControllerAnalyzer implements AnalyzerCommand {
     analyse(route: RouteInfo): AnalysisMessage[] {

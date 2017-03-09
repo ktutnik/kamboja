@@ -1,59 +1,21 @@
-import { ValidatorDecorator } from "./validator/baseclasses"
-let val = new ValidatorDecorator();
+import * as Validator from "./validator"
+import * as Core from "./core"
+import * as Resolver from "./resolver"
+import * as RouteGenerator from "./route-generator"
+import * as Engine from "./engine"
+import * as InterceptorDecorator from "./engine/interceptor-decorator"
 
-export { val }
-export {
-    ValidatorImpl,
-    ValidatorBase,
-    decoratorName
-} from "./validator"
+export { Validator }
+export { Core }
+export { Resolver }
+export { RouteGenerator }
+export { Engine }
+export { ApiActionResult, ApiController, Controller, FileActionResult, JsonActionResult, RedirectActionResult, ViewActionResult } from "./controller"
+export { Kamboja } from "./kamboja"
 
-export {
-    ActionResult,
-    CookieOptions,
-    DependencyResolver,
-    Engine,
-    http,
-    HttpError,
-    HttpMethod,
-    HttpRequest,
-    HttpResponse,
-    IdentifierResolver,
-    internal,
-    KambojaOption,
-    RouteInfo,
-    Facade,
-    ValidatorCommand,
-    Cookie,
-    Validator,
-    ValidationError,
-    MetaDataStorage,
-    Interceptor,
-    Invocation
-} from "./core"
-export {
-    DefaultDependencyResolver,
-    DefaultIdentifierResolver,
-    PathResolver
-} from "./resolver"
-export {
-    RequestHandler, 
-    interceptor,
-    Factory
-} from "./request-handler"
-export {
-    RouteGenerator, 
-    RouteAnalyzer
-} from "./route-generator"
-export {
-    Kamboja
-} from "./kamboja"
-export {
-    Controller,
-    ApiController,
-    JsonActionResult,
-    ViewActionResult,
-    FileActionResult,
-    RedirectActionResult,
-    ApiActionResult
-} from "./controller"
+//decorators
+export const interceptor = InterceptorDecorator.interceptor
+export const val: Validator.ValidatorDecorator = new Validator.ValidatorDecorator();
+export const internal = new Core.Decorator().internal;
+export const http = new Core.HttpDecorator();
+

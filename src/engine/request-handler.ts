@@ -3,10 +3,10 @@ import * as Core from "../core"
 import { ControllerInvocation } from "./controller-invocation"
 import { InterceptorInvocation } from "./interceptor-invocation"
 import { ControllerExecutor } from "./controller-executor"
-import { Factory } from "./factory"
+import { ControllerFactory } from "./factory"
 
 export class RequestHandler {
-    constructor(private container: Factory,
+    constructor(private container: ControllerFactory,
         private request: Core.HttpRequest,
         private response: Core.HttpResponse) { }
 
@@ -21,7 +21,7 @@ export class RequestHandler {
             }
             await invocation.execute()
             if (invocation.returnValue) {
-                if (typeof invocation.returnValue["execute"] != "function") throw new Error(`Controller not return type of ActionResult in ${Core.getMethodName(this.container.routeInfo)}`)
+                if (typeof invocation.returnValue["execute"] != "function") throw new Error(`Controller not return type of ActionResult in ${Core.getRouteDetail(this.container.routeInfo)}`)
                 invocation.returnValue.execute(this.response, this.container.routeInfo)
             }
             else

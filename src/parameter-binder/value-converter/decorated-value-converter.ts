@@ -1,7 +1,7 @@
 import * as Kecubung from "kecubung"
 import { autoConvert } from "../baseclasses"
 import { BaseConverter, ConverterResult } from "./base-converter"
-import {getMethodName, ValidationTypesAccepted} from "../../core"
+import {getRouteDetail, ValidationTypesAccepted} from "../../core"
 
 /*
 @val.type("string")
@@ -18,7 +18,7 @@ export class DecoratedValueConverter extends BaseConverter {
         if (typeof value == "undefined" || value == null) return this.exit(value);
         let type = this.getParameter(decorators[0]);
         if (typeof value == "object" && !Array.isArray(value)) 
-            throw new Error(`Expected parameter type of [@val.type('${type}') ${meta.name}] but got object in ${getMethodName(this.routeInfo)}`)
+            throw new Error(`Expected parameter type of [@val.type('${type}') ${meta.name}] but got object in ${getRouteDetail(this.routeInfo)}`)
         switch (type) {
             case "string":
                 return this.exit(value.toString())

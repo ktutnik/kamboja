@@ -1,5 +1,5 @@
 import { AnalysisMessage, RouteInfo, RouteAnalysisCode } from "../../core"
-import { AnalyzerCommand, getMethodName } from "./definitions"
+import { AnalyzerCommand, getRouteDetail } from "./definitions"
 
 export class DuplicateRouteAnalyzer implements AnalyzerCommand {
     routes: RouteInfo[] = []
@@ -10,7 +10,7 @@ export class DuplicateRouteAnalyzer implements AnalyzerCommand {
         if (dupe.length > 0) {
             return [{
                 code: RouteAnalysisCode.DuplicateRoutes,
-                message: `Duplicate route [${route.route}] on: \n  ${getMethodName(route)} \n\  ${getMethodName(dupe[0])}`,
+                message: `Duplicate route [${route.route}] on: \n  ${getRouteDetail(route)} \n\  ${getRouteDetail(dupe[0])}`,
                 type: "Error"
             }];
         }

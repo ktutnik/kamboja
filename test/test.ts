@@ -11,8 +11,9 @@ function getSave(target){
 }
 
 @save()
-class MyClass{
-
+class MyClass {
+     
+     
 }
 
 

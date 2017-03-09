@@ -1,5 +1,5 @@
 import { AnalysisMessage, RouteInfo, RouteAnalysisCode } from "../../core"
-import { AnalyzerCommand, getMethodName } from "./definitions"
+import { AnalyzerCommand, getRouteDetail } from "./definitions"
 
 export class ConflictInternalDecoratorAnalyzer implements AnalyzerCommand {
     analyse(route: RouteInfo): AnalysisMessage[] {
@@ -7,7 +7,7 @@ export class ConflictInternalDecoratorAnalyzer implements AnalyzerCommand {
             return [{
                 code:RouteAnalysisCode.ConflictDecorators,
                 type: "Error",
-                message: `Method decorated with @http will not visible, because the method is decorated @internal in ${getMethodName(route)}`
+                message: `Method decorated with @http will not visible, because the method is decorated @internal in ${getRouteDetail(route)}`
             }]
         }
     }
