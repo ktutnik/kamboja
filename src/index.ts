@@ -10,12 +10,12 @@ export { Core }
 export { Resolver }
 export { RouteGenerator }
 export { Engine }
+export { ApiActionResult, ApiController, Controller, FileActionResult, JsonActionResult, RedirectActionResult, ViewActionResult } from "./controller"
 export { Kamboja } from "./kamboja"
-export * from "./controller"
 
 //decorators
 export const interceptor = InterceptorDecorator.interceptor
-export const val:Validator.ValidatorDecorator = new Validator.ValidatorDecorator();
+export const val: Validator.ValidatorDecorator = new Validator.ValidatorDecorator();
 export const internal = new Core.Decorator().internal;
 export const http = new Core.HttpDecorator();
 

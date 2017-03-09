@@ -1,5 +1,5 @@
 import * as Chai from "chai"
-import { Kamboja } from "../../src/kamboja"
+import { Kamboja } from "../../src"
 import * as Sinon from "sinon"
 import { ValidatorBase } from "../../src/validator/baseclasses"
 import * as Kecubung from "kecubung"
