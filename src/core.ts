@@ -121,7 +121,7 @@ export interface Facade {
     validators?: (ValidatorCommand | string)[]
     metaDataStorage?: MetaDataStorage,
     interceptors?: (Interceptor | string)[],
-    autoValidation?:boolean
+    autoValidation?: boolean
 }
 
 export interface KambojaOption extends Facade {
@@ -137,8 +137,9 @@ export interface KambojaOption extends Facade {
 }
 
 export interface MetaDataStorage {
-    get(classId: string): Kecubung.ClassMetaData
-    getByCategory(category: MetaDataLoaderCategory): Kecubung.ParentMetaData[]
+    get(classId: string): QualifiedClassMetaData
+    getFiles(category: MetaDataLoaderCategory): Kecubung.ParentMetaData[]
+    getClasses(category:MetaDataLoaderCategory): QualifiedClassMetaData[]
 }
 
 export interface Engine {
@@ -250,7 +251,7 @@ export class ActionResult {
     }
 
     removeCookie(key: string, options?: CookieOptions) {
-        this.removedCookie.push({key:key, options:options})
+        this.removedCookie.push({ key: key, options: options })
     }
 
     setContentType(type: string) {
@@ -269,4 +270,8 @@ export function getRouteDetail(info: RouteInfo) {
     const method = `${tokens[0].trim()}.${info.methodMetaData.name}`
     const file = tokens[1].trim()
     return `[${method} ${file}]`;
+}
+
+export interface QualifiedClassMetaData extends Kecubung.ClassMetaData{
+    qualifiedClassName:string
 }

@@ -11,22 +11,29 @@ describe("MetaDataLoader", () => {
         it("Should load classes properly", () => {
             let loader = new MetaDataLoader(new DefaultIdentifierResolver())
             loader.load("test/metadata-loader/controller", "Controller")
-            let result = loader.getByCategory("Controller")
+            let result = loader.getFiles("Controller")
             Chai.expect(result.length).eq(2)
         })
 
         it("Should able to load from multiple directory", () => {
             let loader = new MetaDataLoader(new DefaultIdentifierResolver())
             loader.load(["test/metadata-loader/controller", "test/metadata-loader/model"], "Controller")
-            let result = loader.getByCategory("Controller")
+            let result = loader.getFiles("Controller")
             Chai.expect(result.length).eq(3)
         })
 
-        it("Should throw when directory not found", () => {
+        it("Should throw when directory not found on load controller", () => {
             let loader = new MetaDataLoader(new DefaultIdentifierResolver())
             Chai.expect(() => {
                 loader.load(["test/metadata-loader/controller", "not/a/directory"], "Controller")
             }).throw(/Directory not found/)
+        })
+
+        it("Should not throw when directory found on load model", () => {
+            let loader = new MetaDataLoader(new DefaultIdentifierResolver())
+            loader.load(["not/a/directory"], "Model")
+            let result = loader.getClasses("Model")
+            Chai.expect(result.length).eq(0)
         })
     })
 
@@ -38,11 +45,25 @@ describe("MetaDataLoader", () => {
             Chai.expect(result.name).eq("DummyController")
         })
 
+        it("Should provide qualifiedClassName properly", () => {
+            let storage = new MetaDataLoader(new DefaultIdentifierResolver())
+            storage.load("test/metadata-loader/controller", "Controller")
+            let result = storage.get("DummyController, test/metadata-loader/controller/dummy-controller.js")
+            Chai.expect(result.qualifiedClassName).eq("DummyController, test/metadata-loader/controller/dummy-controller")
+        })
+
         it("Should not return if provided wrong namespace", () => {
             let storage = new MetaDataLoader(new DefaultIdentifierResolver())
             storage.load("test/metadata-loader/controller", "Controller")
             let result = storage.get("MyNamespace.DummyController, test/metadata-loader/controller/dummy-controller.js")
             Chai.expect(result).undefined
+        })
+
+        it("Should not error if provided namespace without classes", () => {
+            let storage = new MetaDataLoader(new DefaultIdentifierResolver())
+            storage.load("test/metadata-loader/no-class", "Controller")
+            let result = storage.getClasses("Controller")
+            Chai.expect(result.length).eq(0)
         })
 
         it("Should return class by qualified name in deep namespace", () => {

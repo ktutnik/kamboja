@@ -101,7 +101,7 @@ export class Kamboja {
         if (!this.isFolderProvided()) throw new Error("Fatal error")
         this.storage.load(this.options.controllerPaths, "Controller")
         this.storage.load(this.options.modelPath, "Model")
-        let routeInfos = this.generateRoutes(this.storage.getByCategory("Controller"))
+        let routeInfos = this.generateRoutes(this.storage.getFiles("Controller"))
         if (routeInfos.length == 0) throw new Error("Fatal error")
         if (!this.analyzeRoutes(routeInfos)) throw new Error("Fatal Error")
         return this.engine.init(routeInfos, this.options)

@@ -30,8 +30,11 @@ export class QualifiedName {
         return this.valid;
     }
 
-    equals(qualifiedName) {
-        let qualified = new QualifiedName(qualifiedName)
+    equals(qualifiedName: string | QualifiedName) {
+        let qualified: QualifiedName;
+        if (typeof qualifiedName == "string") 
+            qualified = new QualifiedName(qualifiedName)
+        else qualified = qualifiedName
         return this.className === qualified.className
             && this.fileName === qualified.fileName
     }

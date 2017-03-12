@@ -23,7 +23,7 @@ describe("Factory", () => {
     })
 
     it("Should provide controller properly", () => {
-        let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+        let meta = H.fromFile("test/engine/controller/api-controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnTheParam")[0]
         info.classId = info.qualifiedClassName
@@ -32,7 +32,7 @@ describe("Factory", () => {
     })
 
     it("Should throw if provided invalid classId", () => {
-        let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+        let meta = H.fromFile("test/engine/controller/api-controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnTheParam")[0]
         info.classId = "InvalidClass, invalid/path"
@@ -43,7 +43,7 @@ describe("Factory", () => {
     })
 
     it("Should provide custom validator properly", () => {
-        let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+        let meta = H.fromFile("test/engine/controller/api-controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnTheParam")[0]
         info.classId = info.qualifiedClassName
@@ -54,18 +54,18 @@ describe("Factory", () => {
     })
 
     it("Should provide custom validator using qualified class name", () => {
-        let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+        let meta = H.fromFile("test/engine/controller/api-controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnTheParam")[0]
         info.classId = info.qualifiedClassName
         facade.validators = []
-        facade.validators.push("CustomValidation, test/request-handler/validator/custom-validator")
+        facade.validators.push("CustomValidation, test/engine/validator/custom-validator")
         let container = new ControllerFactory(facade, info)
         Chai.expect(container.validatorCommands.length).eq(1)
     })
 
     it("Should throw if provided invalid validator qualified class name", () => {
-        let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+        let meta = H.fromFile("test/engine/controller/api-controller.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnTheParam")[0]
         info.classId = info.qualifiedClassName
@@ -75,12 +75,12 @@ describe("Factory", () => {
     })
 
     it("Should provide interceptors properly", () => {
-        let meta = H.fromFile("test/request-handler/controller/controller-intercepted.js")
+        let meta = H.fromFile("test/engine/controller/controller-intercepted.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "DummyApi")[0]
         info.classId = info.qualifiedClassName
         facade.interceptors = [];
-        facade.interceptors.push("DefaultInterceptor, test/request-handler/interceptor/default-interceptor")
+        facade.interceptors.push("DefaultInterceptor, test/engine/interceptor/default-interceptor")
         facade.interceptors.push(new ChangeValueToHelloWorld())
         let factory = new ControllerFactory(facade, info)
         let result = factory.createInterceptors()
@@ -88,7 +88,7 @@ describe("Factory", () => {
     })
 
     it("Should throw if provided unqualified class name in global interceptor", () => {
-        let meta = H.fromFile("test/request-handler/controller/controller-intercepted.js")
+        let meta = H.fromFile("test/engine/controller/controller-intercepted.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "DummyApi")[0]
         info.classId = info.qualifiedClassName
@@ -99,30 +99,30 @@ describe("Factory", () => {
     })
 
     it("Should throw if provided unqualified class name interceptor in class scope", () => {
-        let meta = H.fromFile("test/request-handler/controller/controller-intercepted-invalid-class.js")
+        let meta = H.fromFile("test/engine/controller/controller-intercepted-invalid-class.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "UnQualifiedNameOnClassController")[0]
         info.classId = info.qualifiedClassName
         let factory = new ControllerFactory(facade, info)
-        Chai.expect(() => factory.createInterceptors()).throw("Can not instantiate interceptor [UnqualifiedName, path/of/nowhere] on [UnQualifiedNameOnClassController, test/request-handler/controller/controller-intercepted-invalid-class.js]")
+        Chai.expect(() => factory.createInterceptors()).throw("Can not instantiate interceptor [UnqualifiedName, path/of/nowhere] on [UnQualifiedNameOnClassController, test/engine/controller/controller-intercepted-invalid-class.js]")
     })
 
     it("Should throw if provided unqualified class name in method scope", () => {
-        let meta = H.fromFile("test/request-handler/controller/controller-intercepted-invalid-method.js")
+        let meta = H.fromFile("test/engine/controller/controller-intercepted-invalid-method.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "UnQualifiedNameOnMethodController")[0]
         info.classId = info.qualifiedClassName
         let factory = new ControllerFactory(facade, info)
-        Chai.expect(() => factory.createInterceptors()).throw("Can not instantiate interceptor [UnqualifiedName, path/of/nowhere] on [UnQualifiedNameOnMethodController.returnView test/request-handler/controller/controller-intercepted-invalid-method.js]")
+        Chai.expect(() => factory.createInterceptors()).throw("Can not instantiate interceptor [UnqualifiedName, path/of/nowhere] on [UnQualifiedNameOnMethodController.returnView test/engine/controller/controller-intercepted-invalid-method.js]")
     })
 
     it("Should return in reverse order in global interceptors", () => {
-        let meta = H.fromFile("test/request-handler/controller/controller-intercepted.js")
+        let meta = H.fromFile("test/engine/controller/controller-intercepted.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "DummyApi")[0]
         info.classId = info.qualifiedClassName
         facade.interceptors = [];
-        facade.interceptors.push("DefaultInterceptor, test/request-handler/interceptor/default-interceptor")
+        facade.interceptors.push("DefaultInterceptor, test/engine/interceptor/default-interceptor")
         facade.interceptors.push(new ChangeValueToHelloWorld())
         let executor: any = new ControllerFactory(facade, info)
         let result = executor.getGlobalInterceptors();
@@ -131,7 +131,7 @@ describe("Factory", () => {
     })
 
     it("Should return in reverse order in class scope interceptors", () => {
-        let meta = H.fromFile("test/request-handler/controller/controller-intercepted.js")
+        let meta = H.fromFile("test/engine/controller/controller-intercepted.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "DummyApi")[0]
         info.classId = info.qualifiedClassName
@@ -142,7 +142,7 @@ describe("Factory", () => {
     })
 
     it("Should return in reverse order in method scope interceptors", () => {
-        let meta = H.fromFile("test/request-handler/controller/controller-intercepted.js")
+        let meta = H.fromFile("test/engine/controller/controller-intercepted.js")
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "DummyApi")[0]
         info.classId = info.qualifiedClassName
