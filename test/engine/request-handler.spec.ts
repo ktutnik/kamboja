@@ -35,7 +35,7 @@ describe("RequestHandler", () => {
 
     describe("ApiController Functions", () => {
         it("Should execute API controller properly", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let meta = H.fromFile("test/engine/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
             info.classId = info.qualifiedClassName
@@ -48,7 +48,7 @@ describe("RequestHandler", () => {
         })
 
         it("Should handle internal error inside controller properly", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let meta = H.fromFile("test/engine/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
             info.classId = info.qualifiedClassName
@@ -60,7 +60,7 @@ describe("RequestHandler", () => {
         })
 
         it("Should handle return VOID type of action", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let meta = H.fromFile("test/engine/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "voidMethod")[0]
             info.classId = info.qualifiedClassName
@@ -71,7 +71,7 @@ describe("RequestHandler", () => {
         })
 
         it("Should not cache validator result", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let meta = H.fromFile("test/engine/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
             info.classId = info.qualifiedClassName
@@ -90,7 +90,7 @@ describe("RequestHandler", () => {
 
     describe("Controller Functions", () => {
         it("Should handle controller execution properly", async () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
+            let meta = H.fromFile("test/engine/controller/controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnFile")[0]
             info.classId = info.qualifiedClassName
@@ -102,7 +102,7 @@ describe("RequestHandler", () => {
         })
 
         it("Should set cookie to the response properly", async () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
+            let meta = H.fromFile("test/engine/controller/controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "setTheCookie")[0]
             info.classId = info.qualifiedClassName
@@ -114,7 +114,7 @@ describe("RequestHandler", () => {
         })
 
         it("Should handle error properly on controller when return non ActionResult", async () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
+            let meta = H.fromFile("test/engine/controller/controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnNonActionResult")[0]
             info.classId = info.qualifiedClassName
@@ -122,13 +122,13 @@ describe("RequestHandler", () => {
             let executor = new RequestHandler(container, httpRequest, httpResponse)
             await executor.execute()
             let result = responseMock.error.getCall(0).args[0]
-            Chai.expect(result.message).eq("Controller not return type of ActionResult in [DummyApi.returnNonActionResult test/request-handler/controller/controller.js]")
+            Chai.expect(result.message).eq("Controller not return type of ActionResult in [DummyApi.returnNonActionResult test/engine/controller/controller.js]")
         })
     })
 
     describe("Validation Functions", () => {
         it("Should handle validation properly", async () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
+            let meta = H.fromFile("test/engine/controller/controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
             info.classId = info.qualifiedClassName
@@ -141,7 +141,7 @@ describe("RequestHandler", () => {
             Chai.expect(result[0].message).contain("required")
         })
         it("Should not error when provided null validator commands", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let meta = H.fromFile("test/engine/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
             info.classId = info.qualifiedClassName
@@ -156,9 +156,9 @@ describe("RequestHandler", () => {
 
     describe("Interception Function", () => {
         it("Should execute global interception on all actions", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let meta = H.fromFile("test/engine/controller/api-controller.js")
             let infos = Transformer.transform(meta)
-            facade.interceptors = ["ChangeToHello, test/request-handler/interceptor/change-to-hello"]
+            facade.interceptors = ["ChangeToHello, test/engine/interceptor/change-to-hello"]
             //returnTheParam
             let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
             info.classId = info.qualifiedClassName
@@ -199,7 +199,7 @@ describe("RequestHandler", () => {
         })
 
         it("Should execute interception in proper order", async () => {
-            let meta = H.fromFile("test/request-handler/controller/interception-order-controller.js")
+            let meta = H.fromFile("test/engine/controller/interception-order-controller.js")
             let infos = Transformer.transform(meta)
             facade.interceptors = [
                 new ConcatInterceptor("4"),

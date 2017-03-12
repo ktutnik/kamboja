@@ -19,7 +19,7 @@ describe("RouteGenerator", () => {
             "test/route-generator/controller"], "Controller")
     })
     it("Should load routes from controllers properly", () => {
-        let test = new RouteGenerator(idResolver, metadataStorage.getByCategory("Controller"))
+        let test = new RouteGenerator(idResolver, metadataStorage.getFiles("Controller"))
         let routes = test.getRoutes()
         let clean = H.cleanUp(routes)
         Chai.expect(clean).deep.eq([{

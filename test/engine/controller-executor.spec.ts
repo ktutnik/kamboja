@@ -26,7 +26,7 @@ describe("ControllerExecutor", () => {
 
     describe("General", () => {
         it("Should not error if validators in facade is null", async () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
+            let meta = H.fromFile("test/engine/controller/controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
             info.classId = info.qualifiedClassName
@@ -38,12 +38,12 @@ describe("ControllerExecutor", () => {
         })
 
         it("Should accept validator by its qualified class name", async () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
+            let meta = H.fromFile("test/engine/controller/controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "customValidationTest")[0]
             info.classId = info.qualifiedClassName
             facade.validators = []
-            facade.validators.push("CustomValidation, test/request-handler/validator/custom-validator")
+            facade.validators.push("CustomValidation, test/engine/validator/custom-validator")
             let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
             let result = <JsonActionResult>await executor.execute(["par1"])
@@ -54,7 +54,7 @@ describe("ControllerExecutor", () => {
     describe("Controller", () => {
 
         it("Should return View properly", async () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
+            let meta = H.fromFile("test/engine/controller/controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
             info.classId = info.qualifiedClassName
@@ -65,7 +65,7 @@ describe("ControllerExecutor", () => {
         })
 
         it("Should return File properly", async () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
+            let meta = H.fromFile("test/engine/controller/controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnFile")[0]
             info.classId = info.qualifiedClassName
@@ -76,7 +76,7 @@ describe("ControllerExecutor", () => {
         })
 
         it("Should return Redirect properly", async () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
+            let meta = H.fromFile("test/engine/controller/controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnRedirect")[0]
             info.classId = info.qualifiedClassName
@@ -87,7 +87,7 @@ describe("ControllerExecutor", () => {
         })
 
         it("Should set cookie properly", async () => {
-            let meta = H.fromFile("test/request-handler/controller/controller.js")
+            let meta = H.fromFile("test/engine/controller/controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "setTheCookie")[0]
             info.classId = info.qualifiedClassName
@@ -101,7 +101,7 @@ describe("ControllerExecutor", () => {
     describe("ApiController", () => {
 
         it("Should return value properly", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let meta = H.fromFile("test/engine/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnTheParam")[0]
             info.classId = info.qualifiedClassName
@@ -112,7 +112,7 @@ describe("ControllerExecutor", () => {
         })
 
         it("Should able to return value with Promise", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let meta = H.fromFile("test/engine/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnTheParamWithPromise")[0]
             info.classId = info.qualifiedClassName
@@ -123,7 +123,7 @@ describe("ControllerExecutor", () => {
         })
 
         it("Should auto validate properly", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let meta = H.fromFile("test/engine/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
             info.classId = info.qualifiedClassName
@@ -134,7 +134,7 @@ describe("ControllerExecutor", () => {
         })
 
         it("Should not auto validate if the setting is turned off", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let meta = H.fromFile("test/engine/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
             info.classId = info.qualifiedClassName
@@ -146,7 +146,7 @@ describe("ControllerExecutor", () => {
         })
 
         it("Should able to use VOID method", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let meta = H.fromFile("test/engine/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "voidMethod")[0]
             info.classId = info.qualifiedClassName
@@ -157,7 +157,7 @@ describe("ControllerExecutor", () => {
         })
 
         it("Should able to return ActionResult (ok/invalid)", async () => {
-            let meta = H.fromFile("test/request-handler/controller/api-controller.js")
+            let meta = H.fromFile("test/engine/controller/api-controller.js")
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnOk")[0]
             info.classId = info.qualifiedClassName

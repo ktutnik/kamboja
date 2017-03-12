@@ -4,6 +4,7 @@ import * as Resolver from "./resolver"
 import * as RouteGenerator from "./route-generator"
 import * as Engine from "./engine"
 import * as InterceptorDecorator from "./engine/interceptor-decorator"
+import * as Kecubung from "kecubung"
 
 export { Validator }
 export { Core }
@@ -18,4 +19,3 @@ export const interceptor = InterceptorDecorator.interceptor
 export const val: Validator.ValidatorDecorator = new Validator.ValidatorDecorator();
 export const internal = new Core.Decorator().internal;
 export const http = new Core.HttpDecorator();
-
