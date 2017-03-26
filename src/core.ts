@@ -134,6 +134,7 @@ export interface KambojaOption extends Facade {
     staticFilePath?: string
     modelPath?: string
     errorHandler?: (err: HttpError) => void,
+    defaultPage?:string
 }
 
 export interface MetaDataStorage {
