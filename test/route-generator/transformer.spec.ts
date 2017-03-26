@@ -14,7 +14,7 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'DefaultAction',
-                route: '/simple/index/:par1/:par2',
+                route: '/simple/index',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'index' },
                 qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/simple-controller.js',
@@ -23,7 +23,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'DefaultAction',
-                route: '/simple/mygetaction/:par1/:par2',
+                route: '/simple/mygetaction',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myGetAction' },
                 qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/simple-controller.js',
@@ -52,14 +52,14 @@ describe("Transformer", () => {
         it("Should be able to transform Deep Module Module/Class/Method/:Parameter", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/deep-module.js")
             let result = Transformer.transform(meta);
-            Chai.expect(result[0].route).eq('/parentmodule/simple/myothergetaction/:par1')
+            Chai.expect(result[0].route).eq('/parentmodule/simple/myothergetaction')
             Chai.expect(result[1].route).eq('/parentmodule/innermodule/simple/myactionwithoutparameter')
         })
 
         it("Should OK for class without 'Controller' prefix", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/non-controller-name.js")
             let result = Transformer.transform(meta);
-            Chai.expect(result[0].route).eq('/controllerwithoutprefix/mygetaction/:par1')
+            Chai.expect(result[0].route).eq('/controllerwithoutprefix/mygetaction')
         })
 
         it("Should not transform non exported class", () => {
@@ -67,13 +67,13 @@ describe("Transformer", () => {
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).undefined
             Chai.expect(result[0].analysis).deep.eq([Core.RouteAnalysisCode.ClassNotExported])
-            Chai.expect(result[1].route).eq("/simple/myothergetaction/:par1")
+            Chai.expect(result[1].route).eq("/simple/myothergetaction")
         })
 
         it("Should not transform non exported on Deep Module", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/non-exported-deep-module.js")
             let result = Transformer.transform(meta);
-            Chai.expect(result[0].route).eq('/parentmodule/simple/myothergetaction/:par1')
+            Chai.expect(result[0].route).eq('/parentmodule/simple/myothergetaction')
             Chai.expect(result[1].route).eq('/parentmodule/innermodule/simple/myactionwithoutparameter')
             Chai.expect(result[1].analysis).deep.eq([Core.RouteAnalysisCode.ClassNotExported])
             Chai.expect(result[2].route).undefined
@@ -163,7 +163,7 @@ describe("Transformer", () => {
             Chai.expect(result[0].httpMethod).eq("GET")
             Chai.expect(result[0].initiator).eq("HttpMethodDecorator")
             Chai.expect(result[0].collaborator.some(x => x == "DefaultAction")).true
-            Chai.expect(result[1].route).eq("/simple/postmethod/:params")
+            Chai.expect(result[1].route).eq("/simple/postmethod")
             Chai.expect(result[1].httpMethod).eq("POST")
             Chai.expect(result[1].initiator).eq("HttpMethodDecorator")
             Chai.expect(result[1].collaborator.some(x => x == "DefaultAction")).true
@@ -281,7 +281,7 @@ describe("Transformer", () => {
         it("Should fall back to default transformer if name doesn't match", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/api-convention-free-name.js")
             let result = Transformer.transform(meta);
-            Chai.expect(result[0].route).eq('/simple/thisisfreeactionname/:offset/:pageWidth')
+            Chai.expect(result[0].route).eq('/simple/thisisfreeactionname')
             Chai.expect(result[0].initiator).eq("DefaultAction")
         })
 
@@ -295,7 +295,7 @@ describe("Transformer", () => {
         it("Should prioritized @http.<any> decorators", () => {
             let meta = H.fromFile("./test/route-generator/transformer-dummy/api-convention-with-http-decorator.js")
             let result = Transformer.transform(meta);
-            Chai.expect(result[0].route).eq("/simple/getbypage/:offset/:pageWidth")
+            Chai.expect(result[0].route).eq("/simple/getbypage")
             Chai.expect(result[0].initiator).eq("HttpMethodDecorator")
             Chai.expect(result[0].collaborator.some(x => x == "DefaultAction")).true
         })
