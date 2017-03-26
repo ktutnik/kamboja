@@ -15,7 +15,7 @@ export class Kamboja {
     private options: Core.KambojaOption
     private log: Logger;
     private storage: MetaDataLoader;
-    private defaultModelPath: string = "model"
+    private defaultModelPath: string = "app/model"
 
     static getOptions() {
         return Kamboja.options;
@@ -25,11 +25,12 @@ export class Kamboja {
         this.options = Lodash.assign(<Core.KambojaOption>{
             skipAnalysis: false,
             showConsoleLog: true,
-            controllerPaths: ["controller"],
+            controllerPaths: ["app/controller"],
             modelPath: this.defaultModelPath,
-            viewPath: "view",
-            staticFilePath: "public",
+            viewPath: "app/view",
+            staticFilePath: "assets",
             viewEngine: "hbs",
+            defaultPage: "/home/index",
             dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
             identifierResolver: new DefaultIdentifierResolver(),
             autoValidation: true,
