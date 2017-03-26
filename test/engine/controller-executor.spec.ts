@@ -16,7 +16,7 @@ let HttpRequest: any = {
     getParam: (key: string) => { },
 }
 
-describe("ControllerExecutor", () => {
+describe.only("ControllerExecutor", () => {
     let validators: Core.ValidatorCommand[];
     let facade: Core.Facade;
 
