@@ -78,7 +78,7 @@ describe("RouteGenerator", () => {
         },
         {
             initiator: 'DefaultAction',
-            route: '/dummy/getdata/:offset/:pageSize',
+            route: '/dummy/getdata',
             httpMethod: 'GET',
             methodMetaData: { name: 'getData' },
             qualifiedClassName: 'DummyController, test/route-generator/controller/dummy-controller',

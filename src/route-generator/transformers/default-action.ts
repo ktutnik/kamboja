@@ -6,9 +6,9 @@ export class DefaultActionTransformer extends TransformerBase {
     @when("Method")
     transform(method: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
         let path = "/" + method.name.toLowerCase()
-        method.parameters.forEach(x => {
+        /* method.parameters.forEach(x => {
             path += `/:${x.name}`
-        })
+        }) */
         if (prevResult) {
             prevResult.forEach(x => {
                 if (Kecubung.flag(x.overrideRequest, Core.OverrideRequest.Route)) {
