@@ -5,7 +5,7 @@ import * as Kecubung from "kecubung"
 import * as Babylon from "babylon"
 import * as Transformer from "./transformers"
 import * as Analyzer from "./analyzer"
-import { PathResolver } from "../resolver/path-resolver"
+import { DefaultPathResolver } from "../resolver/path-resolver"
 
 export class RouteGenerator {
 

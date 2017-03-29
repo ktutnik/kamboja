@@ -5,6 +5,6 @@ export class CategoryModel {
     @val.required()
     name: string
 
-    @val.type("ItemModel[], test/validator/model/item-model")
+    @val.type("ItemModel[], model/item-model")
     items: ItemModel[]
 }

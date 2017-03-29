@@ -8,8 +8,8 @@ import { RequiredValidator, RangeValidator, EmailValidator, TypeValidator, Valid
 import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../src/resolver"
 import { MetaDataLoader } from "../src/metadata-loader/metadata-loader"
 
-export function fromFile(filePath: string) {
-    let path = Path.join(process.cwd(), filePath)
+export function fromFile(filePath: string, pathResolver:Core.PathResolver) {
+    let path = pathResolver.resolve(filePath)
     let code = Fs.readFileSync(path).toString()
     return fromCode(code, filePath)
 }
@@ -43,16 +43,6 @@ export function cleanUp(info: Core.RouteInfo[]) {
 
 export function errorReadFile(path: string): Buffer {
     throw new Error("Error: ENOENT: no such file or directory, open")
-}
-
-export function createFacade() {
-    let facade: Core.Facade = {
-        identifierResolver: new DefaultIdentifierResolver(),
-        dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
-        metaDataStorage: new MetaDataLoader(new DefaultIdentifierResolver()),
-        autoValidation : true
-    }
-    return facade;
 }
 
 export type Spies<T> = {

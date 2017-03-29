@@ -5,11 +5,11 @@ import * as H from "../helper"
 import * as Transformer from "../../src/route-generator/transformers"
 import * as Util from "util"
 import * as Dash from "lodash"
-
+import { DefaultPathResolver } from "../../src/resolver"
 describe("Transformer", () => {
     describe("Default Transformation", () => {
         it("Should be able to transform Class/Method/:Parameter", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/simple-controller.js")
+            let meta = H.fromFile("./transformer-dummy/simple-controller.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
@@ -17,7 +17,7 @@ describe("Transformer", () => {
                 route: '/simple/index',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'index' },
-                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/simple-controller.js',
+                qualifiedClassName: 'SimpleController, ./transformer-dummy/simple-controller.js',
                 classMetaData: { name: 'SimpleController', baseClass: 'Controller' },
                 collaborator: ['Controller']
             },
@@ -26,7 +26,7 @@ describe("Transformer", () => {
                 route: '/simple/mygetaction',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myGetAction' },
-                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/simple-controller.js',
+                qualifiedClassName: 'SimpleController, ./transformer-dummy/simple-controller.js',
                 classMetaData: { name: 'SimpleController', baseClass: 'Controller' },
                 collaborator: ['Controller']
             },
@@ -35,14 +35,14 @@ describe("Transformer", () => {
                 route: '/simple/myactionwithoutparameter',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'myActionWithoutParameter' },
-                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/simple-controller.js',
+                qualifiedClassName: 'SimpleController, ./transformer-dummy/simple-controller.js',
                 classMetaData: { name: 'SimpleController', baseClass: 'Controller' },
                 collaborator: ['Controller']
             }])
         })
 
         it("Should not transform class that not inherited from Controller", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/non-controller.js")
+            let meta = H.fromFile("./transformer-dummy/non-controller.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             let clean = H.cleanUp(result)
             Chai.expect(clean[0].analysis[0]).eq(Core.RouteAnalysisCode.ClassNotInheritedFromController)
@@ -50,20 +50,20 @@ describe("Transformer", () => {
         })
 
         it("Should be able to transform Deep Module Module/Class/Method/:Parameter", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/deep-module.js")
+            let meta = H.fromFile("./transformer-dummy/deep-module.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).eq('/parentmodule/simple/myothergetaction')
             Chai.expect(result[1].route).eq('/parentmodule/innermodule/simple/myactionwithoutparameter')
         })
 
         it("Should OK for class without 'Controller' prefix", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/non-controller-name.js")
+            let meta = H.fromFile("./transformer-dummy/non-controller-name.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).eq('/controllerwithoutprefix/mygetaction')
         })
 
         it("Should not transform non exported class", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/non-exported-class.js")
+            let meta = H.fromFile("./transformer-dummy/non-exported-class.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).undefined
             Chai.expect(result[0].analysis).deep.eq([Core.RouteAnalysisCode.ClassNotExported])
@@ -71,7 +71,7 @@ describe("Transformer", () => {
         })
 
         it("Should not transform non exported on Deep Module", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/non-exported-deep-module.js")
+            let meta = H.fromFile("./transformer-dummy/non-exported-deep-module.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).eq('/parentmodule/simple/myothergetaction')
             Chai.expect(result[1].route).eq('/parentmodule/innermodule/simple/myactionwithoutparameter')
@@ -83,7 +83,7 @@ describe("Transformer", () => {
         })
 
         it("Should give correct analysis in Deep Module", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/issue-with-non-valid-module.js")
+            let meta = H.fromFile("./transformer-dummy/issue-with-non-valid-module.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).eq('this/is/the/:nonPar/route')
             Chai.expect(result[0].analysis).deep.eq([
@@ -95,14 +95,14 @@ describe("Transformer", () => {
 
     describe("Internal Decorator", () => {
         it("Should not transform @internal action", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/internal-decorators.js")
+            let meta = H.fromFile("./transformer-dummy/internal-decorators.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             let info = result.filter(x => x.methodMetaData.name == "privateMethod")
             Chai.expect(info.length).eq(0);
         })
 
         it("Should detect conflict @internal and @http.<any>()", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/internal-conflict.js")
+            let meta = H.fromFile("./transformer-dummy/internal-conflict.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             let clean = H.cleanUp(result)
             Chai.expect(result[0].route).undefined
@@ -113,7 +113,7 @@ describe("Transformer", () => {
 
     describe("Http Decorator", () => {
         it("Should transform @http decorator", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/http-decorators.js")
+            let meta = H.fromFile("./transformer-dummy/http-decorators.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).eq("this/get/got/different")
             Chai.expect(result[0].httpMethod).eq("GET")
@@ -126,7 +126,7 @@ describe("Transformer", () => {
         })
 
         it("Should identify parameter association issue", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/http-decorator-param-issue.js")
+            let meta = H.fromFile("./transformer-dummy/http-decorator-param-issue.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).eq('route/got/:parameter')
             Chai.expect(result[0].analysis).deep.eq([
@@ -144,7 +144,7 @@ describe("Transformer", () => {
         })
 
         it("Should allow multiple decorators", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/http-decorator-multiple.js")
+            let meta = H.fromFile("./transformer-dummy/http-decorator-multiple.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).eq('this/is/the/first/route')
             Chai.expect(result[0].methodMetaData.name).eq('actionHaveNoParameter')
@@ -157,7 +157,7 @@ describe("Transformer", () => {
         })
 
         it("Empty http decorator parameter should fall back to default action generator", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/http-decorator-no-parameter.js")
+            let meta = H.fromFile("./transformer-dummy/http-decorator-no-parameter.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).eq("/simple/getmethod")
             Chai.expect(result[0].httpMethod).eq("GET")
@@ -178,7 +178,7 @@ describe("Transformer", () => {
         })
 
         it("Should check parameters association issue on multiple decorators", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/http-decorator-multiple-issue.js")
+            let meta = H.fromFile("./transformer-dummy/http-decorator-multiple-issue.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             let clean = H.cleanUp(result)
             Chai.expect(result[0].route).eq("this/is/the/first/route/:nonPar")
@@ -196,7 +196,7 @@ describe("Transformer", () => {
 
     describe("ApiConvention", () => {
         it("Should transform API Convention properly", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/api-convention.js")
+            let meta = H.fromFile("./transformer-dummy/api-convention.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
@@ -204,7 +204,7 @@ describe("Transformer", () => {
                 route: '/simple',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'list' },
-                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                qualifiedClassName: 'SimpleController, ./transformer-dummy/api-convention.js',
                 classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
                 collaborator: ['Controller']
             },
@@ -213,7 +213,7 @@ describe("Transformer", () => {
                 route: '/simple/:id',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'get' },
-                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                qualifiedClassName: 'SimpleController, ./transformer-dummy/api-convention.js',
                 classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
                 collaborator: ['Controller']
             },
@@ -222,7 +222,7 @@ describe("Transformer", () => {
                 route: '/simple',
                 httpMethod: 'POST',
                 methodMetaData: { name: 'add' },
-                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                qualifiedClassName: 'SimpleController, ./transformer-dummy/api-convention.js',
                 classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
                 collaborator: ['Controller']
             },
@@ -231,7 +231,7 @@ describe("Transformer", () => {
                 route: '/simple/:id',
                 httpMethod: 'PUT',
                 methodMetaData: { name: 'replace' },
-                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                qualifiedClassName: 'SimpleController, ./transformer-dummy/api-convention.js',
                 classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
                 collaborator: ['Controller']
             },
@@ -240,7 +240,7 @@ describe("Transformer", () => {
                 route: '/simple/:id',
                 httpMethod: 'PATCH',
                 methodMetaData: { name: 'modify' },
-                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                qualifiedClassName: 'SimpleController, ./transformer-dummy/api-convention.js',
                 classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
                 collaborator: ['Controller']
             },
@@ -249,14 +249,14 @@ describe("Transformer", () => {
                 route: '/simple/:id',
                 httpMethod: 'DELETE',
                 methodMetaData: { name: 'delete' },
-                qualifiedClassName: 'SimpleController, ./test/route-generator/transformer-dummy/api-convention.js',
+                qualifiedClassName: 'SimpleController, ./transformer-dummy/api-convention.js',
                 classMetaData: { name: 'SimpleController', baseClass: 'ApiController' },
                 collaborator: ['Controller']
             }])
         })
 
         it("Should identify missing parameter and give Convention Fail warning", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/api-convention-parameter-issue.js")
+            let meta = H.fromFile("./transformer-dummy/api-convention-parameter-issue.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).eq("/simple/list")
             Chai.expect(result[0].httpMethod).eq("GET")
@@ -279,21 +279,21 @@ describe("Transformer", () => {
         })
 
         it("Should fall back to default transformer if name doesn't match", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/api-convention-free-name.js")
+            let meta = H.fromFile("./transformer-dummy/api-convention-free-name.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).eq('/simple/thisisfreeactionname')
             Chai.expect(result[0].initiator).eq("DefaultAction")
         })
 
         it("Should support @internal decorator", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/api-convention-with-internal.js")
+            let meta = H.fromFile("./transformer-dummy/api-convention-with-internal.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             let info = result.filter(x => x.methodMetaData.name == "getByPage")
             Chai.expect(info.length).eq(0)
         })
 
         it("Should prioritized @http.<any> decorators", () => {
-            let meta = H.fromFile("./test/route-generator/transformer-dummy/api-convention-with-http-decorator.js")
+            let meta = H.fromFile("./transformer-dummy/api-convention-with-http-decorator.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             Chai.expect(result[0].route).eq("/simple/getbypage")
             Chai.expect(result[0].initiator).eq("HttpMethodDecorator")

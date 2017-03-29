@@ -10,11 +10,11 @@ export class ChangeValueToHelloWorld implements Core.Interceptor {
     }
 }
 
-@interceptor("DefaultInterceptor, test/engine/interceptor/default-interceptor")
+@interceptor("DefaultInterceptor, interceptor/default-interceptor")
 @interceptor(new ChangeValueToHelloWorld())
 export class DummyApi extends Controller {
 
-    @interceptor("DefaultInterceptor, test/engine/interceptor/default-interceptor")
+    @interceptor("DefaultInterceptor, interceptor/default-interceptor")
     @interceptor(new ChangeValueToHelloWorld())
     returnView() {
         return this.json("Helow")

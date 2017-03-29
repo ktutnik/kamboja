@@ -118,6 +118,7 @@ export interface ValidatorCommand {
 export interface Facade {
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
+    pathResolver?:PathResolver
     validators?: (ValidatorCommand | string)[]
     metaDataStorage?: MetaDataStorage,
     interceptors?: (Interceptor | string)[],
@@ -133,7 +134,8 @@ export interface KambojaOption extends Facade {
     viewEngine?: string
     staticFilePath?: string
     modelPath?: string
-    errorHandler?: (err: HttpError) => void,
+    errorHandler?: (err: HttpError) => void
+    rootPath:string
 }
 
 export interface MetaDataStorage {
@@ -235,6 +237,12 @@ export interface DependencyResolver {
 export interface IdentifierResolver {
     getClassId(qualifiedClassName: string)
     getClassName(classId: string)
+}
+
+export interface PathResolver {
+    resolve(path: string) 
+    relative(absolute: string)
+    normalize(path: string)
 }
 
 export class ActionResult {

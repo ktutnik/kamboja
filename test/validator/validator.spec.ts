@@ -2,7 +2,7 @@ import * as Chai from "chai"
 import * as H from "../helper"
 import * as Kecubung from "kecubung"
 import { ValidatorImpl } from "../../src/validator/validator"
-import { DefaultIdentifierResolver } from "../../src/resolver"
+import { DefaultIdentifierResolver, DefaultPathResolver } from "../../src/resolver"
 import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
 import { RequiredValidator } from "../../src/validator/required-validator"
 import { EmailValidator } from "../../src/validator/email-validator"
@@ -26,14 +26,14 @@ describe("Validator", () => {
     let test: ValidatorImpl;
 
     beforeEach(() => {
-        storage = new MetaDataLoader(new DefaultIdentifierResolver())
-        storage.load("test/validator/model", "Model")
-        storage.load("test/validator/controller", "Controller")
+        storage = new MetaDataLoader(new DefaultIdentifierResolver(), new DefaultPathResolver(__dirname))
+        storage.load("model", "Model")
+        storage.load("controller", "Controller")
         test = new ValidatorImpl(storage, validators)
     })
 
     it("Should return undefined when provided correct value", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: "email@host.com",
             displayName: "Nobita Nobi",
@@ -47,7 +47,7 @@ describe("Validator", () => {
     })
 
     it("Should return messages when provided incorrect value", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: "not-an-email",
             displayName: "Nobita Nobi",
@@ -65,7 +65,7 @@ describe("Validator", () => {
 
     it("Should not validate parameter without validation decorator", () => {
         let test = new ValidatorImpl(storage, [new ExternalValidator()])
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: "not-valid-email",
             displayName: "Nobita Nobi",
@@ -78,7 +78,7 @@ describe("Validator", () => {
 
     it("Should not error if provided other decorator", () => {
         let test = new ValidatorImpl(storage, [new ExternalValidator()])
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: "not-valid-email",
             displayName: "Nobita Nobi",
@@ -91,7 +91,7 @@ describe("Validator", () => {
 
     it("Should able to use external validator", () => {
         let test = new ValidatorImpl(storage, [new ExternalValidator()])
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: "nobita@yahoo.com",
             displayName: "Nobita Nobi",

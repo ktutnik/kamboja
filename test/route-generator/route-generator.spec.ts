@@ -1,5 +1,5 @@
 import { RouteGenerator } from "../../src/route-generator"
-import { DefaultIdentifierResolver, DefaultDependencyResolver } from "../../src/resolver/"
+import { DefaultIdentifierResolver, DefaultDependencyResolver, DefaultPathResolver } from "../../src/resolver/"
 import * as Chai from "chai"
 import * as H from "../helper"
 import * as Fs from "fs"
@@ -11,13 +11,17 @@ import * as Util from "util"
 
 describe("RouteGenerator", () => {
     let idResolver: Core.IdentifierResolver;
+    let pathResolver: Core.PathResolver;
+
     let metadataStorage: MetaDataLoader
     beforeEach(() => {
         idResolver = new DefaultIdentifierResolver()
-        metadataStorage = new MetaDataLoader(idResolver)
-        metadataStorage.load(["test/route-generator/api",
-            "test/route-generator/controller"], "Controller")
+        pathResolver = new DefaultPathResolver(__dirname)
+        metadataStorage = new MetaDataLoader(idResolver, pathResolver)
+        metadataStorage.load(["api",
+            "controller"], "Controller")
     })
+    
     it("Should load routes from controllers properly", () => {
         let test = new RouteGenerator(idResolver, metadataStorage.getFiles("Controller"))
         let routes = test.getRoutes()
@@ -27,7 +31,7 @@ describe("RouteGenerator", () => {
             route: '/dummyapi',
             httpMethod: 'GET',
             methodMetaData: { name: 'list' },
-            qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api',
+            qualifiedClassName: 'DummyApi, api/dummy-api',
             classMetaData: { name: 'DummyApi', baseClass: 'ApiController' },
             collaborator: ['Controller']
         },
@@ -36,7 +40,7 @@ describe("RouteGenerator", () => {
             route: '/dummyapi/:id',
             httpMethod: 'GET',
             methodMetaData: { name: 'get' },
-            qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api',
+            qualifiedClassName: 'DummyApi, api/dummy-api',
             classMetaData: { name: 'DummyApi', baseClass: 'ApiController' },
             collaborator: ['Controller']
         },
@@ -45,7 +49,7 @@ describe("RouteGenerator", () => {
             route: '/dummyapi',
             httpMethod: 'POST',
             methodMetaData: { name: 'add' },
-            qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api',
+            qualifiedClassName: 'DummyApi, api/dummy-api',
             classMetaData: { name: 'DummyApi', baseClass: 'ApiController' },
             collaborator: ['Controller']
         },
@@ -54,7 +58,7 @@ describe("RouteGenerator", () => {
             route: '/dummyapi/:id',
             httpMethod: 'PUT',
             methodMetaData: { name: 'replace' },
-            qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api',
+            qualifiedClassName: 'DummyApi, api/dummy-api',
             classMetaData: { name: 'DummyApi', baseClass: 'ApiController' },
             collaborator: ['Controller']
         },
@@ -63,7 +67,7 @@ describe("RouteGenerator", () => {
             route: '/dummyapi/:id',
             httpMethod: 'PATCH',
             methodMetaData: { name: 'modify' },
-            qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api',
+            qualifiedClassName: 'DummyApi, api/dummy-api',
             classMetaData: { name: 'DummyApi', baseClass: 'ApiController' },
             collaborator: ['Controller']
         },
@@ -72,7 +76,7 @@ describe("RouteGenerator", () => {
             route: '/dummyapi/:id',
             httpMethod: 'DELETE',
             methodMetaData: { name: 'delete' },
-            qualifiedClassName: 'DummyApi, test/route-generator/api/dummy-api',
+            qualifiedClassName: 'DummyApi, api/dummy-api',
             classMetaData: { name: 'DummyApi', baseClass: 'ApiController' },
             collaborator: ['Controller']
         },
@@ -81,7 +85,7 @@ describe("RouteGenerator", () => {
             route: '/dummy/getdata',
             httpMethod: 'GET',
             methodMetaData: { name: 'getData' },
-            qualifiedClassName: 'DummyController, test/route-generator/controller/dummy-controller',
+            qualifiedClassName: 'DummyController, controller/dummy-controller',
             classMetaData: { name: 'DummyController', baseClass: 'Controller' },
             collaborator: ['Controller']
         }])
