@@ -9,6 +9,6 @@ export class UserModel {
     @val.required()
     displayName: string
 
-    @val.type("ItemModel, test/validator/model/item-model")
+    @val.type("ItemModel, model/item-model")
     item: ItemModel
 }

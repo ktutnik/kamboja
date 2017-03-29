@@ -19,7 +19,7 @@ export class Logger {
                 chalk = Chalk.black;
                 break
         }
-        console.log(chalk(Chalk.bold("[Kamboja] ")) + chalk(prefix + message))
+        console.log(chalk(Chalk.bold("  [Kamboja] ")) + chalk(prefix + message))
         return this;
     }
 

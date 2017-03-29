@@ -1,15 +1,17 @@
 import * as Core from "../core"
 import { ValidatorImpl } from "../validator"
 import { getInterceptors } from "./interceptor-decorator"
+import { Kamboja } from "../kamboja"
 
 export class ControllerFactory {
-    validatorCommands:Core.ValidatorCommand[]
-    constructor(public facade: Core.Facade,
-        public routeInfo: Core.RouteInfo) {
-            this.validatorCommands = this.getValidatorCommands()
+    validatorCommands: Core.ValidatorCommand[]
+    facade: Core.Facade;
+    constructor(public routeInfo: Core.RouteInfo) {
+        this.facade = Kamboja.getOptions()
+        this.validatorCommands = this.getValidatorCommands()
     }
 
-    createController():Core.BaseController {
+    createController(): Core.BaseController {
         try {
             return this.facade.dependencyResolver.resolve(this.routeInfo.classId)
         }
@@ -18,8 +20,8 @@ export class ControllerFactory {
         }
     }
 
-    createValidatorForValue(values:any[]){
-        let validator = new ValidatorImpl(this.facade.metaDataStorage,this.validatorCommands)
+    createValidatorForValue(values: any[]) {
+        let validator = new ValidatorImpl(this.facade.metaDataStorage, this.validatorCommands)
         validator.setValue(values, this.routeInfo.classMetaData, this.routeInfo.methodMetaData.name)
         return validator
     }
@@ -52,7 +54,7 @@ export class ControllerFactory {
         return commands
     }
 
-    private getMethodInterceptors(controller:Core.BaseController) {
+    private getMethodInterceptors(controller: Core.BaseController) {
         let interceptors = getInterceptors(controller, this.routeInfo.methodMetaData.name) || []
         let result: Core.Interceptor[] = []
         for (let intercept of interceptors) {
@@ -72,7 +74,7 @@ export class ControllerFactory {
         return result;
     }
 
-    private getClassInterceptors(controller:Core.BaseController) {
+    private getClassInterceptors(controller: Core.BaseController) {
         let interceptors = getInterceptors(controller)
         if (!interceptors) interceptors = []
         let result: Core.Interceptor[] = []

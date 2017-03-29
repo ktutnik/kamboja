@@ -1,19 +1,20 @@
 import * as Path from "path"
 
-export class PathResolver {
+export class DefaultPathResolver {
+    constructor(private rootPath:string){}
 
     /**
      * Resolve path from relative to absolute
      */
     resolve(path: string) {
-        return Path.join(process.cwd(), path);
+        return Path.join(this.rootPath, path);
     }
 
     /**
-     * Convert absolute path to relative to process.cwd()
+     * Convert absolute path to relative to this.rootPath
      */
     relative(absolute: string) {
-        return Path.relative(process.cwd(), absolute);
+        return Path.relative(this.rootPath, absolute);
     }
 
     /**

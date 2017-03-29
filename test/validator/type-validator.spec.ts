@@ -6,7 +6,7 @@ import { EmailValidator } from "../../src/validator/email-validator"
 import { RangeValidator } from "../../src/validator/range-validator"
 import { TypeValidator } from "../../src/validator/type-validator"
 import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
-import { DefaultIdentifierResolver } from "../../src/resolver"
+import { DefaultIdentifierResolver, DefaultPathResolver } from "../../src/resolver"
 import { UserModel } from "./model/user-model"
 import { ItemModel } from "./model/item-model"
 import { CategoryModel } from "./model/category-model"
@@ -19,9 +19,9 @@ describe("TypeValidator", () => {
     let test: TypeValidator;
 
     beforeEach(() => {
-        storage = new MetaDataLoader(new DefaultIdentifierResolver())
-        storage.load("test/validator/model", "Model")
-        storage.load("test/validator/controller", "Controller")
+        storage = new MetaDataLoader(new DefaultIdentifierResolver(), new DefaultPathResolver(__dirname))
+        storage.load("model", "Model")
+        storage.load("controller", "Controller")
         validators = [
             new RequiredValidator(),
             new RangeValidator(),
@@ -33,7 +33,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should return undefined on valid value", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: "email@host.com",
             displayName: "Nobita Nobi",
@@ -49,7 +49,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should return error message on model parameter", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: "not-an-email",
             displayName: "Nobita Nobi",
@@ -66,7 +66,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should validate nested model", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: "not-an-email",
             displayName: "Nobita Nobi",
@@ -86,7 +86,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should validate nested model with array type of children", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: CategoryModel = {
             name: "The category",
             items: [{
@@ -116,7 +116,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should validate nested model with array type of children but provided non array", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model = {
             name: "The category",
             items: {
@@ -139,7 +139,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should validate all decorators in field", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: null,
             displayName: "Nobita Nobi",
@@ -156,7 +156,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should not validate field without @val decorator", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: null,
             displayName: "Nobita Nobi",
@@ -173,7 +173,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should not error if provided @val.type('string')", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: null,
             displayName: "Nobita Nobi",
@@ -191,7 +191,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should not error if provided @val.type('number')", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: null,
             displayName: "Nobita Nobi",
@@ -209,7 +209,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should not error if provided @val.type('boolean')", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: null,
             displayName: "Nobita Nobi",
@@ -227,7 +227,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should give correct error information if model name not found in controller parameter", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: null,
             displayName: "Nobita Nobi",
@@ -243,7 +243,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should give correct error information if model name not found on nested model", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: null,
             displayName: "Nobita Nobi",
@@ -262,7 +262,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should give correct error information if class name is not specified", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: null,
             displayName: "Nobita Nobi",
@@ -278,7 +278,7 @@ describe("TypeValidator", () => {
     })
 
     it("Should give correct error information in invalid class name provided", () => {
-        let clazz = storage.get("UserController, test/validator/controller/user-controller")
+        let clazz = storage.get("UserController, controller/user-controller")
         let model: UserModel = {
             email: null,
             displayName: "Nobita Nobi",

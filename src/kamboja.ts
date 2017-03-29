@@ -1,7 +1,7 @@
 import * as Core from "./core"
 import * as Lodash from "lodash"
 import { MetaDataLoader } from "./metadata-loader/metadata-loader"
-import { DefaultDependencyResolver, DefaultIdentifierResolver, PathResolver } from "./resolver"
+import { DefaultDependencyResolver, DefaultIdentifierResolver, DefaultPathResolver } from "./resolver"
 import { RouteGenerator, RouteAnalyzer } from "./route-generator"
 import * as Fs from "fs"
 import * as Path from "path"
@@ -11,50 +11,64 @@ import * as Babylon from "babylon"
 import * as Kecubung from "kecubung"
 
 export class Kamboja {
+    private static defaultModelPath: string = "model"
     private static options: Core.KambojaOption;
     private options: Core.KambojaOption
     private log: Logger;
     private storage: MetaDataLoader;
-    private defaultModelPath: string = "app/model"
 
-    static getOptions() {
-        return Kamboja.options;
+    private static getDefaultOptions() {
+        let defaultOption: Core.KambojaOption = {
+            skipAnalysis: false,
+            showConsoleLog: true,
+            controllerPaths: ["controller"],
+            modelPath: Kamboja.defaultModelPath,
+            viewPath: "view",
+            staticFilePath: "public",
+            viewEngine: "hbs",
+            autoValidation: true,
+            rootPath: undefined
+        }
+        return defaultOption
+    }
+
+    static getOptions(override?: Core.KambojaOption) {
+        if (!Kamboja.options || override) {
+            let options = Lodash.assign(Kamboja.getDefaultOptions(), override)
+            let idResolver = new DefaultIdentifierResolver()
+            let pathResolver = new DefaultPathResolver(options.rootPath)
+            let resolver = new DefaultDependencyResolver(idResolver, pathResolver)
+            let storage = new MetaDataLoader(options.identifierResolver, pathResolver)
+            options.identifierResolver = idResolver
+            options.pathResolver = pathResolver
+            options.dependencyResolver = resolver
+            options.metaDataStorage = storage
+            return Kamboja.options = options
+        }
+        else
+            return Kamboja.options;
     }
 
     constructor(private engine: Core.Engine, options?: Core.KambojaOption) {
-        this.options = Lodash.assign(<Core.KambojaOption>{
-            skipAnalysis: false,
-            showConsoleLog: true,
-            controllerPaths: ["app/controller"],
-            modelPath: this.defaultModelPath,
-            viewPath: "app/view",
-            staticFilePath: "assets",
-            viewEngine: "hbs",
-            defaultPage: "/home/index",
-            dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver()),
-            identifierResolver: new DefaultIdentifierResolver(),
-            autoValidation: true,
-        }, options)
-        this.storage = new MetaDataLoader(this.options.identifierResolver);
-        this.options.metaDataStorage = this.storage;
+        this.options = Kamboja.getOptions(options)
         this.log = new Logger(this.options.showConsoleLog ? "Info" : "Error")
-        Kamboja.options = this.options;
+        this.storage = <MetaDataLoader>this.options.metaDataStorage
     }
 
     private isFolderProvided() {
         let result = true;
-        let pathResolver = new PathResolver();
+
         //controller
         this.options.controllerPaths.forEach(x => {
-            let path = pathResolver.resolve(x);
+            let path = this.options.pathResolver.resolve(x);
             if (!Fs.existsSync(path)) {
                 result = false;
                 this.log.error(`Controller path [${x}] provided in configuration is not exist`)
             }
         })
         //model
-        let modelPath = pathResolver.resolve(this.options.modelPath)
-        if (!Fs.existsSync(modelPath) && this.options.modelPath != this.defaultModelPath) {
+        let modelPath = this.options.pathResolver.resolve(this.options.modelPath)
+        if (!Fs.existsSync(modelPath) && this.options.modelPath != Kamboja.defaultModelPath) {
             this.log.error(`Model path [${this.options.modelPath}] provided in configuration is not exist`)
             result = false;
         }

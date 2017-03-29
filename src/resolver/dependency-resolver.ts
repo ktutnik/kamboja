@@ -1,11 +1,10 @@
 import * as Core from "../core"
-import { PathResolver } from "./path-resolver"
+import { DefaultPathResolver } from "./path-resolver"
 import { QualifiedName } from "./qualified-name"
 
 export class DefaultDependencyResolver implements Core.DependencyResolver {
-    pathResolver = new PathResolver();
 
-    constructor(private idResolver:Core.IdentifierResolver){}
+    constructor(private idResolver: Core.IdentifierResolver, private pathResolver: Core.PathResolver) { }
 
     resolve<T>(id: string) {
         let name = this.idResolver.getClassName(id)

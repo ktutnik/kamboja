@@ -1,5 +1,5 @@
-import { MetaDataLoaderCategory, IdentifierResolver, MetaDataStorage, QualifiedClassMetaData } from "../core"
-import { PathResolver } from "../resolver/path-resolver"
+import { MetaDataLoaderCategory, PathResolver, IdentifierResolver, MetaDataStorage, QualifiedClassMetaData } from "../core"
+import { DefaultPathResolver } from "../resolver/path-resolver"
 import { QualifiedName } from "../resolver/qualified-name"
 import * as Fs from "fs"
 import * as Path from "path"
@@ -33,10 +33,9 @@ function flatten(metaList: Kecubung.MetaData[], fileName: string): QualifiedClas
 }
 
 export class MetaDataLoader implements MetaDataStorage {
-    private pathResolver = new PathResolver()
     private flatStorage: { [key: string]: QualifiedClassMetaData[] } = {}
     private storage: { [key: string]: Kecubung.ParentMetaData[] } = {}
-    constructor(private idResolver: IdentifierResolver) { }
+    constructor(private idResolver: IdentifierResolver, private pathResolver:PathResolver) { }
 
     load(path: string | string[], category: MetaDataLoaderCategory) {
         let files: string[]

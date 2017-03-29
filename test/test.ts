@@ -15,9 +15,3 @@ class MyClass {
      
      
 }
-
-
-let clas = new MyClass();
-let result = getSave(clas.constructor);
-
-console.log(result)
