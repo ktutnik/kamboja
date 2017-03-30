@@ -1,4 +1,4 @@
-import { Controller, ApiController, ApiActionResult } from "../../src/controller"
+import { Controller, ApiController, ApiActionResult } from "../../src"
 import * as H from "../helper"
 import * as Chai from "chai"
 import * as Core from "../../src/core"

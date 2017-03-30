@@ -5,7 +5,7 @@ import * as Fs from "fs"
 import * as Core from "../src/core"
 import * as Sinon from "sinon"
 import { RequiredValidator, RangeValidator, EmailValidator, TypeValidator, ValidatorImpl } from "../src/validator"
-import { DefaultDependencyResolver, DefaultIdentifierResolver } from "../src/resolver"
+import { DefaultDependencyResolver, DefaultIdentifierResolver, DefaultPathResolver } from "../src/resolver"
 import { MetaDataLoader } from "../src/metadata-loader/metadata-loader"
 
 export function fromFile(filePath: string, pathResolver:Core.PathResolver) {
@@ -103,4 +103,14 @@ export class HttpRequest implements Core.HttpRequest {
     getCookie(key: string): string { return }
     getParam(key: string): string { return }
     isAccept(mime: string) { return false }
+}
+
+export function createFacade(rootPath:string) {
+    let facade: Core.Facade = {
+        identifierResolver: new DefaultIdentifierResolver(),
+        dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver(), new DefaultPathResolver(rootPath)),
+        metaDataStorage: new MetaDataLoader(new DefaultIdentifierResolver(), new DefaultPathResolver(rootPath)),
+        autoValidation : true
+    }
+    return facade;
 }

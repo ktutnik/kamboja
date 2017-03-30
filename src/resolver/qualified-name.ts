@@ -1,5 +1,5 @@
 import * as Path from "path"
-import { DefaultPathResolver } from "./path-resolver"
+import { PathResolver } from "../core"
 import { Kamboja } from "../kamboja"
 
 export class QualifiedName {
@@ -7,7 +7,7 @@ export class QualifiedName {
     fileName: string
     private valid: boolean;
     private array: boolean;
-    constructor(public qualifiedName: string) {
+    constructor(public qualifiedName: string, private pathResolver:PathResolver) {
         let tokens = this.qualifiedName.split(",")
         if (tokens.length != 2) {
             this.valid = false;
@@ -20,7 +20,6 @@ export class QualifiedName {
                 this.className = this.className.substr(0, this.className.length - 2)
             }
             let fileRaw = tokens[1].trim()
-            let pathResolver = Kamboja.getOptions().pathResolver
             this.fileName = pathResolver.normalize(fileRaw)
             this.qualifiedName = `${this.className}, ${this.fileName}`
         }
@@ -33,7 +32,7 @@ export class QualifiedName {
     equals(qualifiedName: string | QualifiedName) {
         let qualified: QualifiedName;
         if (typeof qualifiedName == "string")
-            qualified = new QualifiedName(qualifiedName)
+            qualified = new QualifiedName(qualifiedName, this.pathResolver)
         else qualified = qualifiedName
         return this.className === qualified.className
             && this.fileName === qualified.fileName

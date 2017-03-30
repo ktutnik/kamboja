@@ -26,47 +26,7 @@ describe("Kamboja", () => {
         initSpy.restore()
     })
 
-    it("Should provide default options", () => {
-        (<any>Kamboja).options = undefined
-        let option = Kamboja.getOptions()
-        Chai.expect(option.autoValidation).true
-        Chai.expect(option.controllerPaths).deep.eq(["controller"])
-        Chai.expect(option.dependencyResolver instanceof DefaultDependencyResolver).true
-        Chai.expect(option.identifierResolver instanceof DefaultIdentifierResolver).true
-        Chai.expect(option.pathResolver instanceof DefaultPathResolver).true
-        Chai.expect(option.errorHandler).not.null
-        Chai.expect(option.interceptors).undefined
-        Chai.expect(option.modelPath).eq("model")
-        Chai.expect(option.showConsoleLog).true
-        Chai.expect(option.skipAnalysis).false
-        Chai.expect(option.staticFilePath).eq("public")
-        Chai.expect(option.validators).undefined
-        Chai.expect(option.viewEngine).eq("hbs")
-        Chai.expect(option.viewPath).eq("view")
-    })
-
-    it("Should able to override the static options", () => {
-        let option = Kamboja.getOptions({
-            autoValidation: false,
-            controllerPaths: ["api"],
-            rootPath: __dirname
-        })
-        Chai.expect(option.autoValidation).false
-        Chai.expect(option.controllerPaths).deep.eq(["api"])
-        Chai.expect(option.dependencyResolver instanceof DefaultDependencyResolver).true
-        Chai.expect(option.identifierResolver instanceof DefaultIdentifierResolver).true
-        Chai.expect(option.pathResolver instanceof DefaultPathResolver).true
-        Chai.expect(option.errorHandler).not.null
-        Chai.expect(option.interceptors).undefined
-        Chai.expect(option.modelPath).eq("model")
-        Chai.expect(option.rootPath).eq(__dirname)
-        Chai.expect(option.showConsoleLog).true
-        Chai.expect(option.skipAnalysis).false
-        Chai.expect(option.staticFilePath).eq("public")
-        Chai.expect(option.validators).undefined
-        Chai.expect(option.viewEngine).eq("hbs")
-        Chai.expect(option.viewPath).eq("view")
-    })
+   
 
     it("Should run if no error", () => {
         let kamboja = new Kamboja(engine, {
@@ -148,14 +108,5 @@ describe("Kamboja", () => {
         let result: KambojaOption = initSpy.getCall(0).args[1]
     })
 
-    it("Should provide options from outside", () => {
-        let kamboja = new Kamboja(engine, {
-            rootPath: __dirname,
-        })
-        kamboja.init()
-        let options = Kamboja.getOptions();
-        let storage = options.metaDataStorage;
-        Chai.expect(storage).not.null;
-    })
 
 })

@@ -17,8 +17,8 @@ export class Kamboja {
     private log: Logger;
     private storage: MetaDataLoader;
 
-    private static getDefaultOptions() {
-        let defaultOption: Core.KambojaOption = {
+    constructor(private engine: Core.Engine, override?: Core.KambojaOption) {
+        let options = Lodash.assign({
             skipAnalysis: false,
             showConsoleLog: true,
             controllerPaths: ["controller"],
@@ -28,29 +28,17 @@ export class Kamboja {
             viewEngine: "hbs",
             autoValidation: true,
             rootPath: undefined
-        }
-        return defaultOption
-    }
+        }, override)
+        let idResolver = new DefaultIdentifierResolver()
+        let pathResolver = new DefaultPathResolver(options.rootPath)
+        let resolver = new DefaultDependencyResolver(idResolver, pathResolver)
+        let storage = new MetaDataLoader(options.identifierResolver, pathResolver)
+        options.identifierResolver = idResolver
+        options.pathResolver = pathResolver
+        options.dependencyResolver = resolver
+        options.metaDataStorage = storage
 
-    static getOptions(override?: Core.KambojaOption) {
-        if (!Kamboja.options || override) {
-            let options = Lodash.assign(Kamboja.getDefaultOptions(), override)
-            let idResolver = new DefaultIdentifierResolver()
-            let pathResolver = new DefaultPathResolver(options.rootPath)
-            let resolver = new DefaultDependencyResolver(idResolver, pathResolver)
-            let storage = new MetaDataLoader(options.identifierResolver, pathResolver)
-            options.identifierResolver = idResolver
-            options.pathResolver = pathResolver
-            options.dependencyResolver = resolver
-            options.metaDataStorage = storage
-            return Kamboja.options = options
-        }
-        else
-            return Kamboja.options;
-    }
-
-    constructor(private engine: Core.Engine, options?: Core.KambojaOption) {
-        this.options = Kamboja.getOptions(options)
+        this.options = options
         this.log = new Logger(this.options.showConsoleLog ? "Info" : "Error")
         this.storage = <MetaDataLoader>this.options.metaDataStorage
     }
