@@ -1,17 +1,14 @@
 import * as Chai from "chai"
-import { Kamboja } from "../../src"
+import { Kamboja, Validator, Core, Resolver, MetaDataLoader } from "../../src"
 import * as Sinon from "sinon"
-import { ValidatorBase } from "../../src/validator/baseclasses"
 import * as Kecubung from "kecubung"
-import { ValidationError, KambojaOption, FieldValidatorArg } from "../../src/core"
-import { DefaultDependencyResolver, DefaultIdentifierResolver, DefaultPathResolver } from "../../src/resolver"
-import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
+
 let engine = {
     init: () => { }
 }
 
-class FakeValidator extends ValidatorBase {
-    validate(arg: FieldValidatorArg): ValidationError[] {
+class FakeValidator extends Validator.ValidatorBase {
+    validate(arg: Core.FieldValidatorArg): Core.ValidationError[] {
         return;
     }
 }
@@ -25,8 +22,6 @@ describe("Kamboja", () => {
     afterEach(() => {
         initSpy.restore()
     })
-
-   
 
     it("Should run if no error", () => {
         let kamboja = new Kamboja(engine, {
