@@ -91,7 +91,7 @@ describe("Kamboja", () => {
             ]
         })
         kamboja.init()
-        let result: KambojaOption = initSpy.getCall(0).args[1]
+        let result: Core.KambojaOption = initSpy.getCall(0).args[1]
     })
 
     it("Should able to hide log detail", () => {
@@ -100,7 +100,7 @@ describe("Kamboja", () => {
             showConsoleLog: false
         })
         kamboja.init()
-        let result: KambojaOption = initSpy.getCall(0).args[1]
+        let result: Core.KambojaOption = initSpy.getCall(0).args[1]
     })
 
 
