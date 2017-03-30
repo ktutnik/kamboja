@@ -92,11 +92,11 @@ export class Kamboja {
             return false;
         }
         this.log.newLine().info("Routes generated successfully")
-        console.log("  --------------------------------------")
+        this.log.info("--------------------------------------")
         validRoutes.forEach(x => {
-            console.log(`  ${x.httpMethod}\t${x.route}`)
+            this.log.info(`${x.httpMethod}\t${x.route}`)
         })
-        console.log("  --------------------------------------")
+        this.log.info("--------------------------------------")
         return true;
     }
 
