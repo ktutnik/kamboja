@@ -6,8 +6,6 @@ import * as Path from "path"
 import * as Kecubung from "kecubung"
 import * as Babylon from "babylon"
 
-
-
 function flatten(metaList: Kecubung.MetaData[], fileName: string): QualifiedClassMetaData[] {
     let result = []
     metaList.forEach(x => {
@@ -35,7 +33,7 @@ function flatten(metaList: Kecubung.MetaData[], fileName: string): QualifiedClas
 export class MetaDataLoader implements MetaDataStorage {
     private flatStorage: { [key: string]: QualifiedClassMetaData[] } = {}
     private storage: { [key: string]: Kecubung.ParentMetaData[] } = {}
-    constructor(private idResolver: IdentifierResolver, private pathResolver:PathResolver) { }
+    constructor(private idResolver: IdentifierResolver, public pathResolver:PathResolver) { }
 
     load(path: string | string[], category: MetaDataLoaderCategory) {
         let files: string[]
@@ -78,10 +76,10 @@ export class MetaDataLoader implements MetaDataStorage {
     }
 
     get(classId: string): QualifiedClassMetaData {
-        let request = new QualifiedName(classId)
+        let request = new QualifiedName(classId, this.pathResolver)
         for (let key in this.flatStorage) {
             let result = this.flatStorage[key].filter(x => {
-                let qualified = new QualifiedName(x.qualifiedClassName)
+                let qualified = new QualifiedName(x.qualifiedClassName, this.pathResolver)
                 return request.equals(qualified)
             })
             if (result.length > 0) return result[0]

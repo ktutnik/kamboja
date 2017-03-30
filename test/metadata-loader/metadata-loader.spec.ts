@@ -1,7 +1,7 @@
 import * as Chai from "chai"
 import * as Core from "../../src/core"
 import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
-import { DefaultIdentifierResolver } from "../../src/resolver"
+import { DefaultIdentifierResolver, DefaultPathResolver } from "../../src/resolver"
 import * as H from "../helper"
 import { Kamboja } from "../../src/kamboja"
 
@@ -11,8 +11,7 @@ describe("MetaDataLoader", () => {
         let loader: MetaDataLoader;
 
         beforeEach(() => {
-            Kamboja.getOptions({ rootPath: __dirname })
-            loader = <MetaDataLoader>Kamboja.getOptions().metaDataStorage
+            loader = new MetaDataLoader(new DefaultIdentifierResolver(), new DefaultPathResolver(__dirname))
         })
 
         it("Should load classes properly", () => {
@@ -44,7 +43,7 @@ describe("MetaDataLoader", () => {
         let storage: MetaDataLoader;
 
         beforeEach(() => {
-            storage = <MetaDataLoader>Kamboja.getOptions().metaDataStorage
+            storage = new MetaDataLoader(new DefaultIdentifierResolver(), new DefaultPathResolver(__dirname))
         })
 
         it("Should return class by qualified name properly", () => {

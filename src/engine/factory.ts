@@ -3,11 +3,10 @@ import { ValidatorImpl } from "../validator"
 import { getInterceptors } from "./interceptor-decorator"
 import { Kamboja } from "../kamboja"
 
+
 export class ControllerFactory {
     validatorCommands: Core.ValidatorCommand[]
-    facade: Core.Facade;
-    constructor(public routeInfo: Core.RouteInfo) {
-        this.facade = Kamboja.getOptions()
+    constructor(public facade: Core.Facade, public routeInfo: Core.RouteInfo) {
         this.validatorCommands = this.getValidatorCommands()
     }
 
@@ -16,7 +15,7 @@ export class ControllerFactory {
             return this.facade.dependencyResolver.resolve(this.routeInfo.classId)
         }
         catch (e) {
-            throw new Error(`Can not instantiate [${this.routeInfo.classId}] as Controller`)
+            throw new Error(`Can not instantiate [${this.routeInfo.classId}] as Controller.\n\t Inner message: ${e.message}`)
         }
     }
 

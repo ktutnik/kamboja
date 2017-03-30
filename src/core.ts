@@ -140,6 +140,7 @@ export interface KambojaOption extends Facade {
 }
 
 export interface MetaDataStorage {
+    pathResolver:PathResolver
     get(classId: string): QualifiedClassMetaData
     getFiles(category: MetaDataLoaderCategory): Kecubung.ParentMetaData[]
     getClasses(category:MetaDataLoaderCategory): QualifiedClassMetaData[]

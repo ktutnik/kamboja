@@ -13,6 +13,7 @@ export { RouteGenerator }
 export { Engine }
 export { ApiActionResult, ApiController, Controller, FileActionResult, JsonActionResult, RedirectActionResult, ViewActionResult } from "./controller"
 export { Kamboja } from "./kamboja"
+export { MetaDataLoader } from "./metadata-loader/metadata-loader"
 
 //decorators
 export const interceptor = InterceptorDecorator.interceptor
