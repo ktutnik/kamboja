@@ -91,12 +91,12 @@ export class Kamboja {
             this.log.newLine().error(`No valid controller found in [${path}]`)
             return false;
         }
-        this.log.newLine().info("Route generated successfully")
-        console.log("--------------------------------------")
+        this.log.newLine().info("Routes generated successfully")
+        this.log.info("--------------------------------------")
         validRoutes.forEach(x => {
-            console.log(`${x.httpMethod}\t${x.route}`)
+            this.log.info(`${x.httpMethod}\t${x.route}`)
         })
-        console.log("--------------------------------------")
+        this.log.info("--------------------------------------")
         return true;
     }
 
