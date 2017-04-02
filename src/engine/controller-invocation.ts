@@ -9,8 +9,9 @@ export class ControllerInvocation extends Core.Invocation {
     
     constructor(private executor: ControllerExecutor,
         private routeInfo: Core.RouteInfo,
-        private request: Core.HttpRequest) {
+        public request: Core.HttpRequest) {
         super()
+        this.url = request.url
         this.methodName = routeInfo.methodMetaData.name
         this.classMetaData = routeInfo.classMetaData
         let parameterBinder = new ParameterBinder(this.routeInfo, this.request)

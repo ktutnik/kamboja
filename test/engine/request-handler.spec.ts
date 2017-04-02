@@ -31,7 +31,27 @@ describe("RequestHandler", () => {
     })
 
     describe("General Functions", () => {
+        it("Should handle 404 properly", async () => {
+            let container = new ControllerFactory(facade)
+            let executor = new RequestHandler(container, httpRequest, httpResponse)
+            await executor.execute()
+            let result = responseMock.status.getCall(0).args[0]
+            Chai.expect(result).eq(404)
+            Chai.expect(responseMock.end.called).true
+        })
 
+        it("Should allow global interceptor work with request without controller", async () => {
+            facade.interceptors = [
+                "ChangeToHello, interceptor/change-to-hello"
+            ]
+            let container = new ControllerFactory(facade)
+            let executor = new RequestHandler(container, httpRequest, httpResponse)
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).eq("Hello world!")
+        })
+
+        
     })
 
     describe("ApiController Functions", () => {
@@ -128,6 +148,7 @@ describe("RequestHandler", () => {
     })
 
     describe("Validation Functions", () => {
+
         it("Should handle validation properly", async () => {
             let meta = H.fromFile("controller/controller.js", new DefaultPathResolver(__dirname))
             let infos = Transformer.transform(meta)
@@ -156,6 +177,29 @@ describe("RequestHandler", () => {
     })
 
     describe("Interception Function", () => {
+
+        it("Should provide hasController properly", async () => {
+            facade.interceptors = [
+                "CheckHasController, interceptor/check-has-controller"
+            ]
+            let container = new ControllerFactory(facade)
+            let executor = new RequestHandler(container, httpRequest, httpResponse)
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).eq("DOESN'T HAVE CONTROLLER")
+        })
+
+        it("Should give proper error if uncaught error occur inside interceptor", async () => {
+            facade.interceptors = [
+                "ErrorInterceptor, interceptor/error-interceptor"
+            ]
+            let container = new ControllerFactory(facade)
+            let executor = new RequestHandler(container, httpRequest, httpResponse)
+            await executor.execute()
+            let result = responseMock.error.getCall(0).args[0]
+            Chai.expect(result.message).eq("ERROR INSIDE INTERCEPTOR")
+        })
+
         it("Should execute global interception on all actions", async () => {
             let meta = H.fromFile("controller/api-controller.js", new DefaultPathResolver(__dirname))
             let infos = Transformer.transform(meta)

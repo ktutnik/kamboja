@@ -6,7 +6,7 @@ import { Kamboja } from "../kamboja"
 
 export class ControllerFactory {
     validatorCommands: Core.ValidatorCommand[]
-    constructor(public facade: Core.Facade, public routeInfo: Core.RouteInfo) {
+    constructor(public facade: Core.Facade, public routeInfo?: Core.RouteInfo) {
         this.validatorCommands = this.getValidatorCommands()
     }
 
@@ -26,11 +26,13 @@ export class ControllerFactory {
     }
 
     createInterceptors() {
-        let controller = this.createController()
         let result: Core.Interceptor[] = []
         result = result.concat(this.getGlobalInterceptors())
-        result = result.concat(this.getClassInterceptors(controller))
-        result = result.concat(this.getMethodInterceptors(controller))
+        if (this.routeInfo) {
+            let controller = this.createController()
+            result = result.concat(this.getClassInterceptors(controller))
+            result = result.concat(this.getMethodInterceptors(controller))
+        }
         return result;
     }
 
@@ -94,7 +96,7 @@ export class ControllerFactory {
         return result;
     }
 
-    private getGlobalInterceptors() {
+    getGlobalInterceptors() {
         let result: Core.Interceptor[] = []
         if (!this.facade.interceptors) this.facade.interceptors = []
         for (let i = this.facade.interceptors.length - 1; i >= 0; i--) {

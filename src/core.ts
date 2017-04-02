@@ -221,11 +221,16 @@ export class HttpError {
 
 export abstract class Invocation {
     abstract execute(): Promise<void>
+    url:string
+    request:HttpRequest
     methodName: string
     classMetaData: Kecubung.ClassMetaData
     returnValue: ActionResult
     parameters: any[]
     interceptors: Interceptor[]
+    hasController(){
+        return typeof this.classMetaData == "object"
+    }
 }
 
 export interface Interceptor {

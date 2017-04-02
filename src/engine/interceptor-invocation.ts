@@ -15,5 +15,7 @@ export class InterceptorInvocation extends Core.Invocation {
         this.returnValue = this.invocation.returnValue
         this.parameters = this.invocation.parameters
         this.interceptors = this.invocation.interceptors;
+        this.request = this.invocation.request
+        this.url = this.invocation.url
     }
 }
