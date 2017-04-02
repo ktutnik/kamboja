@@ -99,10 +99,13 @@ export class HttpRequest implements Core.HttpRequest {
     body: any
     referrer: string
     url: string
+    user:any
     getHeader(key: string): string { return }
     getCookie(key: string): string { return }
     getParam(key: string): string { return }
     isAccept(mime: string) { return false }
+    isAuthenticated(){return false}
+    getUserRole(){return ""}
 }
 
 export function createFacade(rootPath:string) {

@@ -1,12 +1,12 @@
 import * as Core from "../core"
 import { ValidatorImpl } from "../validator"
-import { getInterceptors } from "./interceptor-decorator"
 import { Kamboja } from "../kamboja"
+import { Interceptor } from "../index"
 
 
 export class ControllerFactory {
     validatorCommands: Core.ValidatorCommand[]
-    constructor(public facade: Core.Facade, public routeInfo: Core.RouteInfo) {
+    constructor(public facade: Core.Facade, public routeInfo?: Core.RouteInfo) {
         this.validatorCommands = this.getValidatorCommands()
     }
 
@@ -26,11 +26,13 @@ export class ControllerFactory {
     }
 
     createInterceptors() {
-        let controller = this.createController()
-        let result: Core.Interceptor[] = []
+        let result: Core.RequestInterceptor[] = []
         result = result.concat(this.getGlobalInterceptors())
-        result = result.concat(this.getClassInterceptors(controller))
-        result = result.concat(this.getMethodInterceptors(controller))
+        if (this.routeInfo) {
+            let controller = this.createController()
+            result = result.concat(this.getClassInterceptors(controller))
+            result = result.concat(this.getMethodInterceptors(controller))
+        }
         return result;
     }
 
@@ -54,8 +56,8 @@ export class ControllerFactory {
     }
 
     private getMethodInterceptors(controller: Core.BaseController) {
-        let interceptors = getInterceptors(controller, this.routeInfo.methodMetaData.name) || []
-        let result: Core.Interceptor[] = []
+        let interceptors = Interceptor.getInterceptors(controller, this.routeInfo.methodMetaData.name) || []
+        let result: Core.RequestInterceptor[] = []
         for (let intercept of interceptors) {
             if (typeof intercept == "string") {
                 try {
@@ -74,9 +76,9 @@ export class ControllerFactory {
     }
 
     private getClassInterceptors(controller: Core.BaseController) {
-        let interceptors = getInterceptors(controller)
+        let interceptors = Interceptor.getInterceptors(controller)
         if (!interceptors) interceptors = []
-        let result: Core.Interceptor[] = []
+        let result: Core.RequestInterceptor[] = []
         for (let intercept of interceptors) {
             if (typeof intercept == "string") {
                 try {
@@ -94,8 +96,8 @@ export class ControllerFactory {
         return result;
     }
 
-    private getGlobalInterceptors() {
-        let result: Core.Interceptor[] = []
+    getGlobalInterceptors() {
+        let result: Core.RequestInterceptor[] = []
         if (!this.facade.interceptors) this.facade.interceptors = []
         for (let i = this.facade.interceptors.length - 1; i >= 0; i--) {
             let intercept = this.facade.interceptors[i]

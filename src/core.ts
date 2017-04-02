@@ -118,10 +118,10 @@ export interface ValidatorCommand {
 export interface Facade {
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
-    pathResolver?:PathResolver
+    pathResolver?: PathResolver
     validators?: (ValidatorCommand | string)[]
     metaDataStorage?: MetaDataStorage,
-    interceptors?: (Interceptor | string)[],
+    interceptors?: (RequestInterceptor | string)[],
     autoValidation?: boolean
 }
 
@@ -135,15 +135,15 @@ export interface KambojaOption extends Facade {
     staticFilePath?: string
     modelPath?: string
     errorHandler?: (err: HttpError) => void
-    rootPath:string
-    defaultPage?:string
+    rootPath: string
+    defaultPage?: string
 }
 
 export interface MetaDataStorage {
-    pathResolver:PathResolver
+    pathResolver: PathResolver
     get(classId: string): QualifiedClassMetaData
     getFiles(category: MetaDataLoaderCategory): Kecubung.ParentMetaData[]
-    getClasses(category:MetaDataLoaderCategory): QualifiedClassMetaData[]
+    getClasses(category: MetaDataLoaderCategory): QualifiedClassMetaData[]
 }
 
 export interface Engine {
@@ -171,6 +171,7 @@ export interface HttpRequest {
     headers: { [key: string]: string }
     cookies: { [key: string]: string }
     params: { [key: string]: string }
+    user: any
     body: any
     referrer: string
     url: string
@@ -178,6 +179,8 @@ export interface HttpRequest {
     getCookie(key: string): string
     getParam(key: string): string
     isAccept(mime: string): boolean
+    isAuthenticated(): boolean
+    getUserRole():string
 }
 
 
@@ -221,14 +224,19 @@ export class HttpError {
 
 export abstract class Invocation {
     abstract execute(): Promise<void>
+    url: string
+    request: HttpRequest
     methodName: string
     classMetaData: Kecubung.ClassMetaData
     returnValue: ActionResult
     parameters: any[]
-    interceptors: Interceptor[]
+    interceptors: RequestInterceptor[]
+    hasController() {
+        return typeof this.classMetaData == "object"
+    }
 }
 
-export interface Interceptor {
+export interface RequestInterceptor {
     intercept(invocation: Invocation): Promise<void>;
 }
 
@@ -242,7 +250,7 @@ export interface IdentifierResolver {
 }
 
 export interface PathResolver {
-    resolve(path: string) 
+    resolve(path: string)
     relative(absolute: string)
     normalize(path: string)
 }
@@ -282,6 +290,33 @@ export function getRouteDetail(info: RouteInfo) {
     return `[${method} ${file}]`;
 }
 
-export interface QualifiedClassMetaData extends Kecubung.ClassMetaData{
-    qualifiedClassName:string
+export interface QualifiedClassMetaData extends Kecubung.ClassMetaData {
+    qualifiedClassName: string
+}
+
+export namespace MetaDataHelper {
+    export function save(key: string, value: any, args: any[]) {
+        if (args.length == 1) {
+            let collections = Reflect.getMetadata(key, args[0]) || []
+            collections.push(value);
+            Reflect.defineMetadata(key, collections, args[0])
+        }
+        else {
+            let collections = Reflect.getMetadata(key, args[0], args[1]) || []
+            collections.push(value);
+            Reflect.defineMetadata(key, collections, args[0], args[1])
+        }
+    }
+
+    export function get<T>(key: string, target: any, methodName?: string) {
+        if (!target) return []
+        if (!methodName) {
+            let collections: T[] = Reflect.getMetadata(key, target.constructor)
+            return collections
+        }
+        else {
+            let collections: T[] = Reflect.getMetadata(key, target, methodName)
+            return collections
+        }
+    }
 }

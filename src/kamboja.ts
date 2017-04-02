@@ -24,7 +24,7 @@ export class Kamboja {
             controllerPaths: ["controller"],
             modelPath: Kamboja.defaultModelPath,
             viewPath: "view",
-            staticFilePath: "public",
+            staticFilePath: "../www",
             viewEngine: "hbs",
             autoValidation: true,
             rootPath: undefined
