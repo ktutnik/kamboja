@@ -118,7 +118,7 @@ export interface ValidatorCommand {
 export interface Facade {
     dependencyResolver?: DependencyResolver
     identifierResolver?: IdentifierResolver
-    pathResolver?:PathResolver
+    pathResolver?: PathResolver
     validators?: (ValidatorCommand | string)[]
     metaDataStorage?: MetaDataStorage,
     interceptors?: (Interceptor | string)[],
@@ -135,15 +135,15 @@ export interface KambojaOption extends Facade {
     staticFilePath?: string
     modelPath?: string
     errorHandler?: (err: HttpError) => void
-    rootPath:string
-    defaultPage?:string
+    rootPath: string
+    defaultPage?: string
 }
 
 export interface MetaDataStorage {
-    pathResolver:PathResolver
+    pathResolver: PathResolver
     get(classId: string): QualifiedClassMetaData
     getFiles(category: MetaDataLoaderCategory): Kecubung.ParentMetaData[]
-    getClasses(category:MetaDataLoaderCategory): QualifiedClassMetaData[]
+    getClasses(category: MetaDataLoaderCategory): QualifiedClassMetaData[]
 }
 
 export interface Engine {
@@ -171,6 +171,7 @@ export interface HttpRequest {
     headers: { [key: string]: string }
     cookies: { [key: string]: string }
     params: { [key: string]: string }
+    user: any
     body: any
     referrer: string
     url: string
@@ -178,6 +179,7 @@ export interface HttpRequest {
     getCookie(key: string): string
     getParam(key: string): string
     isAccept(mime: string): boolean
+    isAuthenticated(): boolean
 }
 
 
@@ -221,14 +223,14 @@ export class HttpError {
 
 export abstract class Invocation {
     abstract execute(): Promise<void>
-    url:string
-    request:HttpRequest
+    url: string
+    request: HttpRequest
     methodName: string
     classMetaData: Kecubung.ClassMetaData
     returnValue: ActionResult
     parameters: any[]
     interceptors: Interceptor[]
-    hasController(){
+    hasController() {
         return typeof this.classMetaData == "object"
     }
 }
@@ -247,7 +249,7 @@ export interface IdentifierResolver {
 }
 
 export interface PathResolver {
-    resolve(path: string) 
+    resolve(path: string)
     relative(absolute: string)
     normalize(path: string)
 }
@@ -287,6 +289,6 @@ export function getRouteDetail(info: RouteInfo) {
     return `[${method} ${file}]`;
 }
 
-export interface QualifiedClassMetaData extends Kecubung.ClassMetaData{
-    qualifiedClassName:string
+export interface QualifiedClassMetaData extends Kecubung.ClassMetaData {
+    qualifiedClassName: string
 }
