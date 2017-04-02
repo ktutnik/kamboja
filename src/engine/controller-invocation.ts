@@ -2,7 +2,6 @@ import * as Core from "../core"
 import { ControllerExecutor } from "../engine/controller-executor"
 import "reflect-metadata"
 import * as Kecubung from "kecubung"
-import { getInterceptors } from "./interceptor-decorator"
 import { ParameterBinder } from "../parameter-binder"
 
 export class ControllerInvocation extends Core.Invocation {

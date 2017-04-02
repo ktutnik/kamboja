@@ -1,7 +1,7 @@
 import * as Core from "../core"
 import { ValidatorImpl } from "../validator"
-import { getInterceptors } from "./interceptor-decorator"
 import { Kamboja } from "../kamboja"
+import { Interceptor } from "../index"
 
 
 export class ControllerFactory {
@@ -26,7 +26,7 @@ export class ControllerFactory {
     }
 
     createInterceptors() {
-        let result: Core.Interceptor[] = []
+        let result: Core.RequestInterceptor[] = []
         result = result.concat(this.getGlobalInterceptors())
         if (this.routeInfo) {
             let controller = this.createController()
@@ -56,8 +56,8 @@ export class ControllerFactory {
     }
 
     private getMethodInterceptors(controller: Core.BaseController) {
-        let interceptors = getInterceptors(controller, this.routeInfo.methodMetaData.name) || []
-        let result: Core.Interceptor[] = []
+        let interceptors = Interceptor.getInterceptors(controller, this.routeInfo.methodMetaData.name) || []
+        let result: Core.RequestInterceptor[] = []
         for (let intercept of interceptors) {
             if (typeof intercept == "string") {
                 try {
@@ -76,9 +76,9 @@ export class ControllerFactory {
     }
 
     private getClassInterceptors(controller: Core.BaseController) {
-        let interceptors = getInterceptors(controller)
+        let interceptors = Interceptor.getInterceptors(controller)
         if (!interceptors) interceptors = []
-        let result: Core.Interceptor[] = []
+        let result: Core.RequestInterceptor[] = []
         for (let intercept of interceptors) {
             if (typeof intercept == "string") {
                 try {
@@ -97,7 +97,7 @@ export class ControllerFactory {
     }
 
     getGlobalInterceptors() {
-        let result: Core.Interceptor[] = []
+        let result: Core.RequestInterceptor[] = []
         if (!this.facade.interceptors) this.facade.interceptors = []
         for (let i = this.facade.interceptors.length - 1; i >= 0; i--) {
             let intercept = this.facade.interceptors[i]

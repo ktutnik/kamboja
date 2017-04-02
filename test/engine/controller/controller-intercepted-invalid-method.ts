@@ -1,10 +1,10 @@
 import { Controller } from "../../../src/controller"
-import { interceptor } from "../../../src/engine/interceptor-decorator"
+import { interceptor } from "../../../src"
 import { val, JsonActionResult } from "../../../src"
 
 export class UnQualifiedNameOnMethodController extends Controller {
 
-    @interceptor("UnqualifiedName, path/of/nowhere")
+    @interceptor.add("UnqualifiedName, path/of/nowhere")
     returnView() {
         return this.json("Helow")
     }

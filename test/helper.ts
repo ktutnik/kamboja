@@ -105,6 +105,7 @@ export class HttpRequest implements Core.HttpRequest {
     getParam(key: string): string { return }
     isAccept(mime: string) { return false }
     isAuthenticated(){return false}
+    getUserRole(){return ""}
 }
 
 export function createFacade(rootPath:string) {

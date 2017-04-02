@@ -1,21 +1,21 @@
 import { Controller } from "../../../src/controller"
-import { interceptor } from "../../../src/engine/interceptor-decorator"
+import { interceptor } from "../../../src"
 import { val, JsonActionResult, Core } from "../../../src"
 import { id } from "../interceptor/interceptor-identifier"
 
 @id("ChangeValueToHelloWorld")
-export class ChangeValueToHelloWorld implements Core.Interceptor {
+export class ChangeValueToHelloWorld implements Core.RequestInterceptor {
     async intercept(invocation: Core.Invocation): Promise<void> {
         invocation.returnValue = new JsonActionResult("Hello world!", undefined, undefined)
     }
 }
 
-@interceptor("DefaultInterceptor, interceptor/default-interceptor")
-@interceptor(new ChangeValueToHelloWorld())
+@interceptor.add("DefaultInterceptor, interceptor/default-interceptor")
+@interceptor.add(new ChangeValueToHelloWorld())
 export class DummyApi extends Controller {
 
-    @interceptor("DefaultInterceptor, interceptor/default-interceptor")
-    @interceptor(new ChangeValueToHelloWorld())
+    @interceptor.add("DefaultInterceptor, interceptor/default-interceptor")
+    @interceptor.add(new ChangeValueToHelloWorld())
     returnView() {
         return this.json("Helow")
     }
