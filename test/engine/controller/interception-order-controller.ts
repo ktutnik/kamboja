@@ -4,10 +4,10 @@ import { interceptor, Core, JsonActionResult } from "../../../src"
 export class ConcatInterceptor implements Core.RequestInterceptor {
     constructor(private msg: string) { }
 
-    async intercept(invocation: Core.Invocation) {
-        await invocation.execute();
-        let result = (<JsonActionResult>invocation.returnValue).body;
-        invocation.returnValue = new JsonActionResult(this.msg + ", " + result, undefined, undefined)
+    async intercept(invocation: Core.Invocation):Promise<Core.ActionResult> {
+        let invocationResult = await invocation.execute();
+        let result = (<JsonActionResult>invocationResult).body;
+        return new JsonActionResult(this.msg + ", " + result, undefined, undefined)
     }
 }
 

@@ -223,12 +223,12 @@ export class HttpError {
 }
 
 export abstract class Invocation {
-    abstract execute(): Promise<void>
+    abstract execute(): Promise<ActionResult>
+    option:KambojaOption
     url: string
     request: HttpRequest
     methodName: string
     classMetaData: Kecubung.ClassMetaData
-    returnValue: ActionResult
     parameters: any[]
     interceptors: RequestInterceptor[]
     hasController() {
@@ -237,7 +237,7 @@ export abstract class Invocation {
 }
 
 export interface RequestInterceptor {
-    intercept(invocation: Invocation): Promise<void>;
+    intercept(invocation: Invocation): Promise<ActionResult>;
 }
 
 export interface DependencyResolver {
@@ -276,7 +276,7 @@ export class ActionResult {
         this.contentType = type;
     }
 
-    execute(response: HttpResponse, routeInfo: RouteInfo) {
+    execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
         if (this.contentType) response.setContentType(this.contentType)
         this.removedCookie.forEach(x => response.removeCookie(x.key, x.options))
         this.cookies.forEach(x => response.setCookie(x.key, x.value, x.options))

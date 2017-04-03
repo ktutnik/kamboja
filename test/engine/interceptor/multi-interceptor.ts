@@ -4,7 +4,7 @@ import { id } from "./interceptor-identifier"
 
 @id("FirstInterceptor")
 export class FirstInterceptor implements Core.RequestInterceptor{
-    async intercept(invocation:Core.Invocation):Promise<void> {
-        await invocation.execute()
+    async intercept(invocation:Core.Invocation) {
+        return await invocation.execute()
     }
 }

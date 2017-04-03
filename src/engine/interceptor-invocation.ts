@@ -5,16 +5,17 @@ import * as Kecubung from "kecubung"
 import { ParameterBinder } from "../parameter-binder"
 
 export class InterceptorInvocation extends Core.Invocation {
-    constructor(private invocation: Core.Invocation, private interceptor: Core.RequestInterceptor) { super() }
+    constructor(private invocation: Core.Invocation, 
+        private interceptor: Core.RequestInterceptor,
+        public option:Core.KambojaOption) { super() }
 
-    async execute(): Promise<void> {
-        await this.interceptor.intercept(this.invocation)
+    async execute(): Promise<Core.ActionResult> {
         this.classMetaData = this.invocation.classMetaData
         this.methodName = this.invocation.methodName
-        this.returnValue = this.invocation.returnValue
         this.parameters = this.invocation.parameters
         this.interceptors = this.invocation.interceptors;
         this.request = this.invocation.request
         this.url = this.invocation.url
+        return await this.interceptor.intercept(this.invocation)
     }
 }

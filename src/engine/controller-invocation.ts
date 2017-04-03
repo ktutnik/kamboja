@@ -8,16 +8,18 @@ export class ControllerInvocation extends Core.Invocation {
     
     constructor(private executor: ControllerExecutor,
         private routeInfo: Core.RouteInfo,
-        public request: Core.HttpRequest) {
+        public request: Core.HttpRequest,
+        option:Core.KambojaOption) {
         super()
         this.url = request.url
         this.methodName = routeInfo.methodMetaData.name
         this.classMetaData = routeInfo.classMetaData
         let parameterBinder = new ParameterBinder(this.routeInfo, this.request)
         this.parameters = parameterBinder.getParameters()
+        this.option = option
     }
 
-    async execute(): Promise<void> {
-        this.returnValue = await this.executor.execute(this.parameters)
+    async execute(): Promise<Core.ActionResult> {
+        return await this.executor.execute(this.parameters)
     }
 }

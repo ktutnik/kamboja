@@ -2,14 +2,14 @@ import { ActionResult, HttpRequest, HttpResponse, RouteInfo, Validator } from ".
 import * as Xml from "xml"
 
 export class ApiActionResult extends ActionResult {
-    constructor(private request: HttpRequest, public body, public status: number) {
+    constructor(public body, public status: number) {
         super(undefined)
     }
 
-    execute(response: HttpResponse, routeInfo: RouteInfo) {
-        super.execute(response, routeInfo);
-        if (this.request.isAccept("application/json")) this.sendJson(response)
-        else if(this.request.isAccept("text/xml")) this.sendXml(response)
+    execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
+        super.execute(request, response, routeInfo);
+        if (request.isAccept("application/json")) this.sendJson(response)
+        else if(request.isAccept("text/xml")) this.sendXml(response)
         else this.sendJson(response)
     }
 

@@ -21,7 +21,7 @@ export class ControllerExecutor {
         }
         else {
             if (this.factory.facade.autoValidation && !controller.validator.isValid()) {
-                return new ApiActionResult(this.request, controller.validator.getValidationErrors(), 400)
+                return new ApiActionResult(controller.validator.getValidationErrors(), 400)
             }
             let result = method.apply(controller, parameters);
             //return immediately if VOID
@@ -29,7 +29,7 @@ export class ControllerExecutor {
             //return if it is already ActionResult variant
             if (typeof result["execute"] == "function") return result
             let apiResult = await Promise.resolve(result)
-            return new ApiActionResult(this.request, apiResult, 200)
+            return new ApiActionResult(apiResult, 200)
         }
     }
 }

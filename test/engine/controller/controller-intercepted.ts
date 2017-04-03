@@ -5,8 +5,8 @@ import { id } from "../interceptor/interceptor-identifier"
 
 @id("ChangeValueToHelloWorld")
 export class ChangeValueToHelloWorld implements Core.RequestInterceptor {
-    async intercept(invocation: Core.Invocation): Promise<void> {
-        invocation.returnValue = new JsonActionResult("Hello world!", undefined, undefined)
+    async intercept(invocation: Core.Invocation) {
+       return new JsonActionResult("Hello world!", undefined, undefined)
     }
 }
 

@@ -10,7 +10,7 @@ export class ApiController implements BaseController {
      * except JSON result will be sent. 
      */
     ok(body){
-        return new ApiActionResult(this.request, body, 200)
+        return new ApiActionResult(body, 200)
     }
 
     /**
@@ -19,6 +19,6 @@ export class ApiController implements BaseController {
      * @param body: message will be sent to the client, if null/undefined validation message will be sent
      */
     invalid(body?){
-        return new ApiActionResult(this.request, body || this.validator.getValidationErrors(), 400)
+        return new ApiActionResult(body || this.validator.getValidationErrors(), 400)
     }
 }
