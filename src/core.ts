@@ -175,7 +175,7 @@ export interface HttpRequest {
     user: any
     body: any
     referrer: string
-    url: Url.URL
+    url: Url.Url
     getHeader(key: string): string
     getCookie(key: string): string
     getParam(key: string): string
@@ -225,7 +225,7 @@ export class HttpError {
 
 export abstract class Invocation {
     abstract execute(): Promise<ActionResult>
-    url: Url.URL
+    url: Url.Url
     request: HttpRequest
     methodName: string
     classMetaData: Kecubung.ClassMetaData
