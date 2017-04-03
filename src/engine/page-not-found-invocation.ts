@@ -1,5 +1,6 @@
 import { Invocation, HttpRequest, HttpResponse, KambojaOption } from "../core"
 import { StatusActionResult } from "../controller/status-action-result"
+import * as Url from "url"
 
 export class PageNotFoundInvocation extends Invocation {
     constructor(request: HttpRequest,

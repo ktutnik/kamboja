@@ -7,6 +7,7 @@ import * as Sinon from "sinon"
 import { RequiredValidator, RangeValidator, EmailValidator, TypeValidator, ValidatorImpl } from "../src/validator"
 import { DefaultDependencyResolver, DefaultIdentifierResolver, DefaultPathResolver } from "../src/resolver"
 import { MetaDataLoader } from "../src/metadata-loader/metadata-loader"
+import * as Url from "url"
 
 export function fromFile(filePath: string, pathResolver:Core.PathResolver) {
     let path = pathResolver.resolve(filePath)
@@ -98,7 +99,7 @@ export class HttpRequest implements Core.HttpRequest {
     params: { [key: string]: string }
     body: any
     referrer: string
-    url: string
+    url: Url.URL
     user:any
     getHeader(key: string): string { return }
     getCookie(key: string): string { return }

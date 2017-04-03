@@ -3,20 +3,19 @@ import { ControllerExecutor } from "../engine/controller-executor"
 import "reflect-metadata"
 import * as Kecubung from "kecubung"
 import { ParameterBinder } from "../parameter-binder"
+import * as Url from "url"
 
 export class ControllerInvocation extends Core.Invocation {
-    
+
     constructor(private executor: ControllerExecutor,
         private routeInfo: Core.RouteInfo,
-        public request: Core.HttpRequest,
-        option:Core.KambojaOption) {
+        public request: Core.HttpRequest) {
         super()
         this.url = request.url
         this.methodName = routeInfo.methodMetaData.name
         this.classMetaData = routeInfo.classMetaData
         let parameterBinder = new ParameterBinder(this.routeInfo, this.request)
         this.parameters = parameterBinder.getParameters()
-        this.option = option
     }
 
     async execute(): Promise<Core.ActionResult> {

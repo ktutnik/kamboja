@@ -1,5 +1,6 @@
 import { MetaData, ParentMetaData, MetadataType, MethodMetaData, ClassMetaData } from "kecubung";
 import * as Kecubung from "kecubung"
+import * as Url from "url"
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
 export type TransformStatus = "ExitWithResult" | "Next" | "Exit"
@@ -120,8 +121,8 @@ export interface Facade {
     identifierResolver?: IdentifierResolver
     pathResolver?: PathResolver
     validators?: (ValidatorCommand | string)[]
-    metaDataStorage?: MetaDataStorage,
-    interceptors?: (RequestInterceptor | string)[],
+    metaDataStorage?: MetaDataStorage
+    interceptors?: (RequestInterceptor | string)[]
     autoValidation?: boolean
 }
 
@@ -174,7 +175,7 @@ export interface HttpRequest {
     user: any
     body: any
     referrer: string
-    url: string
+    url: Url.URL
     getHeader(key: string): string
     getCookie(key: string): string
     getParam(key: string): string
@@ -224,8 +225,7 @@ export class HttpError {
 
 export abstract class Invocation {
     abstract execute(): Promise<ActionResult>
-    option:KambojaOption
-    url: string
+    url: Url.URL
     request: HttpRequest
     methodName: string
     classMetaData: Kecubung.ClassMetaData

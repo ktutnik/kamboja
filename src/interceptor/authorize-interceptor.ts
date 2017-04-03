@@ -8,6 +8,6 @@ export class AuthorizeInterceptor implements RequestInterceptor {
     constructor(public role: (string | string[])) { }
 
     async intercept(invocation: Invocation):Promise<ActionResult> {
-        return await invocation.execute()
+        return invocation.execute()
     }
 }

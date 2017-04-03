@@ -17,14 +17,13 @@ export class RequestHandler {
             let invocation: Core.Invocation;
             if (this.container.routeInfo) {
                 let controllerExecutor = new ControllerExecutor(this.container, this.request)
-                invocation = new ControllerInvocation(controllerExecutor, this.container.routeInfo, this.request, this.option)
+                invocation = new ControllerInvocation(controllerExecutor, this.container.routeInfo, this.request)
             }
             else {
                 invocation = new PageNotFoundInvocation(this.request, this.response)
             }
             let interceptors = this.container.createInterceptors()
             invocation.interceptors = this.container.createInterceptors()
-            invocation.option = this.option
             for (let interceptor of interceptors) {
                 invocation = new InterceptorInvocation(invocation, interceptor, this.option)
             }
