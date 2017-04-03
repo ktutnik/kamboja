@@ -45,7 +45,7 @@ describe("ActionResult", () => {
     it("Should be able to setCookie from result", () => {
         let result = new Core.ActionResult(undefined)
         result.setCookie({ key: "Key", value: "Value" })
-        result.execute(httpResponse, null)
+        result.execute(httpRequest, httpResponse, null)
         let key = responseMock.setCookie.getCall(0).args[0]
         let value = responseMock.setCookie.getCall(0).args[1]
         Chai.expect(key).eq("Key")
@@ -55,14 +55,14 @@ describe("ActionResult", () => {
     it("Should be able to clearCookie from result", () => {
         let result = new Core.ActionResult([])
         result.removeCookie("key")
-        result.execute(httpResponse, null)
+        result.execute(httpRequest, httpResponse, null)
         Chai.expect(responseMock.removeCookie.calledOnce).true
     })
 
     it("Should be able to setContentType from result", () => {
         let result = new Core.ActionResult([])
         result.setContentType("text/xml")
-        result.execute(httpResponse, null)
+        result.execute(httpRequest, httpResponse, null)
         let contentType = responseMock.setContentType.getCall(0).args[0]
         Chai.expect(contentType).eq("text/xml")
     })
@@ -117,9 +117,9 @@ describe("ApiController", () => {
     })
 
     it("Should return XML if provided text/xml in the accept header", () => {
-        let api = new ApiActionResult(httpRequest, { data: "hello" }, 400)
+        let api = new ApiActionResult({ data: "hello" }, 400)
         requestMock.isAccept.withArgs("text/xml").returns(true)
-        api.execute(httpResponse, null)
+        api.execute(httpRequest, httpResponse, null)
         let status = responseMock.status.getCall(0).args[0]
         let setContent = responseMock.setContentType.getCall(0).args[0]
         let send = responseMock.send.getCall(0).args[0]
@@ -129,9 +129,9 @@ describe("ApiController", () => {
     })
 
     it("Should return XML if provided text/xml in the accept header", () => {
-        let api = new ApiActionResult(httpRequest, { data: "hello" }, 400)
+        let api = new ApiActionResult({ data: "hello" }, 400)
         requestMock.isAccept.withArgs("text/xml").returns(true)
-        api.execute(httpResponse, null)
+        api.execute(httpRequest, httpResponse, null)
         let status = responseMock.status.getCall(0).args[0]
         let setContent = responseMock.setContentType.getCall(0).args[0]
         let send = responseMock.send.getCall(0).args[0]
@@ -140,35 +140,35 @@ describe("ApiController", () => {
         Chai.expect(send).eq("<data>hello</data>")
 
         //should ok without status & without body
-        api = new ApiActionResult(httpRequest, undefined, undefined)
+        api = new ApiActionResult(undefined, undefined)
         requestMock.isAccept.withArgs("text/xml").returns(true)
-        api.execute(httpResponse, null)
+        api.execute(httpRequest, httpResponse, null)
         let endCalled = responseMock.end.calledOnce
         Chai.expect(endCalled).true
     })
 
     it("Should return JSON by default", () => {
-        let api = new ApiActionResult(httpRequest, { data: "hello" }, 400)
+        let api = new ApiActionResult({ data: "hello" }, 400)
         requestMock.isAccept.withArgs("text/xml").returns(false)
-        api.execute(httpResponse, null)
+        api.execute(httpRequest, httpResponse, null)
         let status = responseMock.status.getCall(0).args[0]
         let send = responseMock.json.getCall(0).args[0]
         Chai.expect(status).eq(400)
         Chai.expect(send).deep.eq({ data: "hello" })
 
         //should ok without status & without body
-        api = new ApiActionResult(httpRequest, undefined, undefined)
+        api = new ApiActionResult(undefined, undefined)
         requestMock.isAccept.withArgs("text/xml").returns(false)
-        api.execute(httpResponse, null)
+        api.execute(httpRequest, httpResponse, null)
         let endCalled = responseMock.end.calledOnce
         Chai.expect(endCalled).true
     })
 
     it("Should return JSON if provided multiple Accept Header", () => {
-        let api = new ApiActionResult(httpRequest, { data: "hello" }, 200)
+        let api = new ApiActionResult({ data: "hello" }, 200)
         requestMock.isAccept.withArgs("text/xml").returns(true)
         requestMock.isAccept.withArgs("application/json").returns(true)
-        api.execute(httpResponse, null)
+        api.execute(httpRequest, httpResponse, null)
         let status = responseMock.status.getCall(0).args[0]
         let send = responseMock.json.getCall(0).args[0]
         Chai.expect(status).eq(200)
@@ -180,6 +180,7 @@ describe("Controller", () => {
     describe("view", () => {
         let spy: Sinon.SinonSpy;
         let HttpResponse = new H.HttpResponse()
+        let HttpRequest = new H.HttpRequest()
 
         beforeEach(() => {
             spy = Sinon.spy(HttpResponse, "view")
@@ -193,7 +194,7 @@ describe("Controller", () => {
             let controller = new Controller()
             //called without view name
             let view = controller.view({});
-            view.execute(HttpResponse, RouteInfo)
+            view.execute(HttpRequest, HttpResponse, RouteInfo)
             let viewName = spy.getCall(0).args[0]
             Chai.expect(viewName).eq("simple/mymethod")
         })
@@ -201,7 +202,7 @@ describe("Controller", () => {
         it("Should able to called with view name on controller scope", () => {
             let controller = new Controller()
             let view = controller.view({}, "index");
-            view.execute(HttpResponse, RouteInfo)
+            view.execute(HttpRequest, HttpResponse, RouteInfo)
             let viewName = spy.getCall(0).args[0]
             Chai.expect(viewName).eq("simple/index")
         })
@@ -209,7 +210,7 @@ describe("Controller", () => {
         it("Should able to called with view name outside controller", () => {
             let controller = new Controller()
             let view = controller.view({}, "other/index");
-            view.execute(HttpResponse, RouteInfo)
+            view.execute(HttpRequest, HttpResponse, RouteInfo)
             let viewName = spy.getCall(0).args[0]
             Chai.expect(viewName).eq("other/index")
         })
@@ -218,7 +219,7 @@ describe("Controller", () => {
             let controller = new Controller()
             //called without view name
             let view = controller.view({});
-            view.execute(HttpResponse, <Core.RouteInfo>{
+            view.execute(HttpRequest, HttpResponse, <Core.RouteInfo>{
                 qualifiedClassName: 'Proud, .simple-controller.js',
                 methodMetaData: <Kecubung.MethodMetaData>{
                     name: 'myMethod',
@@ -232,6 +233,7 @@ describe("Controller", () => {
     describe("file", () => {
         let spy: Sinon.SinonSpy;
         let HttpResponse = new H.HttpResponse()
+        let HttpRequest = new H.HttpRequest()
 
         beforeEach(() => {
             spy = Sinon.spy(HttpResponse, "file")
@@ -244,7 +246,7 @@ describe("Controller", () => {
         it("Should provide file path properly", () => {
             let controller = new Controller()
             let view = controller.file("./go/go/kamboja.js");
-            view.execute(HttpResponse, RouteInfo)
+            view.execute(HttpRequest, HttpResponse, RouteInfo)
             let viewName = spy.getCall(0).args[0]
             Chai.expect(viewName).eq("./go/go/kamboja.js")
         })
@@ -253,6 +255,7 @@ describe("Controller", () => {
     describe("redirect", () => {
         let spy: Sinon.SinonSpy;
         let HttpResponse = new H.HttpResponse()
+        let HttpRequest = new H.HttpRequest()
 
         beforeEach(() => {
             spy = Sinon.spy(HttpResponse, "redirect")
@@ -265,7 +268,7 @@ describe("Controller", () => {
         it("Should provide redirect path properly", () => {
             let controller = new Controller()
             let view = controller.redirect("./go/go/kamboja.js");
-            view.execute(HttpResponse, RouteInfo)
+            view.execute(HttpRequest, HttpResponse, RouteInfo)
             let viewName = spy.getCall(0).args[0]
             Chai.expect(viewName).eq("./go/go/kamboja.js")
         })
@@ -274,6 +277,7 @@ describe("Controller", () => {
     describe("json", () => {
         let spy: Sinon.SinonSpy;
         let HttpResponse = new H.HttpResponse()
+        let HttpRequest = new H.HttpRequest()
 
         beforeEach(() => {
             spy = Sinon.spy(HttpResponse, "json")
@@ -286,7 +290,7 @@ describe("Controller", () => {
         it("Should provide json body properly", () => {
             let controller = new Controller()
             let view = controller.json({ data: "Hello!" });
-            view.execute(HttpResponse, RouteInfo)
+            view.execute(HttpRequest, HttpResponse, RouteInfo)
             let viewName = spy.getCall(0).args[0]
             Chai.expect(viewName).deep.eq({ data: "Hello!" })
         })

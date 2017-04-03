@@ -13,6 +13,13 @@ class FakeValidator extends Validator.ValidatorBase {
     }
 }
 
+class FakeInterceptor implements Core.RequestInterceptor {
+    constructor(private opt: Core.KambojaOption) { }
+    async intercept(invocation: Core.Invocation) {
+        return invocation.execute()
+    }
+}
+
 describe("Kamboja", () => {
     let initSpy: Sinon.SinonSpy;
     beforeEach(() => {
@@ -103,5 +110,29 @@ describe("Kamboja", () => {
         let result: Core.KambojaOption = initSpy.getCall(0).args[1]
     })
 
+    it("Should able to add interception from outside option", () => {
+        let opt: Core.KambojaOption = {
+            rootPath: __dirname,
+            showConsoleLog: false
+        }
+        let kamboja = new Kamboja(engine, opt)
+        kamboja.intercept(x => new FakeInterceptor(x))
+        kamboja.intercept(x => [new FakeInterceptor(x), new FakeInterceptor(x)])
+        Chai.expect((<any>kamboja).options.interceptors.length).eq(3)
+    })
+
+    it("Should able to mix interception from option and method", () => {
+        let opt: Core.KambojaOption = {
+            rootPath: __dirname,
+            showConsoleLog: false,
+            interceptors:[
+                new FakeInterceptor(null)
+            ]
+        }
+        let kamboja = new Kamboja(engine, opt)
+        kamboja.intercept(x => new FakeInterceptor(x))
+        kamboja.intercept(x => [new FakeInterceptor(x), new FakeInterceptor(x)])
+        Chai.expect((<any>kamboja).options.interceptors.length).eq(4)
+    })
 
 })

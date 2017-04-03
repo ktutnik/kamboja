@@ -5,8 +5,8 @@ export class FileActionResult extends ActionResult{
         super(cookies)
     }
 
-    execute(response: HttpResponse, routeInfo: RouteInfo){
-        super.execute(response, routeInfo)
+    execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo){
+        super.execute(request, response, routeInfo)
         response.file(this.filePath);
     }
 }

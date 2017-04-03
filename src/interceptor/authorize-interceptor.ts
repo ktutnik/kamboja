@@ -1,4 +1,4 @@
-import { RequestInterceptor, Invocation } from "../core"
+import { RequestInterceptor, Invocation, ActionResult } from "../core"
 import { InterceptorDecorator } from "./interceptor-decorator"
 
 let interceptor = new InterceptorDecorator()
@@ -7,7 +7,7 @@ let interceptor = new InterceptorDecorator()
 export class AuthorizeInterceptor implements RequestInterceptor {
     constructor(public role: (string | string[])) { }
 
-    async intercept(invocation: Invocation) {
-        await invocation.execute()
+    async intercept(invocation: Invocation):Promise<ActionResult> {
+        return invocation.execute()
     }
 }

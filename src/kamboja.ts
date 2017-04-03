@@ -43,6 +43,14 @@ export class Kamboja {
         this.storage = <MetaDataLoader>this.options.metaDataStorage
     }
 
+    intercept(factory:(opt:Core.KambojaOption) => string | string[] | Core.RequestInterceptor | Core.RequestInterceptor[]){
+        let interceptors = factory(this.options)
+        if(!this.options.interceptors) this.options.interceptors = []
+        if(Array.isArray(interceptors))
+            this.options.interceptors.push(...interceptors)
+        else this.options.interceptors.push(interceptors)
+    }
+
     private isFolderProvided() {
         let result = true;
 

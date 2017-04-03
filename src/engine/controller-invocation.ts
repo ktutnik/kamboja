@@ -3,9 +3,10 @@ import { ControllerExecutor } from "../engine/controller-executor"
 import "reflect-metadata"
 import * as Kecubung from "kecubung"
 import { ParameterBinder } from "../parameter-binder"
+import * as Url from "url"
 
 export class ControllerInvocation extends Core.Invocation {
-    
+
     constructor(private executor: ControllerExecutor,
         private routeInfo: Core.RouteInfo,
         public request: Core.HttpRequest) {
@@ -17,7 +18,7 @@ export class ControllerInvocation extends Core.Invocation {
         this.parameters = parameterBinder.getParameters()
     }
 
-    async execute(): Promise<void> {
-        this.returnValue = await this.executor.execute(this.parameters)
+    async execute(): Promise<Core.ActionResult> {
+        return await this.executor.execute(this.parameters)
     }
 }

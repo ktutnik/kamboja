@@ -7,8 +7,8 @@ export class ViewActionResult extends ActionResult {
         super(cookies)
     }
 
-    execute(response: HttpResponse, routeInfo: RouteInfo) {
-        super.execute(response, routeInfo)
+    execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
+        super.execute(request, response, routeInfo)
         //if view name doesn't contains / then add the classname
         if (this.viewName && this.viewName.indexOf("/") == -1) {
             if(!routeInfo) throw new Error(ViewOutsideControllerError);
