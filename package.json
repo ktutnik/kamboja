@@ -1,6 +1,6 @@
 {
   "name": "kamboja",
-  "version": "0.0.1-28",
+  "version": "0.0.1-31",
   "description": "MVC Framework powered by TypeScript",
   "main": "lib/source/index.js",
   "typings": "lib/dts/index.d.ts",
