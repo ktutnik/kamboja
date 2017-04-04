@@ -8,6 +8,8 @@ export type TransformerName = "DefaultAction" | "IndexAction" | "HttpMethodDecor
 export type MetaDataLoaderCategory = "Controller" | "Model"
 export const ValidationTypesAccepted = ["string", "string[]", "number", "number[]", "boolean", "boolean[]", "date", "date[]"]
 
+export type InterceptorFactory = (opt:KambojaOption) => string | string[] | RequestInterceptor | RequestInterceptor[]
+
 export class Decorator {
     internal() { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
 }
