@@ -16,6 +16,7 @@ export class Kamboja {
     private options: Core.KambojaOption
     private log: Logger;
     private storage: MetaDataLoader;
+    private interceptorFactories: Core.InterceptorFactory[] = []
 
     constructor(private engine: Core.Engine, override?: Core.KambojaOption) {
         let options = Lodash.assign({
@@ -43,12 +44,18 @@ export class Kamboja {
         this.storage = <MetaDataLoader>this.options.metaDataStorage
     }
 
-    intercept(factory:(opt:Core.KambojaOption) => string | string[] | Core.RequestInterceptor | Core.RequestInterceptor[]){
-        let interceptors = factory(this.options)
-        if(!this.options.interceptors) this.options.interceptors = []
-        if(Array.isArray(interceptors))
-            this.options.interceptors.push(...interceptors)
-        else this.options.interceptors.push(interceptors)
+    intercept(factory: Core.InterceptorFactory) {
+        this.interceptorFactories.push(factory)
+        return this
+    }
+
+    private registerInterceptors() {
+        this.interceptorFactories.forEach(x => {
+            let result = x(this.options)
+            if (!this.options.interceptors) this.options.interceptors = []
+            if (Array.isArray(result)) this.options.interceptors.push(...result)
+            else this.options.interceptors.push(result)
+        })
     }
 
     private isFolderProvided() {
@@ -115,6 +122,8 @@ export class Kamboja {
         let routeInfos = this.generateRoutes(this.storage.getFiles("Controller"))
         if (routeInfos.length == 0) throw new Error("Fatal error")
         if (!this.analyzeRoutes(routeInfos)) throw new Error("Fatal Error")
-        return this.engine.init(routeInfos, this.options)
+        let app = this.engine.init(routeInfos, this.options)
+        this.registerInterceptors()
+        return app;
     }
 }

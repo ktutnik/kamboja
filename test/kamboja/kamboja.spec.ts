@@ -117,7 +117,8 @@ describe("Kamboja", () => {
         }
         let kamboja = new Kamboja(engine, opt)
         kamboja.intercept(x => new FakeInterceptor(x))
-        kamboja.intercept(x => [new FakeInterceptor(x), new FakeInterceptor(x)])
+            .intercept(x => [new FakeInterceptor(x), new FakeInterceptor(x)])
+            .init()
         Chai.expect((<any>kamboja).options.interceptors.length).eq(3)
     })
 
@@ -125,14 +126,30 @@ describe("Kamboja", () => {
         let opt: Core.KambojaOption = {
             rootPath: __dirname,
             showConsoleLog: false,
-            interceptors:[
+            interceptors: [
                 new FakeInterceptor(null)
             ]
         }
         let kamboja = new Kamboja(engine, opt)
         kamboja.intercept(x => new FakeInterceptor(x))
-        kamboja.intercept(x => [new FakeInterceptor(x), new FakeInterceptor(x)])
+            .intercept(x => [new FakeInterceptor(x), new FakeInterceptor(x)])
+            .init()
         Chai.expect((<any>kamboja).options.interceptors.length).eq(4)
+    })
+
+    it("Should call engine.init() before instantiate interceptors", () => {
+        let called = () => { console.log(""); }
+        let calledSpy = Sinon.spy(called)
+        let opt: Core.KambojaOption = {
+            rootPath: __dirname
+        }
+        let kamboja = new Kamboja(engine, opt)
+        kamboja.intercept(x => {
+            called()
+            return new FakeInterceptor(x)
+        }).init()
+        Chai.expect(initSpy.called).true
+        Chai.expect(calledSpy.called).false
     })
 
 })
