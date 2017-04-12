@@ -18,11 +18,14 @@ export class Kamboja {
     private storage: MetaDataLoader;
     private interceptorFactories: Core.InterceptorFactory[] = []
 
-    static getFacade(){
+    static getFacade() {
         return Kamboja.facade;
     }
 
-    constructor(private engine: Core.Engine, override?: Core.KambojaOption) {
+    constructor(private engine: Core.Engine, opt: Core.KambojaOption | string) {
+        let override: Core.KambojaOption;
+        if (typeof opt === "string") override = { rootPath: opt }
+        else override = opt
         let options = Lodash.assign({
             skipAnalysis: false,
             showConsoleLog: true,
@@ -31,8 +34,9 @@ export class Kamboja {
             viewPath: "view",
             staticFilePath: "../www",
             viewEngine: "hbs",
+            defaultPage: "/home/index",
             autoValidation: true,
-            rootPath: "/home/index"
+            rootPath: undefined
         }, override)
         let idResolver = new DefaultIdentifierResolver()
         let pathResolver = new DefaultPathResolver(options.rootPath)
