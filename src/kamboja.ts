@@ -12,11 +12,15 @@ import * as Kecubung from "kecubung"
 
 export class Kamboja {
     private static defaultModelPath: string = "model"
-    private static options: Core.KambojaOption;
+    private static facade: Core.Facade;
     private options: Core.KambojaOption
     private log: Logger;
     private storage: MetaDataLoader;
     private interceptorFactories: Core.InterceptorFactory[] = []
+
+    static getFacade(){
+        return Kamboja.facade;
+    }
 
     constructor(private engine: Core.Engine, override?: Core.KambojaOption) {
         let options = Lodash.assign({
@@ -28,7 +32,7 @@ export class Kamboja {
             staticFilePath: "../www",
             viewEngine: "hbs",
             autoValidation: true,
-            rootPath: undefined
+            rootPath: "/home/index"
         }, override)
         let idResolver = new DefaultIdentifierResolver()
         let pathResolver = new DefaultPathResolver(options.rootPath)
@@ -40,6 +44,7 @@ export class Kamboja {
         options.metaDataStorage = storage
 
         this.options = options
+        Kamboja.facade = options;
         this.log = new Logger(this.options.showConsoleLog ? "Info" : "Error")
         this.storage = <MetaDataLoader>this.options.metaDataStorage
     }

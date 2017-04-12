@@ -152,4 +152,13 @@ describe("Kamboja", () => {
         Chai.expect(calledSpy.called).false
     })
 
+    it("Should provide facade properly before init", () => {
+        let kamboja = new Kamboja(engine, {
+            rootPath: __dirname
+        })
+        let metadata = Kamboja.getFacade();
+        Chai.expect(metadata).not.null
+    })
+
+
 })
