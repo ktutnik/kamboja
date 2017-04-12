@@ -5,12 +5,12 @@ import { getRouteDetail } from "../../core"
 export class ConventionValueConverter extends BaseConverter {
     convert(meta: Kecubung.ParameterMetaData, value: string): ConverterResult {
         if (typeof value == "undefined" || value == null) return this.exit(value);
-        if (meta.name.indexOf("str") == 0 && this.isUppercase(meta.name[3]))
+        if (meta.name.indexOf("s") == 0 && this.isUppercase(meta.name[1]))
             return this.toString(value, meta)
-        if ((meta.name.indexOf("num") == 0 || meta.name.indexOf("int") == 0)
-            && this.isUppercase(meta.name[3]))
+        if ((meta.name.indexOf("i") == 0 || meta.name.indexOf("n") == 0)
+            && this.isUppercase(meta.name[1]))
             return this.toNumber(value, meta)
-        if (meta.name.indexOf("bool") == 0 && this.isUppercase(meta.name[4]))
+        if (meta.name.indexOf("b") == 0 && this.isUppercase(meta.name[1]))
             return this.toBoolean(value, meta)
         return this.next()
     }
