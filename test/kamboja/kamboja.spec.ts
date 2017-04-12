@@ -39,6 +39,42 @@ describe("Kamboja", () => {
         Chai.expect(result.length).eq(2)
     })
 
+    it("Should provide default option properly", () => {
+        let kamboja:any = new Kamboja(engine, {
+            rootPath: __dirname
+        })
+        
+        let option:Core.KambojaOption = kamboja.options;
+
+        Chai.expect(option.autoValidation).true
+        Chai.expect(option.controllerPaths).deep.eq(["controller"])
+        Chai.expect(option.defaultPage).eq("/home/index")
+        Chai.expect(option.modelPath).eq("model")
+        Chai.expect(option.rootPath).eq(__dirname)
+        Chai.expect(option.showConsoleLog).true
+        Chai.expect(option.skipAnalysis).false
+        Chai.expect(option.staticFilePath).eq("../www")
+        Chai.expect(option.viewEngine).eq("hbs")
+        Chai.expect(option.viewPath).eq("view")
+    })
+
+    it("Should able to only provide __dirname on the constructor", () => {
+        let kamboja:any = new Kamboja(engine, __dirname)
+        
+        let option:Core.KambojaOption = kamboja.options;
+
+        Chai.expect(option.autoValidation).true
+        Chai.expect(option.controllerPaths).deep.eq(["controller"])
+        Chai.expect(option.defaultPage).eq("/home/index")
+        Chai.expect(option.modelPath).eq("model")
+        Chai.expect(option.rootPath).eq(__dirname)
+        Chai.expect(option.showConsoleLog).true
+        Chai.expect(option.skipAnalysis).false
+        Chai.expect(option.staticFilePath).eq("../www")
+        Chai.expect(option.viewEngine).eq("hbs")
+        Chai.expect(option.viewPath).eq("view")
+    })
+
     it("Should ok if no model defined", () => {
         let kamboja = new Kamboja(engine, {
             rootPath: __dirname
