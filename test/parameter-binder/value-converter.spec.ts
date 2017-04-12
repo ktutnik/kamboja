@@ -164,31 +164,31 @@ describe("Value Converter", () => {
             Chai.expect(typeof result).eq("undefined")
         })
 
-        it("Should throw if provided object on str<Name>", () => {
+        it("Should throw if provided object on s<Name>", () => {
             let meta = H.fromFile("controller/parameter-binder-controller.js", new DefaultPathResolver(__dirname))
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
             Chai.expect(() => convert(info, parameterMeta, { data: "Hello" }))
-                .throw("Expected parameter type of \'string\'  but got object in [strName] [DummyApi.conventionConversion controller/parameter-binder-controller.js]")
+                .throw("Expected parameter type of \'string\'  but got object in [sName] [DummyApi.conventionConversion controller/parameter-binder-controller.js]")
         })
 
-        it("Should throw if provided object on num<Name>", () => {
+        it("Should throw if provided object on i<Name>", () => {
             let meta = H.fromFile("controller/parameter-binder-controller.js", new DefaultPathResolver(__dirname))
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[1]
             Chai.expect(() => convert(info, parameterMeta, { data: "Hello" }))
-                .throw("Expected parameter type of \'number\'  but got object in [intAge] [DummyApi.conventionConversion controller/parameter-binder-controller.js")
+                .throw("Expected parameter type of \'number\'  but got object in [iAge] [DummyApi.conventionConversion controller/parameter-binder-controller.js")
         })
 
-        it("Should throw if provided object on bool<Name>", () => {
+        it("Should throw if provided object on b<Name>", () => {
             let meta = H.fromFile("controller/parameter-binder-controller.js", new DefaultPathResolver(__dirname))
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[2]
             Chai.expect(() => convert(info, parameterMeta, { data: "Hello" }))
-                .throw("Expected parameter type of \'boolean\'  but got object in [boolIsDirty] [DummyApi.conventionConversion controller/parameter-binder-controller.js]")
+                .throw("Expected parameter type of \'boolean\'  but got object in [bIsDirty] [DummyApi.conventionConversion controller/parameter-binder-controller.js]")
         })
 
         it("Should not convert if parameter name after 'str' is lower case", () => {
