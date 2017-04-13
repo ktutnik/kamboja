@@ -18,6 +18,9 @@ export class ApiConventionParameterBinder {
                         .parameters[0].name
                     result.push(autoConvert(this.request.getParam(id)))
                     result.push(this.request.body)
+                    for(let i = 1; i < this.routeInfo.methodMetaData.parameters.length; i++){
+                        //TODO: 
+                    }
                     return { status: "Exit", result: result };
                 case "POST":
                     return { status: "Exit", result: [this.request.body] };

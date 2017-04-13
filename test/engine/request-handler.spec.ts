@@ -33,7 +33,7 @@ describe("RequestHandler", () => {
     describe("General Functions", () => {
         it("Should handle 404 properly", async () => {
             let container = new ControllerFactory(facade)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.status.getCall(0).args[0]
             Chai.expect(result).eq(404)
@@ -45,7 +45,7 @@ describe("RequestHandler", () => {
                 "ChangeToHello, interceptor/change-to-hello"
             ]
             let container = new ControllerFactory(facade)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).eq("Hello world!")
@@ -54,6 +54,108 @@ describe("RequestHandler", () => {
     })
 
     describe("ApiController Functions", () => {
+        it("Should execute get(id) properly", async () => {
+            let meta = H.fromFile("controller/api-convention-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "get")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            requestMock.getParam.withArgs("id").returns("12345")
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).eq(12345)
+        })
+
+        it("Should execute list(iOffset, iLimit) properly", async () => {
+            let meta = H.fromFile("controller/api-convention-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "list")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            requestMock.getParam.withArgs("iOffset").returns("1")
+            requestMock.getParam.withArgs("iLimit").returns("10")
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).deep.eq({
+                iOffset: 1,
+                iLimit: 10
+            })
+        })
+
+        it("Should execute add(data) properly", async () => {
+            let meta = H.fromFile("controller/api-convention-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "add")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            httpRequest.body = {
+                message: "HELLO!"
+            }
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).deep.eq({
+                message: "HELLO!"
+            })
+        })
+
+        it("Should execute replace(id, data) properly", async () => {
+            let meta = H.fromFile("controller/api-convention-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "replace")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            httpRequest.body = {
+                message: "HELLO!"
+            }
+            requestMock.getParam.withArgs("id").returns("12345")
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).deep.eq({
+                id: 12345,
+                data: {
+                    message: "HELLO!"
+                }
+            })
+        })
+
+        it("Should execute modify(id, data) properly", async () => {
+            let meta = H.fromFile("controller/api-convention-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "modify")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            httpRequest.body = {
+                message: "HELLO!"
+            }
+            requestMock.getParam.withArgs("id").returns("12345")
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).deep.eq({
+                id: 12345,
+                data: {
+                    message: "HELLO!"
+                }
+            })
+        })
+
+        it("Should execute delete(id) properly", async () => {
+            let meta = H.fromFile("controller/api-convention-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "delete")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            requestMock.getParam.withArgs("id").returns("12345")
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).eq(12345)
+        })
+
         it("Should execute API controller properly", async () => {
             let meta = H.fromFile("controller/api-controller.js", new DefaultPathResolver(__dirname))
             let infos = Transformer.transform(meta)
@@ -61,7 +163,7 @@ describe("RequestHandler", () => {
             info.classId = info.qualifiedClassName
             let container = new ControllerFactory(facade, info)
             requestMock.getParam.withArgs("par1").returns("param1")
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).eq("param1")
@@ -73,7 +175,7 @@ describe("RequestHandler", () => {
             let info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
             info.classId = info.qualifiedClassName
             let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.error.getCall(0).args[0]
             Chai.expect(result.message).contains("Internal error from DummyApi")
@@ -85,7 +187,7 @@ describe("RequestHandler", () => {
             let info = infos.filter(x => x.methodMetaData.name == "voidMethod")[0]
             info.classId = info.qualifiedClassName
             let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             Chai.expect(responseMock.end.called).true
         })
@@ -97,7 +199,7 @@ describe("RequestHandler", () => {
             info.classId = info.qualifiedClassName
             let container = new ControllerFactory(facade, info)
             requestMock.getParam.withArgs("required").returns(undefined)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).deep.eq([{ field: 'required', message: '[required] is required' }])
@@ -115,7 +217,7 @@ describe("RequestHandler", () => {
             let info = infos.filter(x => x.methodMetaData.name == "returnFile")[0]
             info.classId = info.qualifiedClassName
             let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.file.getCall(0).args[0]
             Chai.expect(result).eq("/go/go/kamboja.js")
@@ -127,7 +229,7 @@ describe("RequestHandler", () => {
             let info = infos.filter(x => x.methodMetaData.name == "setTheCookie")[0]
             info.classId = info.qualifiedClassName
             let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.setCookie.getCall(0).args
             Chai.expect(result).deep.eq(['TheKey', 'TheValue', { expires: true }])
@@ -139,7 +241,7 @@ describe("RequestHandler", () => {
             let info = infos.filter(x => x.methodMetaData.name == "returnNonActionResult")[0]
             info.classId = info.qualifiedClassName
             let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.error.getCall(0).args[0]
             Chai.expect(result.message).eq("Controller not return type of ActionResult in [DummyApi.returnNonActionResult controller/controller.js]")
@@ -155,7 +257,7 @@ describe("RequestHandler", () => {
             info.classId = info.qualifiedClassName
             requestMock.getParam.withArgs("age").returns(undefined)
             let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result[0].field).eq("age")
@@ -168,7 +270,7 @@ describe("RequestHandler", () => {
             info.classId = info.qualifiedClassName
             requestMock.getParam.withArgs("par1").returns("param1")
             let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).eq("param1")
@@ -182,7 +284,7 @@ describe("RequestHandler", () => {
                 "CheckHasController, interceptor/check-has-controller"
             ]
             let container = new ControllerFactory(facade)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).eq("DOESN'T HAVE CONTROLLER")
@@ -193,7 +295,7 @@ describe("RequestHandler", () => {
                 "ErrorInterceptor, interceptor/error-interceptor"
             ]
             let container = new ControllerFactory(facade)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.error.getCall(0).args[0]
             Chai.expect(result.message).eq("ERROR INSIDE INTERCEPTOR")
@@ -210,7 +312,7 @@ describe("RequestHandler", () => {
             info.classId = info.qualifiedClassName
             requestMock.getParam.withArgs("par1").returns("param1")
             let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).eq("Hello world!")
@@ -220,7 +322,7 @@ describe("RequestHandler", () => {
             info.classId = info.qualifiedClassName
             requestMock.getParam.withArgs("par1").returns("param1")
             container = new ControllerFactory(facade, info)
-            executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).eq("Hello world!")
@@ -229,7 +331,7 @@ describe("RequestHandler", () => {
             info = infos.filter(x => x.methodMetaData.name == "voidMethod")[0]
             info.classId = info.qualifiedClassName
             container = new ControllerFactory(facade, info)
-            executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).eq("Hello world!")
@@ -238,7 +340,7 @@ describe("RequestHandler", () => {
             info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
             info.classId = info.qualifiedClassName
             container = new ControllerFactory(facade, info)
-            executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).eq("Hello world!")
@@ -254,7 +356,7 @@ describe("RequestHandler", () => {
             let info = infos.filter(x => x.classMetaData.name == "InterceptedTestController" && x.methodMetaData.name == "returnHello")[0]
             info.classId = info.qualifiedClassName
             let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname})
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).eq("0, 1, 2, 3, 4, 5, Hello")
