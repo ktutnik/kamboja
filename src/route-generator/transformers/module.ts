@@ -1,6 +1,7 @@
 import * as Kecubung from "kecubung"
 import * as Core from "../../core"
 import { TransformerBase, when } from "./transformer-base"
+import { ControllerWithDecorator } from "./controller-decorator"
 import { ControllerTransformer } from "./controller"
 
 export class ModuleTransformer extends TransformerBase {
@@ -16,7 +17,7 @@ export class ModuleTransformer extends TransformerBase {
                 x.analysis.push(Core.RouteAnalysisCode.ClassNotExported)
             }
             x.qualifiedClassName = meta.name + "." + x.qualifiedClassName;
-            if(!x.collaborator)x.collaborator = []
+            if (!x.collaborator) x.collaborator = []
             x.collaborator.push("Module")
         })
         return this.exit(result)
@@ -26,6 +27,7 @@ export class ModuleTransformer extends TransformerBase {
         //highest priority transformer should stay on top of another
         this.transformers = [
             new ModuleTransformer(),
+            new ControllerWithDecorator(),
             new ControllerTransformer(),
         ]
     }

@@ -8,13 +8,14 @@ export type TransformerName = "DefaultAction" | "IndexAction" | "HttpMethodDecor
 export type MetaDataLoaderCategory = "Controller" | "Model"
 export const ValidationTypesAccepted = ["string", "string[]", "number", "number[]", "boolean", "boolean[]", "date", "date[]"]
 
-export type InterceptorFactory = (opt:KambojaOption) => string | string[] | RequestInterceptor | RequestInterceptor[]
+export type InterceptorFactory = (opt: KambojaOption) => string | string[] | RequestInterceptor | RequestInterceptor[]
 
 export class Decorator {
     internal() { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
 }
 
 export class HttpDecorator {
+    root(route: string) { return (constructor: Function) => { } }
     get(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
     post(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
     put(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
@@ -59,6 +60,9 @@ export namespace RouteAnalysisCode {
     export const ClassNotExported = 7
 
     export const DuplicateRoutes = 8
+
+    export const DuplicateParameterName = 9
+
 }
 
 export interface AnalysisMessage {
@@ -97,7 +101,7 @@ export interface RouteInfo {
     qualifiedClassName?: string
     classId?: any
     analysis?: number[]
-    classPath?: string
+    //classPath?: string
     methodPath?: string
 }
 
@@ -183,7 +187,7 @@ export interface HttpRequest {
     getParam(key: string): string
     isAccept(mime: string): boolean
     isAuthenticated(): boolean
-    getUserRole():string
+    getUserRole(): string
 }
 
 
@@ -278,7 +282,7 @@ export class ActionResult {
         this.contentType = type;
     }
 
-    execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
+    execute(request: HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
         if (this.contentType) response.setContentType(this.contentType)
         this.removedCookie.forEach(x => response.removeCookie(x.key, x.options))
         this.cookies.forEach(x => response.setCookie(x.key, x.value, x.options))

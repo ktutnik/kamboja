@@ -1,74 +1,28 @@
 import * as Kecubung from "kecubung"
 import * as Core from "../../core"
-import { TransformerBase, when } from "./transformer-base"
-import { ApiConventionTransformer } from "./api-convention"
-import { DefaultActionTransformer } from "./default-action"
-import { HttpDecoratorTransformer } from "./http-decorator"
-import { InternalDecoratorTransformer } from "./internal-decorator"
-import { IndexActionTransformer } from "./index-action"
+import { when, TransformerBase } from "./transformer-base"
+import { ControllerBaseTransformer } from "./controller-base"
 
-export class ControllerTransformer extends TransformerBase {
+
+
+export class ControllerTransformer extends ControllerBaseTransformer {
 
     @when("Class")
     transform(meta: Kecubung.ClassMetaData,
         parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
-        //check if class inherrited from Controler or ApiController
-        if (!meta.baseClass ||
-            !(meta.baseClass == "Controller"
-                || meta.baseClass == "ApiController"))
-            return this.exit(<Core.RouteInfo>{
-                analysis: [Core.RouteAnalysisCode.ClassNotInheritedFromController],
-                qualifiedClassName: meta.name,
-                initiator: "Controller",
-                classMetaData: meta
-            });
-        //check if class is valid (exported)
-        if (!Kecubung.flag(meta.analysis, Kecubung.AnalysisType.Valid))
-            return this.exit(<Core.RouteInfo>{
-                analysis: [Core.RouteAnalysisCode.ClassNotExported],
-                qualifiedClassName: meta.name,
-                initiator: "Controller",
-                classMetaData: meta
-            });
-
-        this.installChildTransformer(meta)
-
-        let ctlLocation = meta.name.toLowerCase().lastIndexOf("controller");
-        if (ctlLocation > 0) {
-            let name = meta.name.substr(0, ctlLocation);
-            parent += "/" + name.toLowerCase();
-        }
-        else {
-            parent += "/" + meta.name.toLowerCase();
-        }
+        let transformResult = super.transform(meta, parent, prevResult)
+        if (transformResult && transformResult.status == "ExitWithResult") return transformResult
+        let name = this.getName(meta)
+        if (!parent) parent = ""
+        parent += "/" + name
         let result = this.transformChildren(meta.methods, parent)
         result.forEach(x => {
             x.qualifiedClassName = meta.name
             x.classMetaData = meta
-            if(x.initiator != "HttpMethodDecorator") x.classPath = parent
+            //if (x.initiator != "HttpMethodDecorator") x.classPath = parent
             if (!x.collaborator) x.collaborator = []
             x.collaborator.push("Controller")
         })
         return this.exit(result)
-    }
-
-    private installChildTransformer(meta: Kecubung.ClassMetaData) {
-        //highest priority transformer should stay on top of another
-        if (meta.baseClass == "ApiController") {
-            this.transformers = [
-                new InternalDecoratorTransformer(),
-                new HttpDecoratorTransformer(),
-                new ApiConventionTransformer(),
-                new DefaultActionTransformer()
-            ]
-        }
-        else {
-            this.transformers = [
-                new InternalDecoratorTransformer(),
-                new HttpDecoratorTransformer(),
-                //new IndexActionTransformer(),
-                new DefaultActionTransformer()
-            ]
-        }
     }
 }

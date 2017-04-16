@@ -19,7 +19,7 @@ export class HttpDecoratorTransformer extends TransformerBase {
             //single method can be assigned with multiple route,
             //so the result is multiple RouteInfo
             for (let decorator of decorators) {
-                let info = this.createInfo(meta, decorator);
+                let info = this.createInfo(meta, decorator, parent);
                 result.push(info);
             }
             //pass to the default action generator to fill decorator without parameter
@@ -28,7 +28,7 @@ export class HttpDecoratorTransformer extends TransformerBase {
         else return this.next()
     }
 
-    private createInfo(meta: Kecubung.MethodMetaData, decorator: Kecubung.DecoratorMetaData) {
+    private createInfo(meta: Kecubung.MethodMetaData, decorator: Kecubung.DecoratorMetaData, parent:string) {
         let method = <Core.HttpMethod>decorator.name.toUpperCase();
         //if decorator doesn't contains parameter (url) then 
         //left the url empty and pass to the next transformer
@@ -41,7 +41,9 @@ export class HttpDecoratorTransformer extends TransformerBase {
             };
         }
         else {
-            let route = (<Kecubung.PrimitiveValueMetaData>decorator.parameters[0]).value;
+            let route:string = (<Kecubung.PrimitiveValueMetaData>decorator.parameters[0]).value;
+            //if route is relative add with parent
+            if(route.charAt(0) != "/") route = parent + "/" + route;
             let analysis: number[] = []
 
             let routeAnalysis = this.checkMissingActionParameters(meta, route)

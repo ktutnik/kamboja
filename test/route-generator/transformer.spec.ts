@@ -85,7 +85,7 @@ describe("Transformer", () => {
         it("Should give correct analysis in Deep Module", () => {
             let meta = H.fromFile("./transformer-dummy/issue-with-non-valid-module.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
-            Chai.expect(result[0].route).eq('this/is/the/:nonPar/route')
+            Chai.expect(result[0].route).eq('/this/is/the/:nonPar/route')
             Chai.expect(result[0].analysis).deep.eq([
                 Core.RouteAnalysisCode.UnAssociatedParameters,
                 Core.RouteAnalysisCode.ClassNotExported
@@ -115,29 +115,29 @@ describe("Transformer", () => {
         it("Should transform @http decorator", () => {
             let meta = H.fromFile("./transformer-dummy/http-decorators.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
-            Chai.expect(result[0].route).eq("this/get/got/different")
+            Chai.expect(result[0].route).eq("/this/get/got/different")
             Chai.expect(result[0].httpMethod).eq("GET")
-            Chai.expect(result[1].route).eq("this/post/got/different")
+            Chai.expect(result[1].route).eq("/this/post/got/different")
             Chai.expect(result[1].httpMethod).eq("POST")
-            Chai.expect(result[2].route).eq("this/put/got/different")
+            Chai.expect(result[2].route).eq("/this/put/got/different")
             Chai.expect(result[2].httpMethod).eq("PUT")
-            Chai.expect(result[3].route).eq("this/delete/got/different")
+            Chai.expect(result[3].route).eq("/this/delete/got/different")
             Chai.expect(result[3].httpMethod).eq("DELETE")
         })
 
         it("Should identify parameter association issue", () => {
             let meta = H.fromFile("./transformer-dummy/http-decorator-param-issue.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
-            Chai.expect(result[0].route).eq('route/got/:parameter')
+            Chai.expect(result[0].route).eq('/route/got/:parameter')
             Chai.expect(result[0].analysis).deep.eq([
                 Core.RouteAnalysisCode.MissingActionParameters,
                 Core.RouteAnalysisCode.UnAssociatedParameters
             ])
-            Chai.expect(result[1].route).eq('route/:associated/:notAssociated')
+            Chai.expect(result[1].route).eq('/route/:associated/:notAssociated')
             Chai.expect(result[1].analysis).deep.eq([
                 Core.RouteAnalysisCode.UnAssociatedParameters
             ])
-            Chai.expect(result[2].route).eq('route/have/no/parameter')
+            Chai.expect(result[2].route).eq('/route/have/no/parameter')
             Chai.expect(result[2].analysis).deep.eq([
                 Core.RouteAnalysisCode.MissingRouteParameters,
             ])
@@ -146,13 +146,13 @@ describe("Transformer", () => {
         it("Should allow multiple decorators", () => {
             let meta = H.fromFile("./transformer-dummy/http-decorator-multiple.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
-            Chai.expect(result[0].route).eq('this/is/the/first/route')
+            Chai.expect(result[0].route).eq('/this/is/the/first/route')
             Chai.expect(result[0].methodMetaData.name).eq('actionHaveNoParameter')
-            Chai.expect(result[1].route).eq('this/is/the/other/route')
+            Chai.expect(result[1].route).eq('/this/is/the/other/route')
             Chai.expect(result[1].methodMetaData.name).eq('actionHaveNoParameter')
-            Chai.expect(result[2].route).eq('this/is/:parameter')
+            Chai.expect(result[2].route).eq('/this/is/:parameter')
             Chai.expect(result[2].methodMetaData.name).eq('actionWithParameter')
-            Chai.expect(result[3].route).eq('the/:parameter/in/the/middle')
+            Chai.expect(result[3].route).eq('/the/:parameter/in/the/middle')
             Chai.expect(result[3].methodMetaData.name).eq('actionWithParameter')
         })
 
@@ -181,12 +181,12 @@ describe("Transformer", () => {
             let meta = H.fromFile("./transformer-dummy/http-decorator-multiple-issue.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
             let clean = H.cleanUp(result)
-            Chai.expect(result[0].route).eq("this/is/the/first/route/:nonPar")
+            Chai.expect(result[0].route).eq("/this/is/the/first/route/:nonPar")
             Chai.expect(result[0].analysis).deep.eq([
                 Core.RouteAnalysisCode.UnAssociatedParameters
             ])
             Chai.expect(result[0].methodMetaData.name).eq("actionHaveNoParameter")
-            Chai.expect(result[1].route).eq("this/is/the/:nonPar/route")
+            Chai.expect(result[1].route).eq("/this/is/the/:nonPar/route")
             Chai.expect(result[1].analysis).deep.eq([
                 Core.RouteAnalysisCode.UnAssociatedParameters
             ])
@@ -298,6 +298,54 @@ describe("Transformer", () => {
             Chai.expect(result[0].route).eq("/simple/getbypage")
             Chai.expect(result[0].initiator).eq("HttpMethodDecorator")
             Chai.expect(result[0].collaborator.some(x => x == "DefaultAction")).true
+        })
+    })
+
+    describe("Root Decorator", () => {
+        it("Should transform @http decorator", () => {
+            let meta = H.fromFile("./transformer-dummy/root-decorator.js", new DefaultPathResolver(__dirname))
+            let result = Transformer.transform(meta);
+            let clean = H.cleanUp(result)
+            Chai.expect(clean).deep.eq([{
+                initiator: 'HttpMethodDecorator',
+                route: '/absolute/relative',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'index' },
+                qualifiedClassName: 'Namespace.AbsoluteRootController, ./transformer-dummy/root-decorator.js',
+                classMetaData: { name: 'AbsoluteRootController', baseClass: 'Controller' },
+                collaborator: ['DefaultAction', 'Controller', 'Module'],
+                analysis: [2]
+            },
+            {
+                initiator: 'HttpMethodDecorator',
+                route: '/abs/url',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'myGetAction' },
+                qualifiedClassName: 'Namespace.AbsoluteRootController, ./transformer-dummy/root-decorator.js',
+                classMetaData: { name: 'AbsoluteRootController', baseClass: 'Controller' },
+                collaborator: ['DefaultAction', 'Controller', 'Module'],
+                analysis: [2]
+            },
+            {
+                initiator: 'HttpMethodDecorator',
+                route: '/namespace/relative/relative',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'index' },
+                qualifiedClassName: 'Namespace.RelativeRootController, ./transformer-dummy/root-decorator.js',
+                classMetaData: { name: 'RelativeRootController', baseClass: 'Controller' },
+                collaborator: ['DefaultAction', 'Controller', 'Module'],
+                analysis: [2]
+            },
+            {
+                initiator: 'HttpMethodDecorator',
+                route: '/absolute/url',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'myGetAction' },
+                qualifiedClassName: 'Namespace.RelativeRootController, ./transformer-dummy/root-decorator.js',
+                classMetaData: { name: 'RelativeRootController', baseClass: 'Controller' },
+                collaborator: ['DefaultAction', 'Controller', 'Module'],
+                analysis: [2]
+            }])
         })
     })
 })

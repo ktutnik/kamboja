@@ -156,6 +156,125 @@ describe("RequestHandler", () => {
             Chai.expect(result).eq(12345)
         })
 
+        it("Should execute get(id, root) properly", async () => {
+            let meta = H.fromFile("controller/api-convention-custom-parameter-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "get")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            requestMock.getParam.withArgs("id").returns("12345")
+            requestMock.getParam.withArgs("root").returns("12345")
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).deep.eq({
+                id: 12345, root: 12345
+            })
+        })
+
+        it("Should execute list(iOffset, iLimit, root) properly", async () => {
+            let meta = H.fromFile("controller/api-convention-custom-parameter-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "list")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            requestMock.getParam.withArgs("iOffset").returns("1")
+            requestMock.getParam.withArgs("iLimit").returns("10")
+            requestMock.getParam.withArgs("root").returns("12345")
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).deep.eq({
+                iOffset: 1,
+                iLimit: 10,
+                root: 12345
+            })
+        })
+
+        it("Should execute add(data, root) properly", async () => {
+            let meta = H.fromFile("controller/api-convention-custom-parameter-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "add")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            httpRequest.body = {
+                message: "HELLO!"
+            }
+            requestMock.getParam.withArgs("root").returns("12345")
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).deep.eq({
+                root: 12345, 
+                data: {
+                    message: "HELLO!"
+                }
+            })
+        })
+
+        it("Should execute replace(id, data, root) properly", async () => {
+            let meta = H.fromFile("controller/api-convention-custom-parameter-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "replace")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            httpRequest.body = {
+                message: "HELLO!"
+            }
+            requestMock.getParam.withArgs("id").returns("12345")
+            requestMock.getParam.withArgs("root").returns("12345")
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).deep.eq({
+                id: 12345,
+                root: 12345, 
+                data: {
+                    message: "HELLO!"
+                }
+            })
+        })
+
+        it("Should execute modify(id, data, root) properly", async () => {
+            let meta = H.fromFile("controller/api-convention-custom-parameter-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "modify")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            httpRequest.body = {
+                message: "HELLO!"
+            }
+            requestMock.getParam.withArgs("id").returns("12345")
+            requestMock.getParam.withArgs("root").returns("12345")
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).deep.eq({
+                id: 12345,
+                root: 12345, 
+                data: {
+                    message: "HELLO!"
+                }
+            })
+        })
+
+        it("Should execute delete(id, root) properly", async () => {
+            let meta = H.fromFile("controller/api-convention-custom-parameter-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "delete")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            requestMock.getParam.withArgs("id").returns("12345")
+            requestMock.getParam.withArgs("root").returns("12345")
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).deep.eq({
+                id: 12345, 
+                root: 12345
+            })
+        })
+
         it("Should execute API controller properly", async () => {
             let meta = H.fromFile("controller/api-controller.js", new DefaultPathResolver(__dirname))
             let infos = Transformer.transform(meta)
@@ -179,6 +298,19 @@ describe("RequestHandler", () => {
             await executor.execute()
             let result = responseMock.error.getCall(0).args[0]
             Chai.expect(result.message).contains("Internal error from DummyApi")
+        })
+
+        it("Should able to set status using throw error", async () => {
+            let meta = H.fromFile("controller/api-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "statusError")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.error.getCall(0).args
+            console.log(result)
+            Chai.expect(result).contains(404)
         })
 
         it("Should handle return VOID type of action", async () => {

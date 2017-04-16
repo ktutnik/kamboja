@@ -3,12 +3,12 @@ import {Controller, ApiController} from "../../../src/controller"
 
 export class SimpleController extends Controller {
     
-    @http.get("route/got/:parameter")
+    @http.get("/route/got/:parameter")
     actionHaveNoParameter(){}
 
-    @http.get("route/:associated/:notAssociated")
+    @http.get("/route/:associated/:notAssociated")
     postMethod(associated){}
 
-    @http.get("route/have/no/parameter")
+    @http.get("/route/have/no/parameter")
     actionHaveParameter(parameter){}
 }

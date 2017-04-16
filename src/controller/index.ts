@@ -5,4 +5,4 @@ export { JsonActionResult } from "./json-action-result"
 export { RedirectActionResult } from "./redirect-action-result"
 export { FileActionResult } from "./file-action-result"
 export { ApiActionResult } from "./api-action-result"
-
+export { HttpStatusError } from "./errors"
