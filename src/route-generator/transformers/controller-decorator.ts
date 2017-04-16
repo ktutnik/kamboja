@@ -1,14 +1,14 @@
 import * as Kecubung from "kecubung"
 import * as Core from "../../core"
 import { when, TransformerBase } from "./transformer-base"
-import { ControllerBaseTransformer } from "./controller-base"
+import { getTransformers, checkForAnalysis } from "./controller"
 
-export class ControllerWithDecorator extends ControllerBaseTransformer {
+export class ControllerWithDecorator extends TransformerBase {
     @when("Class")
-    transform(meta: Kecubung.ClassMetaData,
-        parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
-        let transformResult = super.transform(meta, parent, prevResult)
-        if (transformResult && transformResult.status == "ExitWithResult") return transformResult
+    transform(meta: Kecubung.ClassMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
+        let checkResult = checkForAnalysis(meta)
+        if (checkResult) return this.exit(checkResult)
+        this.transformers = getTransformers(meta)
 
         if (meta.decorators && meta.decorators.some(x => x.name == "root")) {
             let decorators = meta.decorators.filter(x => x.name == "root")
@@ -16,7 +16,7 @@ export class ControllerWithDecorator extends ControllerBaseTransformer {
                 return this.exit(<Core.RouteInfo>{
                     analysis: [Core.RouteAnalysisCode.DuplicateRoutes],
                     qualifiedClassName: meta.name,
-                    initiator: "Controller",
+                    initiator: "ControllerWithDecorator",
                     classMetaData: meta
                 });
             }
@@ -30,26 +30,11 @@ export class ControllerWithDecorator extends ControllerBaseTransformer {
                 x.qualifiedClassName = meta.name
                 x.classMetaData = meta
                 if (!x.collaborator) x.collaborator = []
-                x.collaborator.push("Controller")
-                if (!this.queryAssociated(route, x.methodMetaData)) {
-                    if (!x.analysis) x.analysis = []
-                    x.analysis.push(Core.RouteAnalysisCode.MissingActionParameters)
-                }
+                x.collaborator.push("ControllerWithDecorator")
             })
             return this.exit(result)
         }
         else return this.next()
     }
 
-    private queryAssociated(parent: string, meta: Kecubung.MethodMetaData) {
-        let routeParameters = parent.split("/")
-            .filter(x => x.charAt(0) == ":")
-            .map(x => x.substr(1));
-        if (routeParameters.length > 0) {
-            let associated = meta.parameters
-                .filter(par => routeParameters.some(qry => qry == par.name))
-            return associated.length == routeParameters.length
-        }
-        return true
-    }
 }

@@ -313,7 +313,7 @@ describe("Transformer", () => {
                 methodMetaData: { name: 'index' },
                 qualifiedClassName: 'Namespace.AbsoluteRootController, ./transformer-dummy/root-decorator.js',
                 classMetaData: { name: 'AbsoluteRootController', baseClass: 'Controller' },
-                collaborator: ['DefaultAction', 'Controller', 'Module'],
+                collaborator: ['DefaultAction', 'ControllerWithDecorator', 'Module'],
                 analysis: [2]
             },
             {
@@ -323,7 +323,7 @@ describe("Transformer", () => {
                 methodMetaData: { name: 'myGetAction' },
                 qualifiedClassName: 'Namespace.AbsoluteRootController, ./transformer-dummy/root-decorator.js',
                 classMetaData: { name: 'AbsoluteRootController', baseClass: 'Controller' },
-                collaborator: ['DefaultAction', 'Controller', 'Module'],
+                collaborator: ['DefaultAction', 'ControllerWithDecorator', 'Module'],
                 analysis: [2]
             },
             {
@@ -333,7 +333,7 @@ describe("Transformer", () => {
                 methodMetaData: { name: 'index' },
                 qualifiedClassName: 'Namespace.RelativeRootController, ./transformer-dummy/root-decorator.js',
                 classMetaData: { name: 'RelativeRootController', baseClass: 'Controller' },
-                collaborator: ['DefaultAction', 'Controller', 'Module'],
+                collaborator: ['DefaultAction', 'ControllerWithDecorator', 'Module'],
                 analysis: [2]
             },
             {
@@ -343,7 +343,7 @@ describe("Transformer", () => {
                 methodMetaData: { name: 'myGetAction' },
                 qualifiedClassName: 'Namespace.RelativeRootController, ./transformer-dummy/root-decorator.js',
                 classMetaData: { name: 'RelativeRootController', baseClass: 'Controller' },
-                collaborator: ['DefaultAction', 'Controller', 'Module'],
+                collaborator: ['DefaultAction', 'ControllerWithDecorator', 'Module'],
                 analysis: [2]
             }])
         })
