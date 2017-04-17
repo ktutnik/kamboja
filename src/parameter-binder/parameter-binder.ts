@@ -1,5 +1,5 @@
 import * as Core from "../core"
-import {BinderCommand, BinderResult, autoConvert} from "./baseclasses"
+import {BinderCommand, BinderResult} from "./baseclasses"
 import {ApiConventionParameterBinder} from "./api-convention-parameter-binder"
 import {DefaultParameterBinder} from "./default-parameter-binder"
 

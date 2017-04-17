@@ -123,6 +123,8 @@ describe("Transformer", () => {
             Chai.expect(result[2].httpMethod).eq("PUT")
             Chai.expect(result[3].route).eq("/this/delete/got/different")
             Chai.expect(result[3].httpMethod).eq("DELETE")
+            Chai.expect(result[4].route).eq("/this/patch/got/different")
+            Chai.expect(result[4].httpMethod).eq("PATCH")
         })
 
         it("Should identify parameter association issue", () => {

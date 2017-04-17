@@ -7,15 +7,14 @@ import { ConventionValueConverter } from "./convention-value-converter"
 import * as Core from "../../core"
 
 
-
-export function convert(routeInfo: Core.RouteInfo, meta: Kecubung.ParameterMetaData, value: any) {
+export function convert(routeInfo: Core.RouteInfo, name:string, value: any) {
     const Converters: BaseConverter[] = [
         new DecoratedValueConverter(routeInfo),
         new ConventionValueConverter(routeInfo),
         new DefaultValueConverter(routeInfo)
     ]
     for (let converter of Converters) {
-        let result = converter.convert(meta, value)
+        let result = converter.convert(routeInfo.methodMetaData.parameters.filter(x => x.name == name)[0], value)
         if (result.type == "Exit") return result.result;
     }
 }

@@ -3,13 +3,10 @@ import * as Core from "../../core"
 import { TransformerBase, when } from "./transformer-base"
 
 export class InternalDecoratorTransformer extends TransformerBase {
-    private decorators: Array<Core.DecoratorType> = ["get", "put", "post", "delete", "internal"]
+    private decorators: Array<Core.DecoratorType> = ["get", "put", "post", "delete", "internal", "patch"]
 
     @when("Method")
     transform(meta: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
-        if (prevResult) {
-            this.next(prevResult)
-        }
         if (meta.decorators && meta.decorators.length > 0) {
             let decorators = meta.decorators.filter(x => this.decorators.some(y => y == x.name))
 

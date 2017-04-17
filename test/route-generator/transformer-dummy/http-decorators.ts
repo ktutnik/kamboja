@@ -14,4 +14,7 @@ export class SimpleController extends Controller {
 
     @http.delete("/this/delete/got/different")
     deleteMethod(){}
+
+    @http.patch("/this/patch/got/different")
+    patchMethod(){}
 }
