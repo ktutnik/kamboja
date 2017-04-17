@@ -9,7 +9,7 @@ import { DefaultDependencyResolver, DefaultIdentifierResolver, DefaultPathResolv
 import { MetaDataLoader } from "../src/metadata-loader/metadata-loader"
 import * as Url from "url"
 
-export function fromFile(filePath: string, pathResolver:Core.PathResolver) {
+export function fromFile(filePath: string, pathResolver: Core.PathResolver) {
     let path = pathResolver.resolve(filePath)
     let code = Fs.readFileSync(path).toString()
     return fromCode(code, filePath)
@@ -72,7 +72,8 @@ export function stub<T>(object: T) {
 
 export function restore<T>(object: Spies<T> | Stubs<T>) {
     for (let key in object) {
-        object[key].restore()
+        if (object[key].restore)
+            object[key].restore()
     }
 }
 
@@ -86,7 +87,7 @@ export class HttpResponse implements Core.HttpResponse {
     redirect(url: string) { }
     file(path: string) { }
     end() { }
-    removeCookie(key:string, option?:Core.CookieOptions) { }
+    removeCookie(key: string, option?: Core.CookieOptions) { }
     setContentType(type: string) { }
     send(body) { }
 };
@@ -100,21 +101,21 @@ export class HttpRequest implements Core.HttpRequest {
     body: any
     referrer: string
     url: Url.URL
-    user:any
+    user: any
     getHeader(key: string): string { return }
     getCookie(key: string): string { return }
     getParam(key: string): string { return }
     isAccept(mime: string) { return false }
-    isAuthenticated(){return false}
-    getUserRole(){return ""}
+    isAuthenticated() { return false }
+    getUserRole() { return "" }
 }
 
-export function createFacade(rootPath:string) {
+export function createFacade(rootPath: string) {
     let facade: Core.Facade = {
         identifierResolver: new DefaultIdentifierResolver(),
         dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver(), new DefaultPathResolver(rootPath)),
         metaDataStorage: new MetaDataLoader(new DefaultIdentifierResolver(), new DefaultPathResolver(rootPath)),
-        autoValidation : true
+        autoValidation: true
     }
     return facade;
 }

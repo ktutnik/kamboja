@@ -1,5 +1,5 @@
 import { Controller, ApiController } from "../../../src/controller"
-import { val } from "../../../src"
+import { val, HttpStatusError } from "../../../src"
 
 export class DummyApi extends ApiController {
     returnTheParam(par1) {
@@ -22,5 +22,9 @@ export class DummyApi extends ApiController {
 
     validationTest( @val.required() required) { 
         return "OK"
+    }
+
+    statusError(){
+        throw new HttpStatusError(404, "Not found")
     }
 }

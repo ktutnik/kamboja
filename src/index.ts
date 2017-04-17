@@ -12,7 +12,7 @@ export { Resolver }
 export { RouteGenerator }
 export { Engine }
 export { Interceptor }
-export { ApiActionResult, ApiController, Controller, FileActionResult, JsonActionResult, RedirectActionResult, ViewActionResult } from "./controller"
+export { ApiActionResult, ApiController, Controller, FileActionResult, JsonActionResult, RedirectActionResult, ViewActionResult, HttpStatusError } from "./controller"
 export { Kamboja } from "./kamboja"
 export { MetaDataLoader } from "./metadata-loader/metadata-loader"
 

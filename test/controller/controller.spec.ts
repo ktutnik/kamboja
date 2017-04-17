@@ -1,4 +1,4 @@
-import { Controller, ApiController, ApiActionResult } from "../../src"
+import { Controller, ApiController, ApiActionResult, HttpStatusError } from "../../src"
 import * as H from "../helper"
 import * as Chai from "chai"
 import * as Core from "../../src/core"
@@ -24,6 +24,19 @@ let Validator: Core.Validator = {
     }
 }
 
+describe("Error", () => {
+    it("Should instantiate properly", () => {
+        let status = new HttpStatusError(undefined);
+        Chai.expect(status instanceof HttpStatusError).true
+    })
+
+    it("Should instantiate properly", () => {
+        
+        let status = new HttpStatusError(undefined);
+        Chai.expect(status instanceof HttpStatusError).true
+    })
+})
+
 describe("ActionResult", () => {
     let responseMock: H.Spies<H.HttpResponse>
     let httpResponse: H.HttpResponse
@@ -42,6 +55,8 @@ describe("ActionResult", () => {
         H.restore(requestMock)
     })
 
+
+
     it("Should be able to setCookie from result", () => {
         let result = new Core.ActionResult(undefined)
         result.setCookie({ key: "Key", value: "Value" })
@@ -50,6 +65,7 @@ describe("ActionResult", () => {
         let value = responseMock.setCookie.getCall(0).args[1]
         Chai.expect(key).eq("Key")
         Chai.expect(value).eq("Value")
+
     })
 
     it("Should be able to clearCookie from result", () => {

@@ -12,7 +12,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "defaultConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
-            let result = convert(info, parameterMeta, "halo")
+            let result = convert(info, parameterMeta.name, "halo")
             Chai.expect(typeof result).eq("string")
         })
 
@@ -21,7 +21,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "defaultConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
-            let result = convert(info, parameterMeta, "200")
+            let result = convert(info, parameterMeta.name, "200")
             Chai.expect(typeof result).eq("number")
         })
 
@@ -30,7 +30,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "defaultConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
-            let result = convert(info, parameterMeta, "True")
+            let result = convert(info, parameterMeta.name, "True")
             Chai.expect(typeof result).eq("boolean")
         })
 
@@ -39,7 +39,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "defaultConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
-            let result = convert(info, parameterMeta, undefined)
+            let result = convert(info, parameterMeta.name, undefined)
             Chai.expect(typeof result).eq("undefined")
         })
 
@@ -48,7 +48,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "defaultConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
-            let result = convert(info, parameterMeta, { data: "Hello" })
+            let result = convert(info, parameterMeta.name, { data: "Hello" })
             Chai.expect(result).deep.eq({ data: "Hello" })
         })
     })
@@ -59,7 +59,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "decoratedConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
-            let result = convert(info, parameterMeta, "halo")
+            let result = convert(info, parameterMeta.name, "halo")
             Chai.expect(typeof result).eq("string")
         })
 
@@ -68,7 +68,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "decoratedConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[1]
-            let result = convert(info, parameterMeta, "200")
+            let result = convert(info, parameterMeta.name, "200")
             Chai.expect(typeof result).eq("number")
         })
 
@@ -77,7 +77,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "decoratedConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[2]
-            let result = convert(info, parameterMeta, "True")
+            let result = convert(info, parameterMeta.name, "True")
             Chai.expect(typeof result).eq("boolean")
         })
 
@@ -86,7 +86,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "decoratedConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
-            let result = convert(info, parameterMeta, undefined)
+            let result = convert(info, parameterMeta.name, undefined)
             Chai.expect(typeof result).eq("undefined")
         })
 
@@ -95,7 +95,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "decoratedConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
-            Chai.expect(() => convert(info, parameterMeta, { data: "Hello" }))
+            Chai.expect(() => convert(info, parameterMeta.name, { data: "Hello" }))
                 .throw("Expected parameter type of [@val.type('string') str] but got object in [DummyApi.decoratedConversion controller/parameter-binder-controller.js]")
         })
 
@@ -104,7 +104,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "arrayDecorated")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
-            Chai.expect(convert(info, parameterMeta, [{ data: "Hello" }]))
+            Chai.expect(convert(info, parameterMeta.name, [{ data: "Hello" }]))
                 .deep.eq([{ data: "Hello" }])
         })
 
@@ -113,7 +113,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "arrayDecorated")[0]
             let parameterMeta = info.methodMetaData.parameters[1]
-            Chai.expect(convert(info, parameterMeta, [{ data: "Hello" }]))
+            Chai.expect(convert(info, parameterMeta.name, [{ data: "Hello" }]))
                 .deep.eq([{ data: "Hello" }])
         })
 
@@ -122,7 +122,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "arrayDecorated")[0]
             let parameterMeta = info.methodMetaData.parameters[2]
-            Chai.expect(convert(info, parameterMeta, [{ data: "Hello" }]))
+            Chai.expect(convert(info, parameterMeta.name, [{ data: "Hello" }]))
                 .deep.eq([{ data: "Hello" }])
         })
     })
@@ -133,7 +133,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
-            let result = convert(info, parameterMeta, "halo")
+            let result = convert(info, parameterMeta.name, "halo")
             Chai.expect(typeof result).eq("string")
         })
 
@@ -142,7 +142,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[1]
-            let result = convert(info, parameterMeta, "200")
+            let result = convert(info, parameterMeta.name, "200")
             Chai.expect(typeof result).eq("number")
         })
 
@@ -151,7 +151,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[2]
-            let result = convert(info, parameterMeta, "True")
+            let result = convert(info, parameterMeta.name, "True")
             Chai.expect(typeof result).eq("boolean")
         })
 
@@ -160,7 +160,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
-            let result = convert(info, parameterMeta, undefined)
+            let result = convert(info, parameterMeta.name, undefined)
             Chai.expect(typeof result).eq("undefined")
         })
 
@@ -169,7 +169,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[0]
-            Chai.expect(() => convert(info, parameterMeta, { data: "Hello" }))
+            Chai.expect(() => convert(info, parameterMeta.name, { data: "Hello" }))
                 .throw("Expected parameter type of \'string\'  but got object in [sName] [DummyApi.conventionConversion controller/parameter-binder-controller.js]")
         })
 
@@ -178,7 +178,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[1]
-            Chai.expect(() => convert(info, parameterMeta, { data: "Hello" }))
+            Chai.expect(() => convert(info, parameterMeta.name, { data: "Hello" }))
                 .throw("Expected parameter type of \'number\'  but got object in [iAge] [DummyApi.conventionConversion controller/parameter-binder-controller.js")
         })
 
@@ -187,7 +187,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[2]
-            Chai.expect(() => convert(info, parameterMeta, { data: "Hello" }))
+            Chai.expect(() => convert(info, parameterMeta.name, { data: "Hello" }))
                 .throw("Expected parameter type of \'boolean\'  but got object in [bIsDirty] [DummyApi.conventionConversion controller/parameter-binder-controller.js]")
         })
 
@@ -196,7 +196,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[3]
-            Chai.expect(convert(info, parameterMeta, { data: "Hello" }))
+            Chai.expect(convert(info, parameterMeta.name, { data: "Hello" }))
                 .deep.eq({ data: "Hello" })
         })
 
@@ -205,7 +205,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[4]
-            Chai.expect(convert(info, parameterMeta, { data: "Hello" }))
+            Chai.expect(convert(info, parameterMeta.name, { data: "Hello" }))
                 .deep.eq({ data: "Hello" })
         })
 
@@ -214,7 +214,7 @@ describe("Value Converter", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "conventionConversion")[0]
             let parameterMeta = info.methodMetaData.parameters[5]
-            Chai.expect(convert(info, parameterMeta, { data: "Hello" }))
+            Chai.expect(convert(info, parameterMeta.name, { data: "Hello" }))
                 .deep.eq({ data: "Hello" })
         })
 
@@ -225,7 +225,7 @@ describe("Value Converter", () => {
         let infos = Transformer.transform(meta)
         let info = infos.filter(x => x.methodMetaData.name == "priority")[0]
         let parameterMeta = info.methodMetaData.parameters[0]
-        let result = convert(info, parameterMeta, "abc")
+        let result = convert(info, parameterMeta.name, "abc")
         Chai.expect(typeof result).eq("number")
     })
 })

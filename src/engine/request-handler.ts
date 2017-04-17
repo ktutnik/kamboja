@@ -5,12 +5,13 @@ import { InterceptorInvocation } from "./interceptor-invocation"
 import { ControllerExecutor } from "./controller-executor"
 import { PageNotFoundInvocation } from "./page-not-found-invocation"
 import { ControllerFactory } from "./factory"
+import { HttpStatusError } from "../controller"
 
 export class RequestHandler {
-    constructor(private container: ControllerFactory, 
+    constructor(private container: ControllerFactory,
         private request: Core.HttpRequest,
         private response: Core.HttpResponse,
-        private option:Core.KambojaOption) { }
+        private option: Core.KambojaOption) { }
 
     async execute() {
         try {
@@ -36,7 +37,11 @@ export class RequestHandler {
                 this.response.end()
         }
         catch (e) {
-            this.response.error(e)
+            if (e instanceof HttpStatusError) {
+                this.response.error(e, e.status)
+            }
+            else
+                this.response.error(e)
         }
     }
 }

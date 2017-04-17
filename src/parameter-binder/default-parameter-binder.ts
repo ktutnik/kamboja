@@ -1,16 +1,16 @@
 import * as Core from "../core"
-import {BinderCommand, BinderResult, autoConvert} from "./baseclasses"
+import { BinderCommand, BinderResult } from "./baseclasses"
+import { convert } from "./value-converter"
 
 export class DefaultParameterBinder {
     constructor(private routeInfo: Core.RouteInfo, private request: Core.HttpRequest) { }
 
     getParameters(): BinderResult {
         let result: any[] = []
-        let routeParams = this.routeInfo.methodMetaData
-            .parameters.map(x => x.name)
-        for (let item of routeParams) {
-            result.push(autoConvert(this.request.getParam(item)))
-        }
+        this.routeInfo.methodMetaData
+            .parameters.forEach(x => {
+                result.push(convert(this.routeInfo, x.name, this.request.getParam(x.name)))
+            })
         return { status: "Exit", result: result };
     }
 }
