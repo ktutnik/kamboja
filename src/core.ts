@@ -19,6 +19,7 @@ export class HttpDecorator {
     get(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
     post(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
     put(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+    patch(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
     delete(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
 }
 

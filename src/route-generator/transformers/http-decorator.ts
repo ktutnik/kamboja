@@ -4,7 +4,7 @@ import { TransformerBase, when } from "./transformer-base"
 
 
 export class HttpDecoratorTransformer extends TransformerBase {
-    decorators: Core.DecoratorType[] = ["get", "post", "put", "delete"]
+    decorators: Core.DecoratorType[] = ["get", "post", "put", "delete", "patch"]
 
     @when("Method")
     transform(meta: Kecubung.MethodMetaData, parent: string, prevResult: Core.RouteInfo[]): Core.TransformResult {
