@@ -42,18 +42,6 @@ export class ApiConventionTransformer extends TransformerBase {
         return this.next()
     }
 
-
-    private list(meta: Kecubung.MethodMetaData, parent: string) {
-        return this.exit({
-            httpMethod: "GET",
-            initiator: "ApiConvention",
-            methodMetaData: meta,
-            route: parent,
-            methodPath: "/"
-        });
-    }
-
-
     private singleParam(meta: Kecubung.MethodMetaData, parent: string, method: Core.HttpMethod) {
         let path = "/:" + meta.parameters[0].name;
         return this.exit({
