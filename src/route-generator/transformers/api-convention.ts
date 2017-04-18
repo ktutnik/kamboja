@@ -32,7 +32,7 @@ export class ApiConventionTransformer extends TransformerBase {
                 case "delete":
                     return this.singleParam(meta, parent, "DELETE");
                 case "replace":
-                    return this.noParam(meta, parent, "PUT")
+                    return this.singleParam(meta, parent, "PUT")
                 case "modify":
                     return this.singleParam(meta, parent, "PATCH");
                 case "add":
