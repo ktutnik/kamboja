@@ -26,17 +26,17 @@ export class ApiConventionTransformer extends TransformerBase {
             }
             switch (<MethodConventionType>meta.name) {
                 case "list":
-                    return this.list(meta, parent);
+                    return this.noParam(meta, parent, "GET");
                 case "get":
                     return this.singleParam(meta, parent, "GET");
                 case "delete":
                     return this.singleParam(meta, parent, "DELETE");
                 case "replace":
-                    return this.singleParam(meta, parent, "PUT")
+                    return this.noParam(meta, parent, "PUT")
                 case "modify":
                     return this.singleParam(meta, parent, "PATCH");
                 case "add":
-                    return this.add(meta, parent);
+                    return this.noParam(meta, parent, "POST");
             }
         }
         return this.next()
@@ -65,9 +65,9 @@ export class ApiConventionTransformer extends TransformerBase {
         });
     }
 
-    private add(meta: Kecubung.MethodMetaData, parent: string) {
+    private noParam(meta: Kecubung.MethodMetaData, parent: string, method:Core.HttpMethod) {
         return this.exit({
-            httpMethod: "POST",
+            httpMethod: method,
             initiator: "ApiConvention",
             methodMetaData: meta,
             route: parent,

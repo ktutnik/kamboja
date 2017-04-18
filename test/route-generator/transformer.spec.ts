@@ -230,7 +230,7 @@ describe("Transformer", () => {
             },
             {
                 initiator: 'ApiConvention',
-                route: '/simple/:id',
+                route: '/simple',
                 httpMethod: 'PUT',
                 methodMetaData: { name: 'replace' },
                 qualifiedClassName: 'SimpleController, ./transformer-dummy/api-convention.js',
