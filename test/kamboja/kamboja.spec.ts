@@ -76,7 +76,7 @@ describe("Kamboja", () => {
         },
         {
             initiator: 'ApiConvention',
-            route: '/categories',
+            route: '/categories/:id',
             httpMethod: 'PUT',
             methodMetaData: { name: 'replace' },
             qualifiedClassName: 'CategoriesController, controller/api-controller',
@@ -130,7 +130,7 @@ describe("Kamboja", () => {
         },
         {
             initiator: 'ApiConvention',
-            route: '/categories/:categoryId/items',
+            route: '/categories/:categoryId/items/:id',
             httpMethod: 'PUT',
             methodMetaData: { name: 'replace' },
             qualifiedClassName: 'CategoriesItemController, controller/api-controller',

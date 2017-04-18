@@ -55,7 +55,7 @@ describe("RouteGenerator", () => {
         },
         {
             initiator: 'ApiConvention',
-            route: '/dummyapi',
+            route: '/dummyapi/:id',
             httpMethod: 'PUT',
             methodMetaData: { name: 'replace' },
             qualifiedClassName: 'DummyApi, api/dummy-api',
