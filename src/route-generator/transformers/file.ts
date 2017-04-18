@@ -3,6 +3,7 @@ import * as Core from "../../core"
 import { TransformerBase, when } from "./transformer-base"
 import { ControllerTransformer } from "./controller"
 import { ModuleTransformer } from "./module"
+import { ControllerWithDecorator } from "./controller-decorator"
 
 export class FileTransformer extends TransformerBase {
 
@@ -18,6 +19,7 @@ export class FileTransformer extends TransformerBase {
         //highest priority transformer should stay on top of another
         this.transformers = [
             new ModuleTransformer(),
+            new ControllerWithDecorator(),
             new ControllerTransformer(),
         ]
     }

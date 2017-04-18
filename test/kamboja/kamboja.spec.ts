@@ -2,6 +2,7 @@ import * as Chai from "chai"
 import { Kamboja, Validator, Core, Resolver, MetaDataLoader } from "../../src"
 import * as Sinon from "sinon"
 import * as Kecubung from "kecubung"
+import * as H from "../helper"
 
 let engine = {
     init: () => { }
@@ -39,12 +40,138 @@ describe("Kamboja", () => {
         Chai.expect(result.length).eq(2)
     })
 
-    it("Should provide default option properly", () => {
-        let kamboja:any = new Kamboja(engine, {
+    it("Should generate routes properly", () => {
+        let kamboja = new Kamboja(engine, {
             rootPath: __dirname
         })
-        
-        let option:Core.KambojaOption = kamboja.options;
+        kamboja.init()
+        let result = initSpy.getCall(0).args[0]
+        let clean = H.cleanUp(result)
+        Chai.expect(clean).deep.eq([{
+            initiator: 'ApiConvention',
+            route: '/categories/:id',
+            httpMethod: 'GET',
+            methodMetaData: { name: 'get' },
+            qualifiedClassName: 'CategoriesController, controller/api-controller',
+            classMetaData: { name: 'CategoriesController', baseClass: 'ApiController' },
+            collaborator: ['Controller']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/categories',
+            httpMethod: 'GET',
+            methodMetaData: { name: 'list' },
+            qualifiedClassName: 'CategoriesController, controller/api-controller',
+            classMetaData: { name: 'CategoriesController', baseClass: 'ApiController' },
+            collaborator: ['Controller']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/categories',
+            httpMethod: 'POST',
+            methodMetaData: { name: 'add' },
+            qualifiedClassName: 'CategoriesController, controller/api-controller',
+            classMetaData: { name: 'CategoriesController', baseClass: 'ApiController' },
+            collaborator: ['Controller']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/categories',
+            httpMethod: 'PUT',
+            methodMetaData: { name: 'replace' },
+            qualifiedClassName: 'CategoriesController, controller/api-controller',
+            classMetaData: { name: 'CategoriesController', baseClass: 'ApiController' },
+            collaborator: ['Controller']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/categories/:id',
+            httpMethod: 'PATCH',
+            methodMetaData: { name: 'modify' },
+            qualifiedClassName: 'CategoriesController, controller/api-controller',
+            classMetaData: { name: 'CategoriesController', baseClass: 'ApiController' },
+            collaborator: ['Controller']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/categories/:id',
+            httpMethod: 'DELETE',
+            methodMetaData: { name: 'delete' },
+            qualifiedClassName: 'CategoriesController, controller/api-controller',
+            classMetaData: { name: 'CategoriesController', baseClass: 'ApiController' },
+            collaborator: ['Controller']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/categories/:categoryId/items/:id',
+            httpMethod: 'GET',
+            methodMetaData: { name: 'get' },
+            qualifiedClassName: 'CategoriesItemController, controller/api-controller',
+            classMetaData: { name: 'CategoriesItemController', baseClass: 'ApiController' },
+            collaborator: ['ControllerWithDecorator']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/categories/:categoryId/items',
+            httpMethod: 'GET',
+            methodMetaData: { name: 'list' },
+            qualifiedClassName: 'CategoriesItemController, controller/api-controller',
+            classMetaData: { name: 'CategoriesItemController', baseClass: 'ApiController' },
+            collaborator: ['ControllerWithDecorator']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/categories/:categoryId/items',
+            httpMethod: 'POST',
+            methodMetaData: { name: 'add' },
+            qualifiedClassName: 'CategoriesItemController, controller/api-controller',
+            classMetaData: { name: 'CategoriesItemController', baseClass: 'ApiController' },
+            collaborator: ['ControllerWithDecorator']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/categories/:categoryId/items',
+            httpMethod: 'PUT',
+            methodMetaData: { name: 'replace' },
+            qualifiedClassName: 'CategoriesItemController, controller/api-controller',
+            classMetaData: { name: 'CategoriesItemController', baseClass: 'ApiController' },
+            collaborator: ['ControllerWithDecorator']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/categories/:categoryId/items/:id',
+            httpMethod: 'PATCH',
+            methodMetaData: { name: 'modify' },
+            qualifiedClassName: 'CategoriesItemController, controller/api-controller',
+            classMetaData: { name: 'CategoriesItemController', baseClass: 'ApiController' },
+            collaborator: ['ControllerWithDecorator']
+        },
+        {
+            initiator: 'ApiConvention',
+            route: '/categories/:categoryId/items/:id',
+            httpMethod: 'DELETE',
+            methodMetaData: { name: 'delete' },
+            qualifiedClassName: 'CategoriesItemController, controller/api-controller',
+            classMetaData: { name: 'CategoriesItemController', baseClass: 'ApiController' },
+            collaborator: ['ControllerWithDecorator']
+        },
+        {
+            initiator: 'DefaultAction',
+            route: '/user/getbypage',
+            httpMethod: 'GET',
+            methodMetaData: { name: 'getByPage' },
+            qualifiedClassName: 'UserController, controller/user-controller',
+            classMetaData: { name: 'UserController', baseClass: 'ApiController' },
+            collaborator: ['Controller']
+        }])
+    })
+
+    it("Should provide default option properly", () => {
+        let kamboja: any = new Kamboja(engine, {
+            rootPath: __dirname
+        })
+
+        let option: Core.KambojaOption = kamboja.options;
 
         Chai.expect(option.autoValidation).true
         Chai.expect(option.controllerPaths).deep.eq(["controller"])
@@ -59,9 +186,9 @@ describe("Kamboja", () => {
     })
 
     it("Should able to only provide __dirname on the constructor", () => {
-        let kamboja:any = new Kamboja(engine, __dirname)
-        
-        let option:Core.KambojaOption = kamboja.options;
+        let kamboja: any = new Kamboja(engine, __dirname)
+
+        let option: Core.KambojaOption = kamboja.options;
 
         Chai.expect(option.autoValidation).true
         Chai.expect(option.controllerPaths).deep.eq(["controller"])

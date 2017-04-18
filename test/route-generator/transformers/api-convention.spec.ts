@@ -79,7 +79,7 @@ describe("ApiConventionTransformer", () => {
         `, "controller/user-controller.js")
         let test = new ApiConventionTransformer()
         let result = test.transform((<Kecubung.ClassMetaData>meta.children[0]).methods[0], "/user", undefined)
-        Chai.expect(result.info[0].route).eq("/user/:id")
+        Chai.expect(result.info[0].route).eq("/user")
     })
 
     it("Should transform 'delete' properly", () => {

@@ -118,7 +118,15 @@ export class Kamboja {
         this.log.newLine().info("Routes generated successfully")
         this.log.info("--------------------------------------")
         validRoutes.forEach(x => {
-            this.log.info(`${x.httpMethod}\t${x.route}`)
+            let method = ""
+            switch(x.httpMethod){
+                case "GET"    : method = "GET    "; break;
+                case "PUT"    : method = "PUT    "; break;
+                case "PATCH"  : method = "PATCH  "; break;
+                case "POST"   : method = "POST   "; break;
+                case "DELETE" : method = "DELETE "; break;
+            }
+            this.log.info(`${method} ${x.route}`)
         })
         this.log.info("--------------------------------------")
         return true;
