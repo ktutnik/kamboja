@@ -8,7 +8,8 @@ export type TransformerName = "DefaultAction" | "IndexAction" | "HttpMethodDecor
 export type MetaDataLoaderCategory = "Controller" | "Model"
 export const ValidationTypesAccepted = ["string", "string[]", "number", "number[]", "boolean", "boolean[]", "date", "date[]"]
 
-export type InterceptorFactory = (opt: KambojaOption) => string | string[] | RequestInterceptor | RequestInterceptor[]
+export type InterceptorFunction = (invocation:Invocation) => Promise<ActionResult>
+export type InterceptorFactory = (opt: KambojaOption) => string | string[] | RequestInterceptor | RequestInterceptor[] | InterceptorFunction | InterceptorFunction[]
 
 export class Decorator {
     internal() { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
@@ -129,7 +130,7 @@ export interface Facade {
     pathResolver?: PathResolver
     validators?: (ValidatorCommand | string)[]
     metaDataStorage?: MetaDataStorage
-    interceptors?: (RequestInterceptor | string)[]
+    interceptors?: (RequestInterceptor | string | InterceptorFunction)[]
     autoValidation?: boolean
 }
 

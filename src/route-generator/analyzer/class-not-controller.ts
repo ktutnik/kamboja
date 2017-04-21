@@ -6,7 +6,7 @@ export class ClassNotInherritedFromControllerAnalyzer implements AnalyzerCommand
         if (route.analysis && route.analysis.some(x => x == RouteAnalysisCode.ClassNotInheritedFromController)) {
             return [{
                 code: RouteAnalysisCode.ClassNotInheritedFromController,
-                type: "Error",
+                type: "Warning",
                 message: `Class not inherited from ApiController or Controller in [${route.qualifiedClassName}]`
             }]
         }

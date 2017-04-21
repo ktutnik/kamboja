@@ -350,4 +350,94 @@ describe("Transformer", () => {
             }])
         })
     })
+
+    describe("ES6 Class Transformation", () => {
+        it("Should transform ES6 class properly", () => {
+            let meta = H.fromCode(`
+                class UserController extends kamboja.ApiController{
+                    get(id){}
+                }
+                exports.UserController = UserController;
+            `)
+
+            let result = Transformer.transform(meta)
+            let clean = H.cleanUp(result)
+            Chai.expect(clean).deep.eq([{
+                initiator: 'ApiConvention',
+                route: '/user/:id',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'get' },
+                qualifiedClassName: 'UserController, ',
+                classMetaData: { name: 'UserController', baseClass: 'ApiController' },
+                collaborator: ['Controller']
+            }])
+        })
+
+        it("Should transform ES6 class with decorator", () => {
+            let meta = H.fromCode(`
+                let UserController = class UserController extends kamboja.ApiController{
+                    get(id){}
+                }
+                UserController = __decorate([
+                    kamboja_1.http.root("/categories/:categoryId/products")
+                ], UserController);
+                exports.UserController = UserController;
+            `)
+
+            let result = Transformer.transform(meta)
+            let clean = H.cleanUp(result)
+            Chai.expect(clean).deep.eq([{
+                initiator: 'ApiConvention',
+                route: '/categories/:categoryId/products/:id',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'get' },
+                qualifiedClassName: 'UserController, ',
+                classMetaData: { name: 'UserController', baseClass: 'ApiController' },
+                collaborator: ['ControllerWithDecorator']
+            }])
+        })
+
+        it("Should transform ES6 class which have method with default parameter", () => {
+            let meta = H.fromCode(`
+                class UserController extends kamboja.ApiController{
+                    get(id=50){}
+                }
+                exports.UserController = UserController;
+            `)
+
+            let result = Transformer.transform(meta)
+            let clean = H.cleanUp(result)
+            Chai.expect(clean).deep.eq([{
+                initiator: 'ApiConvention',
+                route: '/user/:id',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'get' },
+                qualifiedClassName: 'UserController, ',
+                classMetaData: { name: 'UserController', baseClass: 'ApiController' },
+                collaborator: ['Controller']
+            }])
+        })
+
+        it("Should fall back to default transformer if has lack of parameters", () => {
+            let meta = H.fromCode(`
+                class UserController extends kamboja.ApiController{
+                    get(){}
+                }
+                exports.UserController = UserController;
+            `)
+
+            let result = Transformer.transform(meta)
+            let clean = H.cleanUp(result)
+            Chai.expect(clean).deep.eq([{
+                initiator: 'ApiConvention',
+                route: '/user/get',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'get' },
+                qualifiedClassName: 'UserController, ',
+                classMetaData: { name: 'UserController', baseClass: 'ApiController' },
+                collaborator: ['DefaultAction', 'Controller'],
+                analysis: [Core.RouteAnalysisCode.ConventionFail]
+            }])
+        })
+    })
 })

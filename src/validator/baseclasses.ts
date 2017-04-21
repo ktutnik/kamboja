@@ -62,7 +62,7 @@ export class ValidatorBase implements ValidatorCommand {
                             field: arg.parentField,
                             message: `[${arg.parentField}] must be a type of Array`
                         }]
-                    let instances: any[] = arg.classInstance;
+                    let instances = arg.classInstance;
                     for (let i = 0; i < instances.length; i++) {
                         let instance = instances[i]
                         let value = instance[property.name]
