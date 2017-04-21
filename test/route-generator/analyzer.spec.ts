@@ -290,7 +290,7 @@ describe("Analyzer", () => {
         Chai.expect(result).deep.eq([{
             code: Core.RouteAnalysisCode.ClassNotInheritedFromController,
             message: "Class not inherited from ApiController or Controller in [MyClass, example-file.js]",
-            type: 'Error'
+            type: 'Warning'
         }])
     })
 

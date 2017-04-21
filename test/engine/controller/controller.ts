@@ -1,5 +1,5 @@
 import { Controller, ApiController } from "../../../src/controller"
-import { val } from "../../../src"
+import { val, HttpStatusError } from "../../../src"
 
 export function customValidation(){
     return (...args) => {}
@@ -38,6 +38,14 @@ export class DummyApi extends Controller {
              return this.json(true)
         }
         return this.json(this.validator.getValidationErrors())
+    }
+
+    throwError(){
+        throw new Error("Internal error")
+    }
+
+    throwStatusError(){
+        throw new HttpStatusError(404, "Not found action")
     }
 
 }

@@ -9,6 +9,7 @@ import * as Core from "../../src/core"
 import { ConcatInterceptor } from "./controller/interception-order-controller"
 import { Kamboja } from "../../src/kamboja"
 import { DefaultPathResolver } from "../../src/resolver"
+import { HttpStatusError, JsonActionResult } from "../../src/controller"
 
 describe("RequestHandler", () => {
     let responseMock: H.Spies<H.HttpResponse>
@@ -205,7 +206,7 @@ describe("RequestHandler", () => {
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).deep.eq({
-                root: 12345, 
+                root: 12345,
                 data: {
                     message: "HELLO!"
                 }
@@ -228,7 +229,7 @@ describe("RequestHandler", () => {
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).deep.eq({
                 id: 12345,
-                root: 12345, 
+                root: 12345,
                 data: {
                     message: "HELLO!"
                 }
@@ -251,7 +252,7 @@ describe("RequestHandler", () => {
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).deep.eq({
                 id: 12345,
-                root: 12345, 
+                root: 12345,
                 data: {
                     message: "HELLO!"
                 }
@@ -270,7 +271,7 @@ describe("RequestHandler", () => {
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).deep.eq({
-                id: 12345, 
+                id: 12345,
                 root: 12345
             })
         })
@@ -286,31 +287,6 @@ describe("RequestHandler", () => {
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).eq("param1")
-        })
-
-        it("Should handle internal error inside controller properly", async () => {
-            let meta = H.fromFile("controller/api-controller.js", new DefaultPathResolver(__dirname))
-            let infos = Transformer.transform(meta)
-            let info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
-            info.classId = info.qualifiedClassName
-            let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
-            await executor.execute()
-            let result = responseMock.error.getCall(0).args[0]
-            Chai.expect(result.message).contains("Internal error from DummyApi")
-        })
-
-        it("Should able to set status using throw error", async () => {
-            let meta = H.fromFile("controller/api-controller.js", new DefaultPathResolver(__dirname))
-            let infos = Transformer.transform(meta)
-            let info = infos.filter(x => x.methodMetaData.name == "statusError")[0]
-            info.classId = info.qualifiedClassName
-            let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
-            await executor.execute()
-            let result = responseMock.error.getCall(0).args
-            console.log(result)
-            Chai.expect(result).contains(404)
         })
 
         it("Should handle return VOID type of action", async () => {
@@ -339,6 +315,93 @@ describe("RequestHandler", () => {
             await executor.execute()
             let secondResult = responseMock.json.getCall(1).args[0]
             Chai.expect(secondResult).eq("OK")
+        })
+
+        describe("Error Handling", () => {
+            it("Should send back Http Status vs sending rendered html", async () => {
+                let meta = H.fromFile("controller/api-controller.js", new DefaultPathResolver(__dirname))
+                let infos = Transformer.transform(meta)
+                let info = infos.filter(x => x.methodMetaData.name == "statusError")[0]
+                info.classId = info.qualifiedClassName
+                let container = new ControllerFactory(facade, info)
+                let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+                await executor.execute()
+                let json = responseMock.json.getCall(0).args[0]
+                let status = responseMock.status.getCall(0).args[0]
+                Chai.expect(json).eq("Not found")
+                Chai.expect(status).eq(404)
+            })
+
+            it("Should send back 500 on internal error", async () => {
+                let meta = H.fromFile("controller/api-controller.js", new DefaultPathResolver(__dirname))
+                let infos = Transformer.transform(meta)
+                let info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
+                info.classId = info.qualifiedClassName
+                let container = new ControllerFactory(facade, info)
+                let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+                await executor.execute()
+                let json = responseMock.json.getCall(0).args[0]
+                let status = responseMock.status.getCall(0).args[0]
+                Chai.expect(json).eq("Internal error from DummyApi")
+                Chai.expect(status).eq(500)
+            })
+
+            it("Should send back Http Status when error occur in interception", async () => {
+                let meta = H.fromFile("controller/api-controller.js", new DefaultPathResolver(__dirname))
+                let infos = Transformer.transform(meta)
+                let info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
+                info.classId = info.qualifiedClassName
+                facade.interceptors = [
+                    {
+                        intercept: (i: Core.Invocation) => {
+                            throw new HttpStatusError(501, "Error on interception")
+                        }
+                    }
+                ]
+                let container = new ControllerFactory(facade, info)
+                let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+                await executor.execute()
+                let json = responseMock.json.getCall(0).args[0]
+                let status = responseMock.status.getCall(0).args[0]
+                Chai.expect(json).eq("Error on interception")
+                Chai.expect(status).eq(501)
+            })
+
+            it("Should send back error message based on Accept header", async () => {
+                let meta = H.fromFile("controller/api-controller.js", new DefaultPathResolver(__dirname))
+                let infos = Transformer.transform(meta)
+                let info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
+                info.classId = info.qualifiedClassName
+                requestMock.isAccept.withArgs("text/xml").returns(true)
+                let container = new ControllerFactory(facade, info)
+                let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+                await executor.execute()
+                let json = responseMock.send.getCall(0).args[0]
+                let contentType = responseMock.setContentType.getCall(0).args[0]
+                let status = responseMock.status.getCall(0).args[0]
+                Chai.expect(json).eq("Internal error from DummyApi")
+                Chai.expect(contentType).eq("text/xml")
+                Chai.expect(status).eq(500)
+            })
+
+            it("Should able to use custom error", async () => {
+                let meta = H.fromFile("controller/api-controller.js", new DefaultPathResolver(__dirname))
+                let infos = Transformer.transform(meta)
+                let info = infos.filter(x => x.methodMetaData.name == "internalError")[0]
+                info.classId = info.qualifiedClassName
+                requestMock.isAccept.withArgs("text/xml").returns(true)
+                let container = new ControllerFactory(facade, info)
+                let errorHandlerCalled = false;
+                let executor = new RequestHandler(container, httpRequest, httpResponse, {
+                    rootPath: __dirname,
+                    errorHandler: (e) => {
+                        errorHandlerCalled = true;
+                    }
+                })
+                await executor.execute()
+                Chai.expect(errorHandlerCalled).true
+                Chai.expect(responseMock.status.notCalled).true
+            })
         })
     })
 
@@ -376,7 +439,37 @@ describe("RequestHandler", () => {
             let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.error.getCall(0).args[0]
-            Chai.expect(result.message).eq("Controller not return type of ActionResult in [DummyApi.returnNonActionResult controller/controller.js]")
+            Chai.expect(result.message).eq("Controller does not return type of ActionResult in [DummyApi.returnNonActionResult controller/controller.js]")
+        })
+
+        describe("Error Handling", () => {
+            it("Should handle error properly on controller when return non ActionResult", async () => {
+                let meta = H.fromFile("controller/controller.js", new DefaultPathResolver(__dirname))
+                let infos = Transformer.transform(meta)
+                let info = infos.filter(x => x.methodMetaData.name == "throwError")[0]
+                info.classId = info.qualifiedClassName
+                let container = new ControllerFactory(facade, info)
+                let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+                await executor.execute()
+                let result = responseMock.error.getCall(0).args[0]
+                let status = responseMock.error.getCall(0).args[1]
+                Chai.expect(result.message).eq("Internal error")
+                Chai.expect(status).eq(500)
+            })
+
+            it("Should handle HttpStatusError properly on controller when return non ActionResult", async () => {
+                let meta = H.fromFile("controller/controller.js", new DefaultPathResolver(__dirname))
+                let infos = Transformer.transform(meta)
+                let info = infos.filter(x => x.methodMetaData.name == "throwStatusError")[0]
+                info.classId = info.qualifiedClassName
+                let container = new ControllerFactory(facade, info)
+                let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+                await executor.execute()
+                let result = responseMock.error.getCall(0).args[0]
+                let status = responseMock.error.getCall(0).args[1]
+                Chai.expect(result.message).eq("Not found action")
+                Chai.expect(status).eq(404)
+            })
         })
     })
 
@@ -420,6 +513,35 @@ describe("RequestHandler", () => {
             await executor.execute()
             let result = responseMock.json.getCall(0).args[0]
             Chai.expect(result).eq("DOESN'T HAVE CONTROLLER")
+        })
+
+        it("Should able to use function as interception", async () => {
+            let meta = H.fromFile("controller/intercepted-with-function.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "index")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            Chai.expect(result).eq("Hello")
+        })
+
+        it("Should able to use function in global interception", async () => {
+            let meta = H.fromFile("controller/intercepted-with-function.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "nonIntercepted")[0]
+            info.classId = info.qualifiedClassName
+            facade.interceptors = [
+                async (i) => { return new JsonActionResult("Hello", 501, undefined) }
+            ]
+            let container = new ControllerFactory(facade, info)
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = responseMock.json.getCall(0).args[0]
+            let status = responseMock.json.getCall(0).args[1]
+            Chai.expect(result).eq("Hello")
+            Chai.expect(status).eq(501)
         })
 
         it("Should give proper error if uncaught error occur inside interceptor", async () => {

@@ -110,6 +110,9 @@ export class ControllerFactory {
                     throw new Error(`Can not instantiate interceptor [${intercept}] in global interceptors`)
                 }
             }
+            else if (typeof intercept == "function") {
+                result.push({ intercept: intercept })
+            }
             else {
                 result.push(intercept)
             }
