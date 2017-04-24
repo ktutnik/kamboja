@@ -122,6 +122,7 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
             info.classId = info.qualifiedClassName
+            console.log(Util.inspect(info, false, null))
             let builder = new Engine.ControllerFactory(facade, info)
             let executor = new Engine.ControllerExecutor(builder, HttpRequest)
             let result = <JsonActionResult>await executor.execute([])

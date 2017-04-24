@@ -403,6 +403,66 @@ describe("RequestHandler", () => {
                 Chai.expect(responseMock.status.notCalled).true
             })
         })
+
+        describe("Auto Required Validation", () => {
+            it("Should require validate on `get` action", async () => {
+                let meta = H.fromFile("controller/api-convention-controller.js", new DefaultPathResolver(__dirname))
+                let infos = Transformer.transform(meta)
+                let info = infos.filter(x => x.methodMetaData.name == "get")[0]
+                info.classId = info.qualifiedClassName
+                let container = new ControllerFactory(facade, info)
+                requestMock.getParam.withArgs("id").returns(undefined)
+                let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+                await executor.execute()
+                let result = responseMock.json.getCall(0).args[0]
+                Chai.expect(result).deep.eq([{ field: 'id', message: '[id] is required' }])
+            })
+
+            it("Should require validate on `delete` action", async () => {
+                let meta = H.fromFile("controller/api-convention-controller.js", new DefaultPathResolver(__dirname))
+                let infos = Transformer.transform(meta)
+                let info = infos.filter(x => x.methodMetaData.name == "delete")[0]
+                info.classId = info.qualifiedClassName
+                let container = new ControllerFactory(facade, info)
+                requestMock.getParam.withArgs("id").returns(undefined)
+                let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+                await executor.execute()
+                let result = responseMock.json.getCall(0).args[0]
+                Chai.expect(result).deep.eq([{ field: 'id', message: '[id] is required' }])
+            })
+
+            it("Should require validate on `modify` action", async () => {
+                let meta = H.fromFile("controller/api-convention-controller.js", new DefaultPathResolver(__dirname))
+                let infos = Transformer.transform(meta)
+                let info = infos.filter(x => x.methodMetaData.name == "modify")[0]
+                info.classId = info.qualifiedClassName
+                let container = new ControllerFactory(facade, info)
+                httpRequest.body = {
+                    message: "HELLO!"
+                }
+                requestMock.getParam.withArgs("id").returns(undefined)
+                let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+                await executor.execute()
+                let result = responseMock.json.getCall(0).args[0]
+                Chai.expect(result).deep.eq([{ field: 'id', message: '[id] is required' }])
+            })
+
+            it("Should require validate on `replace` action", async () => {
+                let meta = H.fromFile("controller/api-convention-controller.js", new DefaultPathResolver(__dirname))
+                let infos = Transformer.transform(meta)
+                let info = infos.filter(x => x.methodMetaData.name == "replace")[0]
+                info.classId = info.qualifiedClassName
+                let container = new ControllerFactory(facade, info)
+                httpRequest.body = {
+                    message: "HELLO!"
+                }
+                requestMock.getParam.withArgs("id").returns(undefined)
+                let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+                await executor.execute()
+                let result = responseMock.json.getCall(0).args[0]
+                Chai.expect(result).deep.eq([{ field: 'id', message: '[id] is required' }])
+            })
+        })
     })
 
     describe("Controller Functions", () => {
