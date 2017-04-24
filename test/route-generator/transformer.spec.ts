@@ -301,6 +301,38 @@ describe("Transformer", () => {
             Chai.expect(result[0].initiator).eq("HttpMethodDecorator")
             Chai.expect(result[0].collaborator.some(x => x == "DefaultAction")).true
         })
+
+        it("Should add @val.required validator on `get` action", () => {
+            let meta = H.fromFile("./transformer-dummy/api-convention.js", new DefaultPathResolver(__dirname))
+            let result = Transformer.transform(meta);
+            let hasRequired = result.filter(x => x.methodMetaData.name == "get")
+                .some(x => x.methodMetaData.parameters[0].decorators.some(y => y.name == "required"))
+            Chai.expect(hasRequired).true
+        })
+
+        it("Should add @val.required validator on `modify` action", () => {
+            let meta = H.fromFile("./transformer-dummy/api-convention.js", new DefaultPathResolver(__dirname))
+            let result = Transformer.transform(meta);
+            let hasRequired = result.filter(x => x.methodMetaData.name == "modify")
+                .some(x => x.methodMetaData.parameters[0].decorators.some(y => y.name == "required"))
+            Chai.expect(hasRequired).true
+        })
+
+        it("Should add @val.required validator on `replace` action", () => {
+            let meta = H.fromFile("./transformer-dummy/api-convention.js", new DefaultPathResolver(__dirname))
+            let result = Transformer.transform(meta);
+            let hasRequired = result.filter(x => x.methodMetaData.name == "replace")
+                .some(x => x.methodMetaData.parameters[0].decorators.some(y => y.name == "required"))
+            Chai.expect(hasRequired).true
+        })
+
+        it("Should add @val.required validator on `delete` action", () => {
+            let meta = H.fromFile("./transformer-dummy/api-convention.js", new DefaultPathResolver(__dirname))
+            let result = Transformer.transform(meta);
+            let hasRequired = result.filter(x => x.methodMetaData.name == "delete")
+                .some(x => x.methodMetaData.parameters[0].decorators.some(y => y.name == "required"))
+            Chai.expect(hasRequired).true
+        })
     })
 
     describe("Root Decorator", () => {
