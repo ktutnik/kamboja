@@ -381,6 +381,49 @@ describe("Transformer", () => {
                 analysis: [2]
             }])
         })
+
+        it("Should identify unassociated parameter", () => {
+            let meta = H.fromFile("./transformer-dummy/root-decorator-parameterized.js", new DefaultPathResolver(__dirname))
+            let result = Transformer.transform(meta);
+            let clean = H.cleanUp(result)
+            Chai.expect(clean).deep.eq([{
+                initiator: 'HttpMethodDecorator',
+                route: '/absolute/:none/relative/:no',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'index' },
+                qualifiedClassName: 'AbsoluteRootController, ./transformer-dummy/root-decorator-parameterized.js',
+                classMetaData: { name: 'AbsoluteRootController', baseClass: 'Controller' },
+                collaborator: ['DefaultAction', 'ControllerWithDecorator'],
+                analysis: [Core.RouteAnalysisCode.UnAssociatedParameters]
+            },
+            {
+                initiator: 'DefaultAction',
+                route: '/absolute/:none/other',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'other' },
+                qualifiedClassName: 'AbsoluteRootController, ./transformer-dummy/root-decorator-parameterized.js',
+                classMetaData: { name: 'AbsoluteRootController', baseClass: 'Controller' },
+                collaborator: ['ControllerWithDecorator'],
+                analysis: [Core.RouteAnalysisCode.UnAssociatedParameters]
+            },
+            {
+                initiator: 'HttpMethodDecorator',
+                route: '/relative/:par2/relative',
+                httpMethod: 'GET',
+                methodMetaData: { name: 'index' },
+                qualifiedClassName: 'RelativeRootController, ./transformer-dummy/root-decorator-parameterized.js',
+                classMetaData: { name: 'RelativeRootController', baseClass: 'Controller' },
+                collaborator: ['DefaultAction', 'ControllerWithDecorator']
+            }])
+        })
+
+        it("Should automatically add required validator on appropriate parameter", () => {
+            let meta = H.fromFile("./transformer-dummy/root-decorator-parameterized.js", new DefaultPathResolver(__dirname))
+            let result = Transformer.transform(meta);
+            
+            console.log(Util.inspect(result[2].methodMetaData, false, null))
+            Chai.expect(result[2].methodMetaData.parameters[1].decorators[0].name).eq("required")
+        })
     })
 
     describe("ES6 Class Transformation", () => {
@@ -411,7 +454,7 @@ describe("Transformer", () => {
                     get(id){}
                 }
                 UserController = __decorate([
-                    kamboja_1.http.root("/categories/:categoryId/products")
+                    kamboja_1.http.root("/categories/:id/products")
                 ], UserController);
                 exports.UserController = UserController;
             `)
@@ -420,13 +463,28 @@ describe("Transformer", () => {
             let clean = H.cleanUp(result)
             Chai.expect(clean).deep.eq([{
                 initiator: 'ApiConvention',
-                route: '/categories/:categoryId/products/:id',
+                route: '/categories/:id/products/:id',
                 httpMethod: 'GET',
                 methodMetaData: { name: 'get' },
                 qualifiedClassName: 'UserController, ',
                 classMetaData: { name: 'UserController', baseClass: 'ApiController' },
                 collaborator: ['ControllerWithDecorator']
             }])
+        })
+
+        it("Should identify unassociated parameter", () => {
+            let meta = H.fromCode(`
+                let UserController = class UserController extends kamboja.ApiController{
+                    get(id){}
+                }
+                UserController = __decorate([
+                    kamboja_1.http.root("/categories/:categoryId/products")
+                ], UserController);
+                exports.UserController = UserController;
+            `)
+
+            let result = Transformer.transform(meta)
+            Chai.expect(result[0].analysis[0]).eq(Core.RouteAnalysisCode.UnAssociatedParameters)
         })
 
         it("Should transform ES6 class which have method with default parameter", () => {

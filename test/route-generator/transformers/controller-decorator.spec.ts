@@ -137,4 +137,84 @@ describe("ControllerWithDecorator", () => {
         Chai.expect(result.info[0].route).eq("/relative/index")
     })
 
+    it("Should allow parameters inside url", () => {
+        let meta = H.fromCode(`
+            var AbsoluteRootController = (function (_super) {
+                function AbsoluteRootController() {
+                }
+                AbsoluteRootController.prototype.index = function (par1, par2) { };
+                return AbsoluteRootController;
+            }(controller_1.ApiController));
+            AbsoluteRootController = tslib_1.__decorate([
+                src_1.http.root("relative/:par1/:par2/other")
+            ], AbsoluteRootController);
+            exports.AbsoluteRootController = AbsoluteRootController;
+        `, "controller/user-controller.js")
+        let test = new ControllerWithDecorator()
+        let result = test.transform(<Kecubung.ClassMetaData>meta.children[0], undefined, undefined)
+        Chai.expect(result.info[0].route)
+            .eq("/relative/:par1/:par2/other/index")
+        Chai.expect(result.info[0].analysis).undefined
+    })
+
+    it("Should analyze if provided url parameter doesn't have associated action parameter", () => {
+        let meta = H.fromCode(`
+            var AbsoluteRootController = (function (_super) {
+                function AbsoluteRootController() {
+                }
+                AbsoluteRootController.prototype.index = function (par1, par2) { };
+                return AbsoluteRootController;
+            }(controller_1.ApiController));
+            AbsoluteRootController = tslib_1.__decorate([
+                src_1.http.root("relative/:missing/other")
+            ], AbsoluteRootController);
+            exports.AbsoluteRootController = AbsoluteRootController;
+        `, "controller/user-controller.js")
+        let test = new ControllerWithDecorator()
+        let result = test.transform(<Kecubung.ClassMetaData>meta.children[0], undefined, undefined)
+        Chai.expect(result.info[0].analysis)
+            .deep.eq([Core.RouteAnalysisCode.UnAssociatedParameters])
+    })
+
+    it("Should not duplicate analysis if inside method decorator has unassociated analysis", () => {
+        let meta = H.fromCode(`
+            var AbsoluteRootController = (function (_super) {
+                function AbsoluteRootController() {
+                }
+                AbsoluteRootController.prototype.index = function (par1, par2) { };
+                return AbsoluteRootController;
+            }(controller_1.ApiController));
+            AbsoluteRootController = tslib_1.__decorate([
+                src_1.http.root("relative/:missing/other")
+            ], AbsoluteRootController);
+            tslib_1.__decorate([
+                src_1.http.get("/other/:none"),
+            ], AbsoluteRootController.prototype, "index", null);
+            exports.AbsoluteRootController = AbsoluteRootController;
+        `, "controller/user-controller.js")
+        let test = new ControllerWithDecorator()
+        let result = test.transform(<Kecubung.ClassMetaData>meta.children[0], undefined, undefined)
+        Chai.expect(result.info[0].analysis)
+            .deep.eq([Core.RouteAnalysisCode.UnAssociatedParameters])
+    })
+
+    it("Should automatically add 'required' validator on the parameter", () => {
+        let meta = H.fromCode(`
+            var AbsoluteRootController = (function (_super) {
+                function AbsoluteRootController() {
+                }
+                AbsoluteRootController.prototype.index = function (par1, par2) { };
+                return AbsoluteRootController;
+            }(controller_1.ApiController));
+            AbsoluteRootController = tslib_1.__decorate([
+                src_1.http.root("relative/:par2/other")
+            ], AbsoluteRootController);
+            exports.AbsoluteRootController = AbsoluteRootController;
+        `, "controller/user-controller.js")
+        let test = new ControllerWithDecorator()
+        let result = test.transform(<Kecubung.ClassMetaData>meta.children[0], undefined, undefined)
+        Chai.expect(result.info[0].methodMetaData.parameters[1].decorators[0].name)
+            .eq("required")
+    })
+
 })

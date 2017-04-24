@@ -25,8 +25,10 @@ export class ControllerWithDecorator extends TransformerBase {
                 if (!parent) parent = ""
                 route = parent + "/" + route;
             }
+            this.autoAssignedValidator(meta, route)
             let result = this.transformChildren(meta.methods, route)
             result.forEach(x => {
+                this.checkUnassociatedParameter(x, route)
                 x.qualifiedClassName = meta.name
                 x.classMetaData = meta
                 if (!x.collaborator) x.collaborator = []
@@ -37,4 +39,35 @@ export class ControllerWithDecorator extends TransformerBase {
         else return this.next()
     }
 
+    private checkUnassociatedParameter(info: Core.RouteInfo, route: string) {
+        let param = route.split("/").filter(x => x.charAt(0) == ":")
+            .map(x => x.substring(1))
+        let match = info.methodMetaData.parameters.filter(x => param.some(y => x.name == y))
+        if (match.length != param.length) {
+            if (!info.analysis) info.analysis = []
+            if (!info.analysis.some(x => x == Core.RouteAnalysisCode.UnAssociatedParameters))
+                info.analysis.push(Core.RouteAnalysisCode.UnAssociatedParameters)
+        }
+    }
+
+    private autoAssignedValidator(meta: Kecubung.ClassMetaData, route: string) {
+        let param = route.split("/").filter(x => x.charAt(0) == ":")
+            .map(x => x.substring(1))
+        meta.methods.forEach(method => {
+            let getAction = meta.methods.filter(x => x.name == method.name)[0]
+            let parameters = getAction.parameters.filter(x => param.some(y => y == x.name))
+            parameters.forEach(x => {
+                if (!x.decorators) x.decorators = []
+                if (!x.decorators.some(x => x.name == "required")) {
+                    x.decorators.push({
+                        type: 'Decorator',
+                        name: 'required',
+                        analysis: 1,
+                        location: { start: 1124, end: 1164 },
+                        parameters: []
+                    })
+                }
+            })
+        })
+    }
 }
