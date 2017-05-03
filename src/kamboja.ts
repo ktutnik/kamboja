@@ -10,6 +10,9 @@ import { Logger } from "./logger"
 import * as Babylon from "babylon"
 import * as Kecubung from "kecubung"
 
+/**
+ * Create instance of KambojaJS application
+ */
 export class Kamboja {
     private static defaultModelPath: string = "model"
     private static facade: Core.Facade;
@@ -22,6 +25,11 @@ export class Kamboja {
         return Kamboja.facade;
     }
 
+    /**
+     * Create instance of KambojaJS application
+     * @param engine KambojaJS engine implementation
+     * @param opt KambojaJS option
+     */
     constructor(private engine: Core.Engine, opt: Core.KambojaOption | string) {
         let override: Core.KambojaOption;
         if (typeof opt === "string") override = { rootPath: opt }
@@ -53,6 +61,11 @@ export class Kamboja {
         this.storage = <MetaDataLoader>this.options.metaDataStorage
     }
 
+    /**
+     * Add request interceptor
+     * @param factory factory method that will be call after KambojaJS application initialized
+     * @returns KambojaJS application
+     */
     intercept(factory: Core.InterceptorFactory) {
         this.interceptorFactories.push(factory)
         return this
@@ -132,6 +145,10 @@ export class Kamboja {
         return true;
     }
 
+    /**
+     * Initialize KambojaJS application 
+     * @returns Http Callback handler returned by KambojaJS Engine implementation
+     */
     init() {
         if (!this.isFolderProvided()) throw new Error("Fatal error")
         this.storage.load(this.options.controllerPaths, "Controller")

@@ -37,8 +37,9 @@ describe("RequestHandler", () => {
             let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
             await executor.execute()
             let result = responseMock.status.getCall(0).args[0]
+            let text = responseMock.send.getCall(0).args[0]
             Chai.expect(result).eq(404)
-            Chai.expect(responseMock.end.called).true
+            Chai.expect(text).eq("Requested url not found")
         })
 
         it("Should allow global interceptor work with request without controller", async () => {

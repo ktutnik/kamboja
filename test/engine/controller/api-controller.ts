@@ -1,5 +1,5 @@
 import { Controller, ApiController } from "../../../src/controller"
-import { val, HttpStatusError } from "../../../src"
+import { val, HttpStatusError, JsonActionResult } from "../../../src"
 
 export class DummyApi extends ApiController {
     returnTheParam(par1) {
@@ -17,7 +17,7 @@ export class DummyApi extends ApiController {
     }
 
     returnOk() {
-        return this.ok("OK!")
+        return new JsonActionResult("OK!", undefined, undefined)
     }
 
     validationTest( @val.required() required) { 

@@ -2,7 +2,7 @@ import { ActionResult, HttpRequest, HttpResponse, RouteInfo, Validator } from ".
 import * as Xml from "xml"
 
 export class ApiActionResult extends ActionResult {
-    constructor(public body, public status: number) {
+    constructor(public body, public status?: number) {
         super(undefined)
     }
 
@@ -14,14 +14,14 @@ export class ApiActionResult extends ActionResult {
     }
 
     sendJson(response: HttpResponse) {
-        if (this.status) response.status(this.status)
+        response.status(this.status || 200)
         if (this.body) response.json(this.body)
         else response.end()
     }
 
     sendXml(response: HttpResponse) {
         response.setContentType("text/xml")
-        if (this.status) response.status(this.status)
+        response.status(this.status || 200)
         if (this.body) response.send(Xml(this.body))
         else response.end()
     }

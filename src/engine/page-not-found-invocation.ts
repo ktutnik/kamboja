@@ -10,6 +10,6 @@ export class PageNotFoundInvocation extends Invocation {
         this.request = request
     }
     async execute() {
-        return new StatusActionResult(404, undefined)
+        return new StatusActionResult(404, "Requested url not found")
     }
 }
