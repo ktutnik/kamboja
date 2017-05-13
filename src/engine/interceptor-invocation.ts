@@ -3,6 +3,7 @@ import { ControllerExecutor } from "../engine/controller-executor"
 import "reflect-metadata"
 import * as Kecubung from "kecubung"
 import { ParameterBinder } from "../parameter-binder"
+import { InvocationResult } from "./invocation-result"
 
 export class InterceptorInvocation extends Core.Invocation {
     constructor(private invocation: Core.Invocation, 
@@ -16,6 +17,7 @@ export class InterceptorInvocation extends Core.Invocation {
         this.interceptors = this.invocation.interceptors;
         this.request = this.invocation.request
         this.url = this.invocation.url
-        return await this.interceptor.intercept(this.invocation)
+        let result = this.interceptor.intercept(this.invocation)
+        return InvocationResult.create(result)
     }
 }

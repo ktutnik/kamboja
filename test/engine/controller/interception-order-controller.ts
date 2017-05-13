@@ -7,7 +7,7 @@ export class ConcatInterceptor implements Core.RequestInterceptor {
     async intercept(invocation: Core.Invocation):Promise<Core.ActionResult> {
         let invocationResult = await invocation.execute();
         let result = (<JsonActionResult>invocationResult).body;
-        return new JsonActionResult(this.msg + ", " + result, undefined, undefined)
+        return new JsonActionResult(this.msg + ", " + result)
     }
 }
 

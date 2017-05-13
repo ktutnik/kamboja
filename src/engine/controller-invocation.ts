@@ -4,6 +4,7 @@ import "reflect-metadata"
 import * as Kecubung from "kecubung"
 import { ParameterBinder } from "../parameter-binder"
 import * as Url from "url"
+import { InvocationResult } from "./invocation-result"
 
 export class ControllerInvocation extends Core.Invocation {
 
@@ -19,6 +20,7 @@ export class ControllerInvocation extends Core.Invocation {
     }
 
     async execute(): Promise<Core.ActionResult> {
-        return await this.executor.execute(this.parameters)
+        let result = this.executor.execute(this.parameters)
+        return InvocationResult.create(result)
     }
 }

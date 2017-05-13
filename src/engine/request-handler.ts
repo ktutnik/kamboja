@@ -14,13 +14,13 @@ export class RequestHandler {
         private option: Core.KambojaOption) { }
 
     async execute() {
-        let invocation: Core.Invocation;
         try {
+            let invocation: Core.Invocation;
             if (this.container.routeInfo) {
                 let controllerExecutor = new ControllerExecutor(this.container, this.request)
                 invocation = new ControllerInvocation(controllerExecutor, this.container.routeInfo, this.request)
             }
-            else {
+            else { 
                 invocation = new PageNotFoundInvocation(this.request, this.response)
             }
             let interceptors = this.container.createInterceptors()
@@ -29,32 +29,13 @@ export class RequestHandler {
                 invocation = new InterceptorInvocation(invocation, interceptor, this.option)
             }
             let result = await invocation.execute()
-
-            if (result) {
-                if (typeof result["execute"] != "function") throw new Error(`Controller does not return type of ActionResult in ${Core.getRouteDetail(this.container.routeInfo)}`)
-                result.execute(this.request, this.response, this.container.routeInfo)
-            }
-            else
-                this.response.end()
+            result.execute(this.request, this.response, this.container.routeInfo)
         }
         catch (e) {
-            if (invocation.hasController() && invocation.classMetaData.baseClass == "ApiController")
-                this.apiControllerErrorHandler(e, this.container.routeInfo)
-            else this.defaultErrorHandler(e)
+            if (this.container.routeInfo) {
+                e.routeInfo = this.container.routeInfo;
+            }
+            this.response.error(e, e.status || 500)
         }
-    }
-
-    private apiControllerErrorHandler(e, routeInfo: Core.RouteInfo) {
-        if (this.option.errorHandler) {
-            this.option.errorHandler(new Core.HttpError(e.status || 500, e, this.request, this.response))
-        }
-        else {
-            let result = new ApiActionResult(e.message, e.status || 500)
-            result.execute(this.request, this.response, routeInfo)
-        }
-    }
-
-    private defaultErrorHandler(e) {
-        this.response.error(e, e.status || 500)
     }
 }

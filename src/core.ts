@@ -245,7 +245,7 @@ export abstract class Invocation {
 }
 
 export interface RequestInterceptor {
-    intercept(invocation: Invocation): Promise<ActionResult>;
+    intercept(invocation: Invocation):any;
 }
 
 export interface DependencyResolver {

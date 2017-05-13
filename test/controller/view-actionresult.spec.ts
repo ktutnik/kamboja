@@ -26,6 +26,11 @@ describe("ViewActionResult", () => {
         spy.restore();
     })
 
+    it("Should be instanceof Core.ActionResult", () => {
+        let view = new ViewActionResult({}, undefined, undefined)
+        Chai.expect(view instanceof Core.ActionResult).true
+    })
+
     it("Should able to called without view name", () => {
         let view = new ViewActionResult({}, undefined, undefined)
         view.execute(HttpRequest, HttpResponse, RouteInfo)
