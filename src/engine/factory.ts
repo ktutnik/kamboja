@@ -27,7 +27,7 @@ export class ControllerFactory {
 
     createMiddlewares() {
         let result: Core.Middleware[] = []
-        result = result.concat(this.getGlobalInterceptors())
+        result = result.concat(this.getGlobalMiddlewares())
         if (this.routeInfo) {
             let controller = this.createController()
             result = result.concat(this.getClassMiddlewares(controller))
@@ -65,7 +65,7 @@ export class ControllerFactory {
                     result.push(instance)
                 }
                 catch (e) {
-                    throw new Error(`Can not instantiate interceptor [${middleware}] on ${Core.getRouteDetail(this.routeInfo)}`)
+                    throw new Error(`Can not instantiate middleware [${middleware}] on ${Core.getRouteDetail(this.routeInfo)}`)
                 }
             }
             else {
@@ -86,7 +86,7 @@ export class ControllerFactory {
                     result.push(instance)
                 }
                 catch (e) {
-                    throw new Error(`Can not instantiate interceptor [${middleware}] on [${this.routeInfo.qualifiedClassName}]`)
+                    throw new Error(`Can not instantiate middleware [${middleware}] on [${this.routeInfo.qualifiedClassName}]`)
                 }
             }
             else {
@@ -96,25 +96,25 @@ export class ControllerFactory {
         return result;
     }
 
-    getGlobalInterceptors() {
+    getGlobalMiddlewares() {
         let result: Core.Middleware[] = []
         if (!this.facade.middlewares) this.facade.middlewares = []
         for (let i = this.facade.middlewares.length - 1; i >= 0; i--) {
-            let intercept = this.facade.middlewares[i]
-            if (typeof intercept == "string") {
+            let middleware = this.facade.middlewares[i]
+            if (typeof middleware == "string") {
                 try {
-                    let instance = this.facade.dependencyResolver.resolve(intercept)
+                    let instance = this.facade.dependencyResolver.resolve(middleware)
                     result.push(instance)
                 }
                 catch (e) {
-                    throw new Error(`Can not instantiate interceptor [${intercept}] in global interceptors`)
+                    throw new Error(`Can not instantiate middleware [${middleware}] in global middlewares`)
                 }
             }
-            else if (typeof intercept == "function") {
-                result.push({ execute: intercept })
+            else if (typeof middleware == "function") {
+                result.push({ execute: middleware })
             }
             else {
-                result.push(intercept)
+                result.push(middleware)
             }
         }
         return result;

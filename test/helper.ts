@@ -108,6 +108,8 @@ export class HttpRequest implements Core.HttpRequest {
     isAccept(mime: string) { return false }
     isAuthenticated() { return false }
     getUserRole() { return "" }
+    controllerInfo?:Core.ControllerInfo
+    middlewares?: Core.Middleware[]  
 }
 
 export function createFacade(rootPath: string) {

@@ -96,6 +96,56 @@ describe("RequestHandler", () => {
             Chai.expect(error.message).eq("ERROR INSIDE INTERCEPTOR")
             Chai.expect(status).eq(500)
         })
+
+        it("Should Include controllerInfo on request", async () => {
+            let meta = H.fromFile("controller/controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = H.cleanUp([httpRequest.controllerInfo])
+            Chai.expect(result).deep.eq([{
+                initiator: undefined,
+                route: undefined,
+                httpMethod: undefined,
+                methodMetaData: { name: 'returnView' },
+                qualifiedClassName: 'DummyApi, controller/controller.js',
+                classMetaData: { name: 'DummyApi', baseClass: 'Controller' },
+                collaborator: undefined
+            }])
+        })
+
+        it("Should Include controllerInfo on request with interceptor", async () => {
+            facade.middlewares = [
+                "ErrorInterceptor, interceptor/error-interceptor"
+            ]
+            let meta = H.fromFile("controller/controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            let result = H.cleanUp([httpRequest.controllerInfo])
+            Chai.expect(result).deep.eq([{
+                initiator: undefined,
+                route: undefined,
+                httpMethod: undefined,
+                methodMetaData: { name: 'returnView' },
+                qualifiedClassName: 'DummyApi, controller/controller.js',
+                classMetaData: { name: 'DummyApi', baseClass: 'Controller' },
+                collaborator: undefined
+            }])
+        })
+
+        it("Should node Include controllerInfo on request that doesn't handled by controller", async () => {
+            let container = new ControllerFactory(facade)
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            Chai.expect(httpRequest.controllerInfo).undefined
+        })
     })
 
     describe("ApiController Functions", () => {
@@ -509,6 +559,20 @@ describe("RequestHandler", () => {
     })
 
     describe("Interception Function", () => {
+        it("Should provide list of interceptors on http request", async () => {
+            let meta = H.fromFile("controller/interception-order-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            facade.middlewares = [
+                new ConcatInterceptor("4"),
+                new ConcatInterceptor("5")
+            ]
+            let info = infos.filter(x => x.classMetaData.name == "InterceptedTestController" && x.methodMetaData.name == "returnHello")[0]
+            info.classId = info.qualifiedClassName
+            let container = new ControllerFactory(facade, info)
+            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
+            await executor.execute()
+            Chai.expect(httpRequest.middlewares.length).eq(6)
+        })
 
         it("Should provide hasController properly", async () => {
             facade.middlewares = [

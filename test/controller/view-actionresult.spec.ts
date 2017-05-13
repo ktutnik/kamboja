@@ -69,13 +69,13 @@ describe("ViewActionResult", () => {
         let view = new ViewActionResult({}, "index", undefined)
         Chai.expect(() => {
             view.execute(HttpRequest, HttpResponse, undefined)
-        }).throw("Relative view path can not be use inside Request Interceptor")
+        }).throw("Relative view path can not be use inside middlewares")
     })
 
     it("Should throw if used outside Controller but not provided view name", () => {
         let view = new ViewActionResult({}, undefined, undefined)
         Chai.expect(() => {
             view.execute(HttpRequest, HttpResponse, undefined)
-        }).throw("Relative view path can not be use inside Request Interceptor")
+        }).throw("Relative view path can not be use inside middlewares")
     })
 })

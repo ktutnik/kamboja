@@ -1,7 +1,7 @@
 import "reflect-metadata"
 import * as Core from "../core"
 import { ControllerInvocation } from "./controller-invocation"
-import { InterceptorInvocation } from "./interceptor-invocation"
+import { MiddlewareInvocation } from "./interceptor-invocation"
 import { ControllerExecutor } from "./controller-executor"
 import { PageNotFoundInvocation } from "./page-not-found-invocation"
 import { ControllerFactory } from "./factory"
@@ -31,8 +31,8 @@ export class RequestHandler {
             }
             let middlewares = this.container.createMiddlewares()
             this.request.middlewares = this.container.createMiddlewares()
-            for (let interceptor of middlewares) {
-                invocation = new InterceptorInvocation(invocation, this.request, interceptor, this.option)
+            for (let middleware of middlewares) {
+                invocation = new MiddlewareInvocation(invocation, this.request, middleware, this.option)
             }
             let result = await invocation.proceed()
             result.execute(this.request, this.response, this.container.routeInfo)

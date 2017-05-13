@@ -1,9 +1,9 @@
 import { Middleware, Invocation, ActionResult, HttpRequest } from "../core"
 import { MiddlewareDecorator } from "./middleware-decorator"
 
-let interceptor = new MiddlewareDecorator()
+let middleware = new MiddlewareDecorator()
 
-@interceptor.id("kamboja:authorize")
+@middleware.id("kamboja:authorize")
 export class Authorize implements Middleware {
     constructor(public role: (string | string[])) { }
 

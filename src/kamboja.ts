@@ -19,7 +19,6 @@ export class Kamboja {
     private options: Core.KambojaOption
     private log: Logger;
     private storage: MetaDataLoader;
-    private interceptorFactories: Core.MiddlewareFactory[] = []
 
     static getFacade() {
         return Kamboja.facade;

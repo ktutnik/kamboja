@@ -86,7 +86,7 @@ describe("Controller Factory", () => {
             "UnqualifiedName, path/of/nowhere"
         ]
         let factory = new ControllerFactory(facade, info);
-        Chai.expect(() => factory.createMiddlewares()).throw("Can not instantiate interceptor [UnqualifiedName, path/of/nowhere] in global interceptors")
+        Chai.expect(() => factory.createMiddlewares()).throw("Can not instantiate middleware [UnqualifiedName, path/of/nowhere] in global middlewares")
     })
 
     it("Should throw if provided unqualified class name interceptor in class scope", () => {
@@ -95,7 +95,7 @@ describe("Controller Factory", () => {
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "UnQualifiedNameOnClassController")[0]
         info.classId = info.qualifiedClassName
         let factory = new ControllerFactory(facade, info)
-        Chai.expect(() => factory.createMiddlewares()).throw("Can not instantiate interceptor [UnqualifiedName, path/of/nowhere] on [UnQualifiedNameOnClassController, controller/controller-intercepted-invalid-class.js]")
+        Chai.expect(() => factory.createMiddlewares()).throw("Can not instantiate middleware [UnqualifiedName, path/of/nowhere] on [UnQualifiedNameOnClassController, controller/controller-intercepted-invalid-class.js]")
     })
 
     it("Should throw if provided unqualified class name in method scope", () => {
@@ -104,7 +104,7 @@ describe("Controller Factory", () => {
         let info = infos.filter(x => x.methodMetaData && x.methodMetaData.name == "returnView" && x.classMetaData.name == "UnQualifiedNameOnMethodController")[0]
         info.classId = info.qualifiedClassName
         let factory = new ControllerFactory(facade, info)
-        Chai.expect(() => factory.createMiddlewares()).throw("Can not instantiate interceptor [UnqualifiedName, path/of/nowhere] on [UnQualifiedNameOnMethodController.returnView controller/controller-intercepted-invalid-method.js]")
+        Chai.expect(() => factory.createMiddlewares()).throw("Can not instantiate middleware [UnqualifiedName, path/of/nowhere] on [UnQualifiedNameOnMethodController.returnView controller/controller-intercepted-invalid-method.js]")
     })
 
     it("Should return in reverse order in global interceptors", () => {
@@ -117,7 +117,7 @@ describe("Controller Factory", () => {
             new ChangeValueToHelloWorld()
         ]
         let executor: any = new ControllerFactory(facade, info)
-        let result = executor.getGlobalInterceptors();
+        let result = executor.getGlobalMiddlewares();
         Chai.expect(getId(result[0])).eq("ChangeValueToHelloWorld")
         Chai.expect(getId(result[1])).eq("DefaultInterceptor")
     })
