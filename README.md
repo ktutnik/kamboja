@@ -1,11 +1,5 @@
 # KambojaJs
 
-NodeJS MVC Framework powered by TypeScript
-
-
-# Projects status
-
-### Kamboja
 [![npm version](https://badge.fury.io/js/kamboja.svg)](https://badge.fury.io/js/kamboja)
 [![Build Status](https://travis-ci.org/kambojajs/kamboja.svg?branch=master)](https://travis-ci.org/kambojajs/kamboja)
 [![Coverage Status](https://coveralls.io/repos/github/kambojajs/kamboja/badge.svg?branch=master)](https://coveralls.io/github/kambojajs/kamboja?branch=master)
@@ -13,32 +7,73 @@ NodeJS MVC Framework powered by TypeScript
 [![dependencies Status](https://david-dm.org/kambojajs/kamboja/status.svg)](https://david-dm.org/kambojajs/kamboja)
 [![devDependencies Status](https://david-dm.org/kambojajs/kamboja/dev-status.svg)](https://david-dm.org/kambojajs/kamboja?type=dev)
 
-### Kamboja - Express
+KambojaJS aims to fix some problems occurs when using the [old guy](https://expressjs.com/), like increase testability, add convention over configuration and use modern language feature like async/await decorator etc, read more http://kambojajs.com/
 
-[![npm version](https://badge.fury.io/js/kamboja-express.svg)](https://badge.fury.io/js/kamboja-express)
-[![Build Status](https://travis-ci.org/kambojajs/kamboja-express.svg?branch=master)](https://travis-ci.org/kambojajs/kamboja-express)
-[![Coverage Status](https://coveralls.io/repos/github/kambojajs/kamboja-express/badge.svg?branch=master)](https://coveralls.io/github/kambojajs/kamboja-express?branch=master)
-[![Known Vulnerabilities](https://snyk.io/test/github/kambojajs/kamboja-express/badge.svg)](https://snyk.io/test/github/kambojajs/kamboja-express)
-[![dependencies Status](https://david-dm.org/kambojajs/kamboja-express/status.svg)](https://david-dm.org/kambojajs/kamboja-express)
-[![devDependencies Status](https://david-dm.org/kambojajs/kamboja-express/dev-status.svg)](https://david-dm.org/kambojajs/kamboja-express?type=dev)
+## Convention Over Configuration
 
-### Kamboja - Mongoose
+KambojaJS route generation system generate url using pattern below:
 
-[![npm version](https://badge.fury.io/js/kamboja-mongoose.svg)](https://badge.fury.io/js/kamboja-mongoose)
-[![Build Status](https://travis-ci.org/kambojajs/kamboja-mongoose.svg?branch=master)](https://travis-ci.org/kambojajs/kamboja-mongoose)
-[![Coverage Status](https://coveralls.io/repos/github/kambojajs/kamboja-mongoose/badge.svg?branch=master)](https://coveralls.io/github/kambojajs/kamboja-mongoose?branch=master)
-[![Known Vulnerabilities](https://snyk.io/test/github/kambojajs/kamboja-mongoose/badge.svg)](https://snyk.io/test/github/kambojajs/kamboja-mongoose)
-[![dependencies Status](https://david-dm.org/kambojajs/kamboja-mongoose/status.svg)](https://david-dm.org/kambojajs/kamboja-mongoose)
-[![devDependencies Status](https://david-dm.org/kambojajs/kamboja-mongoose/dev-status.svg)](https://david-dm.org/kambojajs/kamboja-mongoose?type=dev)
+```
+<namespace>/<controller>/<action>?<parameter1>=value&<parameter2>=value 
+```
 
-### Kecubung
+Example you define controller like below
 
-[![npm version](https://badge.fury.io/js/kecubung.svg)](https://badge.fury.io/js/kecubung)
-[![Build Status](https://travis-ci.org/kambojajs/kecubung.svg?branch=master)](https://travis-ci.org/kambojajs/kecubung)
-[![Coverage Status](https://coveralls.io/repos/github/kambojajs/kecubung/badge.svg?branch=master)](https://coveralls.io/github/kambojajs/kecubung?branch=master)
-[![Known Vulnerabilities](https://snyk.io/test/github/kambojajs/kecubung/badge.svg)](https://snyk.io/test/github/kambojajs/kecubung)
-[![dependencies Status](https://david-dm.org/kambojajs/kecubung/status.svg)](https://david-dm.org/kambojajs/kecubung)
-[![devDependencies Status](https://david-dm.org/kambojajs/kecubung/dev-status.svg)](https://david-dm.org/kambojajs/kecubung?type=dev)
+```typescript
+import { Controller } from "kamboja"
+
+export namespace Api.v01
+  export class UserController extends Controller {
+    list(query:string, offset:number, limit:number){ }
+  }
+}
+```
+
+Above code by default will generate a GET url below
+
+```
+/api/v01/user/list?query=<value>&offset=<value>&limit=<value>
+```
+
+Refer to [controller](http://kambojajs.com/reference/controller) reference for more information
+
+For more advanced use, KambojaJS provide a convention for creating Restful API by using [ApiController](http://kambojajs.com/reference/api-controller)
+
+Example controller below will create Restful API url for you
+
+```typescript
+import { ApiController } from "kamboja"
+
+namespace Api.V1 {
+    export class ItemsController extends ApiController {
+        //GET /api/v1/items/:id
+        get(id:string) { }
+        //GET /api/v1/items?offset=1&limit=<optional>
+        list(offset:number, limit=50){ }
+        //POST /api/v1/items
+        add(data){ }
+        //DELETE /api/v1/items/:id
+        delete(id:string){ }
+        //PUT /api/v1/items/:id
+        replace(id:string, data){ }
+        //PATCH /api/v1/items/:id
+        modify(id:string, data){}
+    }
+}
+```
+
+Above code will generate some urls:
+
+```
+GET     /api/v1/items/:id
+GET     /api/v1/items?offset=1&limit=<optional>
+POST    /api/v1/items
+DELETE  /api/v1/items/:id
+PUT     /api/v1/items/:id
+PATCH   /api/v1/items/:id
+```
+
+Refer to [ApiController](http://kambojajs.com/reference/api-controller) for more information
 
 
 
