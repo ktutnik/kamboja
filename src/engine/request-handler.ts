@@ -19,16 +19,22 @@ export class RequestHandler {
             if (this.container.routeInfo) {
                 let controllerExecutor = new ControllerExecutor(this.container, this.request)
                 invocation = new ControllerInvocation(controllerExecutor, this.container.routeInfo, this.request)
+                this.request.controllerInfo = {
+                    classId: this.container.routeInfo.classId,
+                    classMetaData: this.container.routeInfo.classMetaData,
+                    methodMetaData: this.container.routeInfo.methodMetaData,
+                    qualifiedClassName: this.container.routeInfo.qualifiedClassName
+                }
             }
             else { 
                 invocation = new PageNotFoundInvocation(this.request, this.response)
             }
-            let interceptors = this.container.createInterceptors()
-            invocation.interceptors = this.container.createInterceptors()
-            for (let interceptor of interceptors) {
-                invocation = new InterceptorInvocation(invocation, interceptor, this.option)
+            let middlewares = this.container.createMiddlewares()
+            this.request.middlewares = this.container.createMiddlewares()
+            for (let interceptor of middlewares) {
+                invocation = new InterceptorInvocation(invocation, this.request, interceptor, this.option)
             }
-            let result = await invocation.execute()
+            let result = await invocation.proceed()
             result.execute(this.request, this.response, this.container.routeInfo)
         }
         catch (e) {

@@ -6,10 +6,8 @@ export class PageNotFoundInvocation extends Invocation {
     constructor(request: HttpRequest,
         private response: HttpResponse) {
         super()
-        this.url = request.url;
-        this.request = request
     }
-    async execute() {
+    async proceed() {
         return new StatusActionResult(404, "Requested url not found")
     }
 }

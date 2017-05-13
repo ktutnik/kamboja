@@ -1,22 +1,22 @@
 import { Controller, ApiController } from "../../../src/controller"
-import { interceptor, Core, JsonActionResult } from "../../../src"
+import { middleware, Core, JsonActionResult } from "../../../src"
 
-export class ConcatInterceptor implements Core.RequestInterceptor {
+export class ConcatInterceptor implements Core.Middleware {
     constructor(private msg: string) { }
 
-    async intercept(invocation: Core.Invocation):Promise<Core.ActionResult> {
-        let invocationResult = await invocation.execute();
+    async execute(request:Core.HttpRequest, invocation: Core.Invocation):Promise<Core.ActionResult> {
+        let invocationResult = await invocation.proceed();
         let result = (<JsonActionResult>invocationResult).body;
         return new JsonActionResult(this.msg + ", " + result)
     }
 }
 
-@interceptor.add(new ConcatInterceptor("2"))
-@interceptor.add(new ConcatInterceptor("3"))
+@middleware.add(new ConcatInterceptor("2"))
+@middleware.add(new ConcatInterceptor("3"))
 export class InterceptedTestController extends ApiController {
 
-    @interceptor.add(new ConcatInterceptor("0"))
-    @interceptor.add(new ConcatInterceptor("1"))
+    @middleware.add(new ConcatInterceptor("0"))
+    @middleware.add(new ConcatInterceptor("1"))
     returnHello() {
         return "Hello"
     }

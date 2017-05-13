@@ -14,10 +14,10 @@ class FakeValidator extends Validator.ValidatorBase {
     }
 }
 
-class FakeInterceptor implements Core.RequestInterceptor {
-    constructor(private opt: Core.KambojaOption) { }
-    async intercept(invocation: Core.Invocation) {
-        return invocation.execute()
+class FakeInterceptor implements Core.Middleware {
+    constructor() { }
+    async execute(request:Core.HttpRequest, invocation: Core.Invocation) {
+        return invocation.proceed()
     }
 }
 
@@ -273,46 +273,31 @@ describe("Kamboja", () => {
         let result: Core.KambojaOption = initSpy.getCall(0).args[1]
     })
 
-    it("Should able to add interception from outside option", () => {
+    it("Should able to add middleware from outside option", () => {
         let opt: Core.KambojaOption = {
             rootPath: __dirname,
             showConsoleLog: false
         }
         let kamboja = new Kamboja(engine, opt)
-        kamboja.intercept(x => new FakeInterceptor(x))
-            .intercept(x => [new FakeInterceptor(x), new FakeInterceptor(x)])
+        kamboja.use(new FakeInterceptor())
+            .use([new FakeInterceptor(), new FakeInterceptor()])
             .init()
-        Chai.expect((<any>kamboja).options.interceptors.length).eq(3)
+        Chai.expect((<any>kamboja).options.middlewares.length).eq(3)
     })
 
-    it("Should able to mix interception from option and method", () => {
+    it("Should able to mix middleware from option and method", () => {
         let opt: Core.KambojaOption = {
             rootPath: __dirname,
             showConsoleLog: false,
-            interceptors: [
-                new FakeInterceptor(null)
+            middlewares: [
+                new FakeInterceptor()
             ]
         }
         let kamboja = new Kamboja(engine, opt)
-        kamboja.intercept(x => new FakeInterceptor(x))
-            .intercept(x => [new FakeInterceptor(x), new FakeInterceptor(x)])
+        kamboja.use(new FakeInterceptor())
+            .use([new FakeInterceptor(), new FakeInterceptor()])
             .init()
-        Chai.expect((<any>kamboja).options.interceptors.length).eq(4)
-    })
-
-    it("Should call engine.init() before instantiate interceptors", () => {
-        let called = () => { console.log(""); }
-        let calledSpy = Sinon.spy(called)
-        let opt: Core.KambojaOption = {
-            rootPath: __dirname
-        }
-        let kamboja = new Kamboja(engine, opt)
-        kamboja.intercept(x => {
-            called()
-            return new FakeInterceptor(x)
-        }).init()
-        Chai.expect(initSpy.called).true
-        Chai.expect(calledSpy.called).false
+        Chai.expect((<any>kamboja).options.middlewares.length).eq(4)
     })
 
     it("Should provide facade properly before init", () => {

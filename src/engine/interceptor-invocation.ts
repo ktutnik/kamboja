@@ -7,17 +7,12 @@ import { InvocationResult } from "./invocation-result"
 
 export class InterceptorInvocation extends Core.Invocation {
     constructor(private invocation: Core.Invocation, 
-        private interceptor: Core.RequestInterceptor,
+        private request:Core.HttpRequest,
+        private middleware: Core.Middleware,
         public option:Core.KambojaOption) { super() }
 
-    async execute(): Promise<Core.ActionResult> {
-        this.classMetaData = this.invocation.classMetaData
-        this.methodName = this.invocation.methodName
-        this.parameters = this.invocation.parameters
-        this.interceptors = this.invocation.interceptors;
-        this.request = this.invocation.request
-        this.url = this.invocation.url
-        let result = this.interceptor.intercept(this.invocation)
+    async proceed(): Promise<Core.ActionResult> {
+        let result = this.middleware.execute(this.request, this.invocation)
         return InvocationResult.create(result)
     }
 }

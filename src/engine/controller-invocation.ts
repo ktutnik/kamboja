@@ -12,14 +12,11 @@ export class ControllerInvocation extends Core.Invocation {
         private routeInfo: Core.RouteInfo,
         public request: Core.HttpRequest) {
         super()
-        this.url = request.url
-        this.methodName = routeInfo.methodMetaData.name
-        this.classMetaData = routeInfo.classMetaData
         let parameterBinder = new ParameterBinder(this.routeInfo, this.request)
         this.parameters = parameterBinder.getParameters()
     }
 
-    async execute(): Promise<Core.ActionResult> {
+    async proceed(): Promise<Core.ActionResult> {
         let result = this.executor.execute(this.parameters)
         return InvocationResult.create(result)
     }

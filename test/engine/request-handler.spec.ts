@@ -43,7 +43,7 @@ describe("RequestHandler", () => {
         })
 
         it("Should allow global interceptor work with request without controller", async () => {
-            facade.interceptors = [
+            facade.middlewares = [
                 "ChangeToHello, interceptor/change-to-hello"
             ]
             let container = new ControllerFactory(facade)
@@ -68,7 +68,7 @@ describe("RequestHandler", () => {
         })
 
         it("Should Include routeInfo on the Error passed with interceptor", async () => {
-            facade.interceptors = [
+            facade.middlewares = [
                 "DefaultInterceptor, interceptor/default-interceptor"
             ]
             let meta = H.fromFile("controller/controller.js", new DefaultPathResolver(__dirname))
@@ -85,7 +85,7 @@ describe("RequestHandler", () => {
         })
 
         it("Should not include routeInfo when error occur on non handled request", async () => {
-            facade.interceptors = [
+            facade.middlewares = [
                 "ErrorInterceptor, interceptor/error-interceptor"
             ]
             let container = new ControllerFactory(facade)
@@ -511,7 +511,7 @@ describe("RequestHandler", () => {
     describe("Interception Function", () => {
 
         it("Should provide hasController properly", async () => {
-            facade.interceptors = [
+            facade.middlewares = [
                 "CheckHasController, interceptor/check-has-controller"
             ]
             let container = new ControllerFactory(facade)
@@ -538,7 +538,7 @@ describe("RequestHandler", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "nonIntercepted")[0]
             info.classId = info.qualifiedClassName
-            facade.interceptors = [
+            facade.middlewares = [
                 async (i) => { return new JsonActionResult("Hello", 501, undefined) }
             ]
             let container = new ControllerFactory(facade, info)
@@ -551,7 +551,7 @@ describe("RequestHandler", () => {
         })
 
         it("Should give proper error if uncaught error occur inside interceptor", async () => {
-            facade.interceptors = [
+            facade.middlewares = [
                 "ErrorInterceptor, interceptor/error-interceptor"
             ]
             let container = new ControllerFactory(facade)
@@ -564,7 +564,7 @@ describe("RequestHandler", () => {
         it("Should execute global interception on all actions", async () => {
             let meta = H.fromFile("controller/api-controller.js", new DefaultPathResolver(__dirname))
             let infos = Transformer.transform(meta)
-            facade.interceptors = [
+            facade.middlewares = [
                 "ChangeToHello, interceptor/change-to-hello"
             ]
             //returnTheParam
@@ -609,7 +609,7 @@ describe("RequestHandler", () => {
         it("Should execute interception in proper order", async () => {
             let meta = H.fromFile("controller/interception-order-controller.js", new DefaultPathResolver(__dirname))
             let infos = Transformer.transform(meta)
-            facade.interceptors = [
+            facade.middlewares = [
                 new ConcatInterceptor("4"),
                 new ConcatInterceptor("5")
             ]

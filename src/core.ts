@@ -8,8 +8,9 @@ export type TransformerName = "DefaultAction" | "IndexAction" | "HttpMethodDecor
 export type MetaDataLoaderCategory = "Controller" | "Model"
 export const ValidationTypesAccepted = ["string", "string[]", "number", "number[]", "boolean", "boolean[]", "date", "date[]"]
 
-export type InterceptorFunction = (invocation:Invocation) => Promise<ActionResult>
-export type InterceptorFactory = (opt: KambojaOption) => string | string[] | RequestInterceptor | RequestInterceptor[] | InterceptorFunction | InterceptorFunction[]
+export type MiddlewareFunction = (request:HttpRequest, next:Invocation) => any
+export type MiddlewaresType = string | string[] | Middleware | Middleware[] | MiddlewareFunction | MiddlewareFunction[]
+export type MiddlewareFactory = (opt: KambojaOption) => MiddlewaresType
 
 export class Decorator {
     internal() { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
@@ -130,7 +131,7 @@ export interface Facade {
     pathResolver?: PathResolver
     validators?: (ValidatorCommand | string)[]
     metaDataStorage?: MetaDataStorage
-    interceptors?: (RequestInterceptor | string | InterceptorFunction)[]
+    middlewares?: (Middleware | string | MiddlewareFunction)[]
     autoValidation?: boolean
 }
 
@@ -190,6 +191,15 @@ export interface HttpRequest {
     isAccept(mime: string): boolean
     isAuthenticated(): boolean
     getUserRole(): string
+    controllerInfo?:ControllerInfo
+    middlewares?: Middleware[]    
+}
+
+export interface ControllerInfo{
+    methodMetaData?: MethodMetaData
+    classMetaData?: ClassMetaData
+    qualifiedClassName?: string
+    classId?: any
 }
 
 
@@ -232,20 +242,12 @@ export class HttpError {
 }
 
 export abstract class Invocation {
-    abstract execute(): Promise<ActionResult>
-    url: Url.Url
-    request: HttpRequest
-    methodName: string
-    classMetaData: Kecubung.ClassMetaData
+    abstract proceed(): Promise<ActionResult>
     parameters: any[]
-    interceptors: RequestInterceptor[]
-    hasController() {
-        return typeof this.classMetaData == "object"
-    }
 }
 
-export interface RequestInterceptor {
-    intercept(invocation: Invocation):any;
+export interface Middleware {
+    execute(request:HttpRequest, next: Invocation):any;
 }
 
 export interface DependencyResolver {
