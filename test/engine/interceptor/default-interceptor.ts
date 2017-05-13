@@ -3,8 +3,8 @@ import { val, Core} from "../../../src"
 import { id } from "./interceptor-identifier"
 
 @id("DefaultInterceptor")
-export class DefaultInterceptor implements Core.RequestInterceptor{
-    async intercept(invocation:Core.Invocation) {
-        return await invocation.execute()
+export class DefaultInterceptor implements Core.Middleware{
+    async execute(request:Core.HttpRequest, invocation:Core.Invocation) {
+        return await invocation.proceed()
     }
 }

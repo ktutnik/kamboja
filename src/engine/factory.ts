@@ -1,7 +1,7 @@
 import * as Core from "../core"
 import { ValidatorImpl } from "../validator"
 import { Kamboja } from "../kamboja"
-import { Interceptor } from "../index"
+import { Middleware } from "../index"
 
 
 export class ControllerFactory {
@@ -25,13 +25,13 @@ export class ControllerFactory {
         return validator
     }
 
-    createInterceptors() {
-        let result: Core.RequestInterceptor[] = []
-        result = result.concat(this.getGlobalInterceptors())
+    createMiddlewares() {
+        let result: Core.Middleware[] = []
+        result = result.concat(this.getGlobalMiddlewares())
         if (this.routeInfo) {
             let controller = this.createController()
-            result = result.concat(this.getClassInterceptors(controller))
-            result = result.concat(this.getMethodInterceptors(controller))
+            result = result.concat(this.getClassMiddlewares(controller))
+            result = result.concat(this.getMethodMiddlewares(controller))
         }
         return result;
     }
@@ -55,66 +55,66 @@ export class ControllerFactory {
         return commands
     }
 
-    private getMethodInterceptors(controller: Core.BaseController) {
-        let interceptors = Interceptor.getInterceptors(controller, this.routeInfo.methodMetaData.name) || []
-        let result: Core.RequestInterceptor[] = []
-        for (let intercept of interceptors) {
-            if (typeof intercept == "string") {
+    private getMethodMiddlewares(controller: Core.BaseController) {
+        let middlewares = Middleware.getMiddlewares(controller, this.routeInfo.methodMetaData.name) || []
+        let result: Core.Middleware[] = []
+        for (let middleware of middlewares) {
+            if (typeof middleware == "string") {
                 try {
-                    let instance = this.facade.dependencyResolver.resolve(intercept)
+                    let instance = this.facade.dependencyResolver.resolve(middleware)
                     result.push(instance)
                 }
                 catch (e) {
-                    throw new Error(`Can not instantiate interceptor [${intercept}] on ${Core.getRouteDetail(this.routeInfo)}`)
+                    throw new Error(`Can not instantiate middleware [${middleware}] on ${Core.getRouteDetail(this.routeInfo)}`)
                 }
             }
             else {
-                result.push(intercept)
+                result.push(middleware)
             }
         }
         return result;
     }
 
-    private getClassInterceptors(controller: Core.BaseController) {
-        let interceptors = Interceptor.getInterceptors(controller)
-        if (!interceptors) interceptors = []
-        let result: Core.RequestInterceptor[] = []
-        for (let intercept of interceptors) {
-            if (typeof intercept == "string") {
+    private getClassMiddlewares(controller: Core.BaseController) {
+        let middlewares = Middleware.getMiddlewares(controller)
+        if (!middlewares) middlewares = []
+        let result: Core.Middleware[] = []
+        for (let middleware of middlewares) {
+            if (typeof middleware == "string") {
                 try {
-                    let instance = this.facade.dependencyResolver.resolve(intercept)
+                    let instance = this.facade.dependencyResolver.resolve(middleware)
                     result.push(instance)
                 }
                 catch (e) {
-                    throw new Error(`Can not instantiate interceptor [${intercept}] on [${this.routeInfo.qualifiedClassName}]`)
+                    throw new Error(`Can not instantiate middleware [${middleware}] on [${this.routeInfo.qualifiedClassName}]`)
                 }
             }
             else {
-                result.push(intercept)
+                result.push(middleware)
             }
         }
         return result;
     }
 
-    getGlobalInterceptors() {
-        let result: Core.RequestInterceptor[] = []
-        if (!this.facade.interceptors) this.facade.interceptors = []
-        for (let i = this.facade.interceptors.length - 1; i >= 0; i--) {
-            let intercept = this.facade.interceptors[i]
-            if (typeof intercept == "string") {
+    getGlobalMiddlewares() {
+        let result: Core.Middleware[] = []
+        if (!this.facade.middlewares) this.facade.middlewares = []
+        for (let i = this.facade.middlewares.length - 1; i >= 0; i--) {
+            let middleware = this.facade.middlewares[i]
+            if (typeof middleware == "string") {
                 try {
-                    let instance = this.facade.dependencyResolver.resolve(intercept)
+                    let instance = this.facade.dependencyResolver.resolve(middleware)
                     result.push(instance)
                 }
                 catch (e) {
-                    throw new Error(`Can not instantiate interceptor [${intercept}] in global interceptors`)
+                    throw new Error(`Can not instantiate middleware [${middleware}] in global middlewares`)
                 }
             }
-            else if (typeof intercept == "function") {
-                result.push({ intercept: intercept })
+            else if (typeof middleware == "function") {
+                result.push({ execute: middleware })
             }
             else {
-                result.push(intercept)
+                result.push(middleware)
             }
         }
         return result;

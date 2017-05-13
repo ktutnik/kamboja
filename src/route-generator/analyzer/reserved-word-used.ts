@@ -9,7 +9,7 @@ const reservedWords:ControllerMemberNames[] = [
     "request", "validator", "setCookie", "view", "redirect", "file", "json"]
 
 const apiReservedWords:ApiControllerMemberNames[] = [
-    "request", "validator", "ok", "invalid"]
+    "request", "validator"]
 
  
 

@@ -1,6 +1,6 @@
 import * as Core from "../../../src/core"
 
-const InterceptorMetadataKey = "kamboja:interceptor"
+const InterceptorMetadataKey = "kamboja:middleware"
 
 export function id(id:string) {
     return (...args: any[]) => {

@@ -16,7 +16,6 @@ export class DummyApi extends Controller {
         return this.redirect("/go/go/kamboja.js");
     }
 
-    //throw error
     returnNonActionResult() {
         return "This is dumb"
     }

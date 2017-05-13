@@ -102,8 +102,8 @@ describe("ControllerExecutor", () => {
             info.classId = info.qualifiedClassName
             let builder = new Engine.ControllerFactory(facade, info)
             let executor = new Engine.ControllerExecutor(builder, HttpRequest)
-            let result = <JsonActionResult>await executor.execute(["param1"])
-            Chai.expect(result.body).eq("param1")
+            let result = await executor.execute(["param1"])
+            Chai.expect(result).eq("param1")
         })
 
         it("Should able to return value with Promise", async () => {
@@ -113,8 +113,8 @@ describe("ControllerExecutor", () => {
             info.classId = info.qualifiedClassName
             let builder = new Engine.ControllerFactory(facade, info)
             let executor = new Engine.ControllerExecutor(builder, HttpRequest)
-            let result = <JsonActionResult>await executor.execute(["param1"])
-            Chai.expect(result.body).eq("param1")
+            let result = await executor.execute(["param1"])
+            Chai.expect(result).eq("param1")
         })
 
         it("Should auto validate properly", async () => {
@@ -122,10 +122,9 @@ describe("ControllerExecutor", () => {
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "validationTest")[0]
             info.classId = info.qualifiedClassName
-            console.log(Util.inspect(info, false, null))
             let builder = new Engine.ControllerFactory(facade, info)
             let executor = new Engine.ControllerExecutor(builder, HttpRequest)
-            let result = <JsonActionResult>await executor.execute([])
+            let result = await executor.execute([])
             Chai.expect(result.body).deep.eq([{ field: 'required', message: '[required] is required' }])
         })
 
@@ -137,8 +136,8 @@ describe("ControllerExecutor", () => {
             facade.autoValidation = false
             let builder = new Engine.ControllerFactory(facade, info)
             let executor = new Engine.ControllerExecutor(builder, HttpRequest)
-            let result = <JsonActionResult>await executor.execute([])
-            Chai.expect(result.body).eq("OK")
+            let result = await executor.execute([])
+            Chai.expect(result).eq("OK")
         })
 
         it("Should able to use VOID method", async () => {

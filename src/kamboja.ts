@@ -10,18 +10,25 @@ import { Logger } from "./logger"
 import * as Babylon from "babylon"
 import * as Kecubung from "kecubung"
 
+/**
+ * Create instance of KambojaJS application
+ */
 export class Kamboja {
     private static defaultModelPath: string = "model"
     private static facade: Core.Facade;
     private options: Core.KambojaOption
     private log: Logger;
     private storage: MetaDataLoader;
-    private interceptorFactories: Core.InterceptorFactory[] = []
 
     static getFacade() {
         return Kamboja.facade;
     }
 
+    /**
+     * Create instance of KambojaJS application
+     * @param engine KambojaJS engine implementation
+     * @param opt KambojaJS option
+     */
     constructor(private engine: Core.Engine, opt: Core.KambojaOption | string) {
         let override: Core.KambojaOption;
         if (typeof opt === "string") override = { rootPath: opt }
@@ -53,18 +60,17 @@ export class Kamboja {
         this.storage = <MetaDataLoader>this.options.metaDataStorage
     }
 
-    intercept(factory: Core.InterceptorFactory) {
-        this.interceptorFactories.push(factory)
+    /**
+     * Add middleware
+     * @param factory factory method that will be call after KambojaJS application initialized
+     * @returns KambojaJS application
+     */
+    use(middleware: Core.MiddlewaresType) {
+        if (!this.options.middlewares) this.options.middlewares = []
+        if (Array.isArray(middleware)) 
+            this.options.middlewares = this.options.middlewares.concat(middleware)
+        else this.options.middlewares.push(middleware)
         return this
-    }
-
-    private registerInterceptors() {
-        this.interceptorFactories.forEach(x => {
-            let result = x(this.options)
-            if (!this.options.interceptors) this.options.interceptors = []
-            if (Array.isArray(result)) this.options.interceptors.push(...result)
-            else this.options.interceptors.push(result)
-        })
     }
 
     private isFolderProvided() {
@@ -119,12 +125,12 @@ export class Kamboja {
         this.log.info("--------------------------------------")
         validRoutes.forEach(x => {
             let method = ""
-            switch(x.httpMethod){
-                case "GET"    : method = "GET    "; break;
-                case "PUT"    : method = "PUT    "; break;
-                case "PATCH"  : method = "PATCH  "; break;
-                case "POST"   : method = "POST   "; break;
-                case "DELETE" : method = "DELETE "; break;
+            switch (x.httpMethod) {
+                case "GET": method = "GET    "; break;
+                case "PUT": method = "PUT    "; break;
+                case "PATCH": method = "PATCH  "; break;
+                case "POST": method = "POST   "; break;
+                case "DELETE": method = "DELETE "; break;
             }
             this.log.info(`${method} ${x.route}`)
         })
@@ -132,6 +138,10 @@ export class Kamboja {
         return true;
     }
 
+    /**
+     * Initialize KambojaJS application 
+     * @returns Http Callback handler returned by KambojaJS Engine implementation
+     */
     init() {
         if (!this.isFolderProvided()) throw new Error("Fatal error")
         this.storage.load(this.options.controllerPaths, "Controller")
@@ -140,7 +150,6 @@ export class Kamboja {
         if (routeInfos.length == 0) throw new Error("Fatal error")
         if (!this.analyzeRoutes(routeInfos)) throw new Error("Fatal Error")
         let app = this.engine.init(routeInfos, this.options)
-        this.registerInterceptors()
         return app;
     }
 }

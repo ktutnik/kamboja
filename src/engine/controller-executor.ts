@@ -15,21 +15,11 @@ export class ControllerExecutor {
         controller.validator = this.factory.createValidatorForValue(parameters)
         controller.request = this.request;
         let method = <Function>controller[this.factory.routeInfo.methodMetaData.name]
-        if (this.factory.routeInfo.classMetaData.baseClass == "Controller") {
+        if (this.factory.routeInfo.classMetaData.baseClass == "ApiController" &&
+            this.factory.facade.autoValidation && !controller.validator.isValid()) {
             let result = method.apply(controller, parameters);
-            return <Promise<Core.ActionResult>>Promise.resolve(result);
+            return new ApiActionResult(controller.validator.getValidationErrors(), 400)
         }
-        else {
-            if (this.factory.facade.autoValidation && !controller.validator.isValid()) {
-                return new ApiActionResult(controller.validator.getValidationErrors(), 400)
-            }
-            let result = method.apply(controller, parameters);
-            //return immediately if VOID
-            if (typeof result == "undefined" || result == null) return;
-            //return if it is already ActionResult variant
-            if (typeof result["execute"] == "function") return result
-            let apiResult = await Promise.resolve(result)
-            return new ApiActionResult(apiResult, 200)
-        }
+        return method.apply(controller, parameters);
     }
 }

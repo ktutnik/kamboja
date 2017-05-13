@@ -107,30 +107,29 @@ describe("ApiController", () => {
         Chai.expect(api).not.null;
     })
 
-    it("Should return OK result properly", () => {
-        let api = new ApiController();
-        let result = api.ok("OK!")
-        Chai.expect(result.body).eq("OK!")
-        Chai.expect(result.status).eq(200)
+    it("Should return 200 if status not defined, when accept text/xml defined", () => {
+        let api = new ApiActionResult({ data: "hello" })
+        requestMock.isAccept.withArgs("application/json").returns(false)
+        requestMock.isAccept.withArgs("text/xml").returns(true)
+        api.execute(httpRequest, httpResponse, null)
+        let status = responseMock.status.getCall(0).args[0]
+        let setContent = responseMock.setContentType.getCall(0).args[0]
+        let send = responseMock.send.getCall(0).args[0]
+        Chai.expect(status).eq(200)
+        Chai.expect(setContent).eq("text/xml")
+        Chai.expect(send).eq("<data>hello</data>")
     })
 
-    it("Should return INVALID result properly", () => {
-        let api = new ApiController();
-        let result = api.invalid("NOT OK!")
-        Chai.expect(result.body).eq("NOT OK!")
-        Chai.expect(result.status).eq(400)
+    it("Should return 200 if status not defined, when accept application/json defined", () => {
+        let api = new ApiActionResult({ data: "hello" })
+        requestMock.isAccept.withArgs("text/xml").returns(false)
+        api.execute(httpRequest, httpResponse, null)
+        let status = responseMock.status.getCall(0).args[0]
+        let send = responseMock.json.getCall(0).args[0]
+        Chai.expect(status).eq(200)
+        Chai.expect(send).deep.eq({ data: "hello" })
     })
 
-    it("Should return message validation when body not provided in INVALID", () => {
-        let api = new ApiController();
-        api.validator = Validator
-        let result = api.invalid()
-        Chai.expect(result.body).deep.eq([{
-            field: "field",
-            message: "Error message"
-        }])
-        Chai.expect(result.status).eq(400)
-    })
 
     it("Should return XML if provided text/xml in the accept header", () => {
         let api = new ApiActionResult({ data: "hello" }, 400)

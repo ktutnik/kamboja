@@ -1,9 +1,9 @@
 import { HttpRequest, HttpResponse, ActionResult, RouteInfo, Cookie } from "../core"
 
-const ViewOutsideControllerError = "Relative view path can not be use inside Request Interceptor"
+const ViewOutsideControllerError = "Relative view path can not be use inside middlewares"
 
 export class ViewActionResult extends ActionResult {
-    constructor(public model, public viewName: string, cookies: Cookie[]) {
+    constructor(public model, public viewName: string, cookies?: Cookie[]) {
         super(cookies)
     }
 

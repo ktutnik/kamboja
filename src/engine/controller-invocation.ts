@@ -4,6 +4,7 @@ import "reflect-metadata"
 import * as Kecubung from "kecubung"
 import { ParameterBinder } from "../parameter-binder"
 import * as Url from "url"
+import { InvocationResult } from "./invocation-result"
 
 export class ControllerInvocation extends Core.Invocation {
 
@@ -11,14 +12,12 @@ export class ControllerInvocation extends Core.Invocation {
         private routeInfo: Core.RouteInfo,
         public request: Core.HttpRequest) {
         super()
-        this.url = request.url
-        this.methodName = routeInfo.methodMetaData.name
-        this.classMetaData = routeInfo.classMetaData
         let parameterBinder = new ParameterBinder(this.routeInfo, this.request)
         this.parameters = parameterBinder.getParameters()
     }
 
-    async execute(): Promise<Core.ActionResult> {
-        return await this.executor.execute(this.parameters)
+    async proceed(): Promise<Core.ActionResult> {
+        let result = this.executor.execute(this.parameters)
+        return InvocationResult.create(result)
     }
 }
