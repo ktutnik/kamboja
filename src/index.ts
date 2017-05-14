@@ -22,5 +22,5 @@ export const val: Validator.ValidatorDecorator = new Validator.ValidatorDecorato
 export const internal = new Core.Decorator().internal;
 export const http = new Core.HttpDecorator();
 export function authorize(role?:string|string[]){
-    return middleware.add(new Middleware.Authorize(role))
+    return middleware.use(new Middleware.Authorize(role))
 }

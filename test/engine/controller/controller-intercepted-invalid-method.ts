@@ -4,7 +4,7 @@ import { val, JsonActionResult } from "../../../src"
 
 export class UnQualifiedNameOnMethodController extends Controller {
 
-    @middleware.add("UnqualifiedName, path/of/nowhere")
+    @middleware.use("UnqualifiedName, path/of/nowhere")
     returnView() {
         return this.json("Helow")
     }

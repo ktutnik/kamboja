@@ -1,14 +1,14 @@
 import { Middleware, middleware } from "../../src"
 import * as Chai from "chai"
 
-@middleware.add("Interceptor, interceptor/path")
-@middleware.add("SecondInterceptor, interceptor/path")
+@middleware.use("Interceptor, interceptor/path")
+@middleware.use("SecondInterceptor, interceptor/path")
 class MyTargetClass {
-    @middleware.add("MethodInterceptor, interceptor/path")
-    @middleware.add("SecondMethodInterceptor, interceptor/path")
+    @middleware.use("MethodInterceptor, interceptor/path")
+    @middleware.use("SecondMethodInterceptor, interceptor/path")
     theMethod() { }
 
-    @middleware.add("MethodInterceptor, interceptor/path")
+    @middleware.use("MethodInterceptor, interceptor/path")
     myProperty:string;
 }
 

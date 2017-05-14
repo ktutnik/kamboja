@@ -10,12 +10,12 @@ export class ChangeValueToHelloWorld implements Core.Middleware {
     }
 }
 
-@middleware.add("DefaultInterceptor, interceptor/default-interceptor")
-@middleware.add(new ChangeValueToHelloWorld())
+@middleware.use("DefaultInterceptor, interceptor/default-interceptor")
+@middleware.use(new ChangeValueToHelloWorld())
 export class DummyApi extends Controller {
 
-    @middleware.add("DefaultInterceptor, interceptor/default-interceptor")
-    @middleware.add(new ChangeValueToHelloWorld())
+    @middleware.use("DefaultInterceptor, interceptor/default-interceptor")
+    @middleware.use(new ChangeValueToHelloWorld())
     returnView() {
         return this.json("Helow")
     }

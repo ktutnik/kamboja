@@ -65,7 +65,7 @@ export class Kamboja {
      * @param factory factory method that will be call after KambojaJS application initialized
      * @returns KambojaJS application
      */
-    addMiddleware(middleware: Core.MiddlewaresType) {
+    use(middleware: Core.MiddlewaresType) {
         if (!this.options.middlewares) this.options.middlewares = []
         if (Array.isArray(middleware)) 
             this.options.middlewares = this.options.middlewares.concat(middleware)

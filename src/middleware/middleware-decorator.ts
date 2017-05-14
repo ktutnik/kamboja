@@ -4,7 +4,7 @@ export const MiddlewareMetadataKey = "kamboja:middleware"
 export const MiddlewareIdMetadataKey = "kamboja:middleware:id"
 
 export class MiddlewareDecorator {
-    add(middleware: Core.Middleware | string ) {
+    use(middleware: Core.Middleware | string ) {
         return (...args: any[]) => {
             Core.MetaDataHelper.save(MiddlewareMetadataKey, middleware, args)
         }
@@ -14,6 +14,4 @@ export class MiddlewareDecorator {
             Core.MetaDataHelper.save(MiddlewareIdMetadataKey, id, args)
         }
     }
-
-    
 }

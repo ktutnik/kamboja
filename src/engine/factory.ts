@@ -110,9 +110,6 @@ export class ControllerFactory {
                     throw new Error(`Can not instantiate middleware [${middleware}] in global middlewares`)
                 }
             }
-            else if (typeof middleware == "function") {
-                result.push({ execute: middleware })
-            }
             else {
                 result.push(middleware)
             }
