@@ -11,12 +11,12 @@ export class ConcatInterceptor implements Core.Middleware {
     }
 }
 
-@middleware.add(new ConcatInterceptor("2"))
-@middleware.add(new ConcatInterceptor("3"))
+@middleware.use(new ConcatInterceptor("2"))
+@middleware.use(new ConcatInterceptor("3"))
 export class InterceptedTestController extends ApiController {
 
-    @middleware.add(new ConcatInterceptor("0"))
-    @middleware.add(new ConcatInterceptor("1"))
+    @middleware.use(new ConcatInterceptor("0"))
+    @middleware.use(new ConcatInterceptor("1"))
     returnHello() {
         return "Hello"
     }
