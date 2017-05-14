@@ -6,7 +6,7 @@ export class ErrorHandler {
         private request: Core.HttpRequest,
         private response: Core.HttpResponse) { }
 
-    execute() {
+    async execute() {
         if (this.option.errorHandler) {
             this.option.errorHandler(new Core.HttpError(this.error.status, this.error, this.request, this.response))
         }
@@ -14,11 +14,10 @@ export class ErrorHandler {
             let routeInfo = <Core.RouteInfo>this.error.routeInfo;
             if (routeInfo && routeInfo.classMetaData.baseClass == "ApiController") {
                 let actionResult = new ApiActionResult(this.error.message, this.error.status)
-                actionResult.execute(this.request, this.response, routeInfo)
+                await actionResult.execute(this.request, this.response, routeInfo)
             }
             else if (this.request.getHeader("Content-Type") == "application/json") {
-                let actionResult = new ApiActionResult(this.error.message, this.error.status)
-                actionResult.execute(this.request, this.response, routeInfo)
+                this.response.json(this.error.message, this.error.status)
             }
             else if (this.request.getHeader("Content-Type") == "text/xml") {
                 this.response.setContentType("text/xml")

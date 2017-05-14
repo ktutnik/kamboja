@@ -82,7 +82,7 @@ describe("ErrorHandler", () => {
         let engine = new Engine.ErrorHandler(error, { rootPath: __dirname }, httpRequest, httpResponse)
         engine.execute()
         let body = responseMock.json.getCall(0).args[0]
-        let status = responseMock.status.getCall(0).args[0]
+        let status = responseMock.json.getCall(0).args[1]
         Chai.expect(body).eq("Fatal error")
         Chai.expect(status).eq(500)
     })
