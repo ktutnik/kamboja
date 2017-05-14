@@ -35,7 +35,7 @@ export class RequestHandler {
                 invocation = new MiddlewareInvocation(invocation, this.request, middleware, this.option)
             }
             let result = await invocation.proceed()
-            result.execute(this.request, this.response, this.container.routeInfo)
+            await result.execute(this.request, this.response, this.container.routeInfo)
         }
         catch (e) {
             if (this.container.routeInfo) {

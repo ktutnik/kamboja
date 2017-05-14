@@ -7,7 +7,7 @@ export class ViewActionResult extends ActionResult {
         super(cookies)
     }
 
-    execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
+    async execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
         super.execute(request, response, routeInfo)
         //if view name doesn't contains / then add the classname
         if (this.viewName && this.viewName.indexOf("/") == -1) {

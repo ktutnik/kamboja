@@ -6,7 +6,7 @@ export class ApiActionResult extends ActionResult {
         super(undefined)
     }
 
-    execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
+    async execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
         super.execute(request, response, routeInfo);
         if (request.isAccept("application/json")) this.sendJson(response)
         else if(request.isAccept("text/xml")) this.sendXml(response)

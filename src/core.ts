@@ -285,7 +285,7 @@ export class ActionResult {
         this.contentType = type;
     }
 
-    execute(request: HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
+    async execute(request: HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
         if (this.contentType) response.setContentType(this.contentType)
         this.removedCookie.forEach(x => response.removeCookie(x.key, x.options))
         this.cookies.forEach(x => response.setCookie(x.key, x.value, x.options))

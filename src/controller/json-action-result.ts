@@ -5,7 +5,7 @@ export class JsonActionResult extends ActionResult {
         super(cookies)
     }
 
-    execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
+    async execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
         super.execute(request, response, routeInfo)
         response.json(this.body, this.status || 200);
     }

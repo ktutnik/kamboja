@@ -5,7 +5,7 @@ export class RedirectActionResult extends ActionResult{
         super(cookies)
     }
 
-    execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo){
+    async execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo){
         super.execute(request, response, routeInfo)
         response.redirect(this.redirectUrl);
     }

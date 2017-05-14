@@ -5,7 +5,7 @@ export class StatusActionResult extends ActionResult {
         super(undefined)
     }
 
-    execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
+    async execute(request:HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
         super.execute(request, response, routeInfo)
         response.status(this.status)
         response.send(this.message)

@@ -65,17 +65,21 @@ describe("ViewActionResult", () => {
         Chai.expect(viewName).eq("proud/mymethod")
     })
 
-    it("Should throw if used outside Controller but use relative view path", () => {
-        let view = new ViewActionResult({}, "index", undefined)
-        Chai.expect(() => {
-            view.execute(HttpRequest, HttpResponse, undefined)
-        }).throw("Relative view path can not be use inside middlewares")
+    it("Should throw if used outside Controller but use relative view path", async () => {
+        try {
+            let view = new ViewActionResult({}, "index", undefined)
+            await view.execute(HttpRequest, HttpResponse, undefined)
+        } catch (e) {
+            Chai.expect(e.message).eq("Relative view path can not be use inside middlewares")
+        }
     })
 
-    it("Should throw if used outside Controller but not provided view name", () => {
-        let view = new ViewActionResult({}, undefined, undefined)
-        Chai.expect(() => {
-            view.execute(HttpRequest, HttpResponse, undefined)
-        }).throw("Relative view path can not be use inside middlewares")
+    it("Should throw if used outside Controller but not provided view name", async () => {
+        try {
+            let view = new ViewActionResult({}, undefined, undefined)
+            await view.execute(HttpRequest, HttpResponse, undefined)
+        } catch (e) {
+            Chai.expect(e.message).eq("Relative view path can not be use inside middlewares")
+        }
     })
 })
