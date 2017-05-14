@@ -8,8 +8,7 @@ export type TransformerName = "DefaultAction" | "IndexAction" | "HttpMethodDecor
 export type MetaDataLoaderCategory = "Controller" | "Model"
 export const ValidationTypesAccepted = ["string", "string[]", "number", "number[]", "boolean", "boolean[]", "date", "date[]"]
 
-export type MiddlewareFunction = (request:HttpRequest, next:Invocation) => any
-export type MiddlewaresType = string | string[] | Middleware | Middleware[] | MiddlewareFunction | MiddlewareFunction[]
+export type MiddlewaresType = string | string[] | Middleware | Middleware[] 
 export type MiddlewareFactory = (opt: KambojaOption) => MiddlewaresType
 
 export class Decorator {
@@ -131,7 +130,7 @@ export interface Facade {
     pathResolver?: PathResolver
     validators?: (ValidatorCommand | string)[]
     metaDataStorage?: MetaDataStorage
-    middlewares?: (Middleware | string | MiddlewareFunction)[]
+    middlewares?: (Middleware | string)[]
     autoValidation?: boolean
 }
 

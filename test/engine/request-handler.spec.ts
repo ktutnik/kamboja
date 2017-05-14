@@ -585,35 +585,6 @@ describe("RequestHandler", () => {
             Chai.expect(result).eq("DOESN'T HAVE CONTROLLER")
         })
 
-        it("Should able to use function as interception", async () => {
-            let meta = H.fromFile("controller/intercepted-with-function.js", new DefaultPathResolver(__dirname))
-            let infos = Transformer.transform(meta)
-            let info = infos.filter(x => x.methodMetaData.name == "index")[0]
-            info.classId = info.qualifiedClassName
-            let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
-            await executor.execute()
-            let result = responseMock.json.getCall(0).args[0]
-            Chai.expect(result).eq("Hello")
-        })
-
-        it("Should able to use function in global interception", async () => {
-            let meta = H.fromFile("controller/intercepted-with-function.js", new DefaultPathResolver(__dirname))
-            let infos = Transformer.transform(meta)
-            let info = infos.filter(x => x.methodMetaData.name == "nonIntercepted")[0]
-            info.classId = info.qualifiedClassName
-            facade.middlewares = [
-                async (i) => { return new JsonActionResult("Hello", 501, undefined) }
-            ]
-            let container = new ControllerFactory(facade, info)
-            let executor = new RequestHandler(container, httpRequest, httpResponse, { rootPath: __dirname })
-            await executor.execute()
-            let result = responseMock.json.getCall(0).args[0]
-            let status = responseMock.json.getCall(0).args[1]
-            Chai.expect(result).eq("Hello")
-            Chai.expect(status).eq(501)
-        })
-
         it("Should give proper error if uncaught error occur inside interceptor", async () => {
             facade.middlewares = [
                 "ErrorInterceptor, interceptor/error-interceptor"

@@ -279,8 +279,8 @@ describe("Kamboja", () => {
             showConsoleLog: false
         }
         let kamboja = new Kamboja(engine, opt)
-        kamboja.use(new FakeInterceptor())
-            .use([new FakeInterceptor(), new FakeInterceptor()])
+        kamboja.addMiddleware(new FakeInterceptor())
+            .addMiddleware([new FakeInterceptor(), new FakeInterceptor()])
             .init()
         Chai.expect((<any>kamboja).options.middlewares.length).eq(3)
     })
@@ -294,8 +294,8 @@ describe("Kamboja", () => {
             ]
         }
         let kamboja = new Kamboja(engine, opt)
-        kamboja.use(new FakeInterceptor())
-            .use([new FakeInterceptor(), new FakeInterceptor()])
+        kamboja.addMiddleware(new FakeInterceptor())
+            .addMiddleware([new FakeInterceptor(), new FakeInterceptor()])
             .init()
         Chai.expect((<any>kamboja).options.middlewares.length).eq(4)
     })
