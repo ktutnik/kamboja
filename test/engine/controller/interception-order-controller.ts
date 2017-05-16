@@ -1,5 +1,7 @@
 import { Controller, ApiController } from "../../../src/controller"
-import { middleware, Core, JsonActionResult } from "../../../src"
+import { Middleware, Core, JsonActionResult } from "../../../src"
+
+let middleware = new Middleware.MiddlewareDecorator()
 
 export class ConcatInterceptor implements Core.Middleware {
     constructor(private msg: string) { }

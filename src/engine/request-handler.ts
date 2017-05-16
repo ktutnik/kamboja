@@ -4,44 +4,57 @@ import { ControllerInvocation } from "./controller-invocation"
 import { MiddlewareInvocation } from "./interceptor-invocation"
 import { ControllerExecutor } from "./controller-executor"
 import { PageNotFoundInvocation } from "./page-not-found-invocation"
-import { ControllerFactory } from "./factory"
+import { ErrorInvocation } from "./error-invocation"
+import { ControllerFactory } from "./controller-factory"
+import { MiddlewareFactory } from "./middleware-factory"
 import { HttpStatusError, ApiActionResult } from "../controller"
 
 export class RequestHandler {
-    constructor(private container: ControllerFactory,
+    constructor(private option: Core.Facade,
         private request: Core.HttpRequest,
         private response: Core.HttpResponse,
-        private option: Core.KambojaOption) { }
+        private info?: Core.RouteInfo | Error) { }
 
     async execute() {
+        let invocation: Core.Invocation;
+        let controller: Core.BaseController;
+        let routeInfo: Core.RouteInfo;
+        let controllerInfo: Core.ControllerInfo;
         try {
-            let invocation: Core.Invocation;
-            if (this.container.routeInfo) {
-                let controllerExecutor = new ControllerExecutor(this.container, this.request)
-                invocation = new ControllerInvocation(controllerExecutor, this.container.routeInfo, this.request)
-                this.request.controllerInfo = {
-                    classId: this.container.routeInfo.classId,
-                    classMetaData: this.container.routeInfo.classMetaData,
-                    methodMetaData: this.container.routeInfo.methodMetaData,
-                    qualifiedClassName: this.container.routeInfo.qualifiedClassName
-                }
-            }
-            else { 
+            if (!this.info) {
                 invocation = new PageNotFoundInvocation(this.request, this.response)
             }
-            let middlewares = this.container.createMiddlewares()
-            this.request.middlewares = this.container.createMiddlewares()
+            else if (this.info instanceof Error) {
+                invocation = new ErrorInvocation(this.request, this.response, this.info)
+            }
+            else {
+                routeInfo = this.info;
+                let factory = new ControllerFactory(this.option, routeInfo)
+                controller = factory.createController()
+                let controllerExecutor = new ControllerExecutor(factory, this.request)
+                invocation = new ControllerInvocation(controllerExecutor, routeInfo, this.request)
+                controllerInfo = {
+                    classId: routeInfo.classId,
+                    classMetaData: routeInfo.classMetaData,
+                    methodMetaData: routeInfo.methodMetaData,
+                    qualifiedClassName: routeInfo.qualifiedClassName
+                }
+            }
+            let factory = new MiddlewareFactory(this.option, controller, routeInfo)
+            let middlewares = factory.createMiddlewares()
+            invocation.controllerInfo = controllerInfo;
+            invocation.middlewares = middlewares
             for (let middleware of middlewares) {
-                invocation = new MiddlewareInvocation(invocation, this.request, middleware, this.option)
+                invocation = new MiddlewareInvocation(invocation, this.request, middleware)
+                invocation.controllerInfo = controllerInfo;
+                invocation.middlewares = middlewares
             }
             let result = await invocation.proceed()
-            await result.execute(this.request, this.response, this.container.routeInfo)
+            await result.execute(this.request, this.response, routeInfo)
         }
         catch (e) {
-            if (this.container.routeInfo) {
-                e.routeInfo = this.container.routeInfo;
-            }
-            this.response.error(e, e.status || 500)
+            this.response.status(e.status || 500)
+            this.response.send(e.message)
         }
     }
 }

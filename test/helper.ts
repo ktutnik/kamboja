@@ -8,6 +8,7 @@ import { RequiredValidator, RangeValidator, EmailValidator, TypeValidator, Valid
 import { DefaultDependencyResolver, DefaultIdentifierResolver, DefaultPathResolver } from "../src/resolver"
 import { MetaDataLoader } from "../src/metadata-loader/metadata-loader"
 import * as Url from "url"
+import * as Transformer from "../src/route-generator/transformers"
 
 export function fromFile(filePath: string, pathResolver: Core.PathResolver) {
     let path = pathResolver.resolve(filePath)
@@ -108,16 +109,26 @@ export class HttpRequest implements Core.HttpRequest {
     isAccept(mime: string) { return false }
     isAuthenticated() { return false }
     getUserRole() { return "" }
-    controllerInfo?:Core.ControllerInfo
-    middlewares?: Core.Middleware[]  
+    controllerInfo?: Core.ControllerInfo
+    middlewares?: Core.Middleware[]
 }
 
 export function createFacade(rootPath: string) {
+    let pathResolver = new DefaultPathResolver(rootPath);
     let facade: Core.Facade = {
         identifierResolver: new DefaultIdentifierResolver(),
-        dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver(), new DefaultPathResolver(rootPath)),
-        metaDataStorage: new MetaDataLoader(new DefaultIdentifierResolver(), new DefaultPathResolver(rootPath)),
+        dependencyResolver: new DefaultDependencyResolver(new DefaultIdentifierResolver(), pathResolver),
+        metaDataStorage: new MetaDataLoader(new DefaultIdentifierResolver(), pathResolver),
+        pathResolver: pathResolver,
         autoValidation: true
     }
     return facade;
+}
+
+export function getRouteInfo(facade: Core.Facade, path: string, methodName: string) {
+    let meta = fromFile(path, facade.pathResolver)
+    let infos = Transformer.transform(meta)
+    let info = infos.filter(x => x.methodMetaData.name == methodName)[0]
+    info.classId = info.qualifiedClassName
+    return info
 }

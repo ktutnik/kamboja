@@ -1,7 +1,9 @@
 import { Controller } from "../../../src/controller"
-import { middleware } from "../../../src"
+import { Middleware } from "../../../src"
 import { val, JsonActionResult, Core } from "../../../src"
 import { id } from "../interceptor/interceptor-identifier"
+
+let middleware = new Middleware.MiddlewareDecorator()
 
 @id("ChangeValueToHelloWorld")
 export class ChangeValueToHelloWorld implements Core.Middleware {

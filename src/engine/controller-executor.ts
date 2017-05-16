@@ -3,7 +3,7 @@ import { ValidatorImpl } from "../validator"
 import * as Kecubung from "kecubung"
 import { ParameterBinder } from "../parameter-binder"
 import { ApiActionResult } from "../controller/api-action-result"
-import { ControllerFactory } from "./factory"
+import { ControllerFactory } from "./controller-factory"
 
 export class ControllerExecutor {
     constructor(private factory: ControllerFactory,
@@ -12,7 +12,7 @@ export class ControllerExecutor {
 
     async execute(parameters: any[]) {
         let controller = this.factory.createController();
-        controller.validator = this.factory.createValidatorForValue(parameters)
+        controller.validator = this.factory.createValidatorForParameters(parameters)
         controller.request = this.request;
         let method = <Function>controller[this.factory.routeInfo.methodMetaData.name]
         if (this.factory.routeInfo.classMetaData.baseClass == "ApiController" &&
