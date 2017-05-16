@@ -175,14 +175,9 @@ describe("Kamboja", () => {
 
         Chai.expect(option.autoValidation).true
         Chai.expect(option.controllerPaths).deep.eq(["controller"])
-        Chai.expect(option.defaultPage).eq("/home/index")
         Chai.expect(option.modelPath).eq("model")
         Chai.expect(option.rootPath).eq(__dirname)
-        Chai.expect(option.showConsoleLog).true
         Chai.expect(option.skipAnalysis).false
-        Chai.expect(option.staticFilePath).eq("../www")
-        Chai.expect(option.viewEngine).eq("hbs")
-        Chai.expect(option.viewPath).eq("view")
     })
 
     it("Should able to only provide __dirname on the constructor", () => {
@@ -192,14 +187,9 @@ describe("Kamboja", () => {
 
         Chai.expect(option.autoValidation).true
         Chai.expect(option.controllerPaths).deep.eq(["controller"])
-        Chai.expect(option.defaultPage).eq("/home/index")
         Chai.expect(option.modelPath).eq("model")
         Chai.expect(option.rootPath).eq(__dirname)
-        Chai.expect(option.showConsoleLog).true
         Chai.expect(option.skipAnalysis).false
-        Chai.expect(option.staticFilePath).eq("../www")
-        Chai.expect(option.viewEngine).eq("hbs")
-        Chai.expect(option.viewPath).eq("view")
     })
 
     it("Should ok if no model defined", () => {
@@ -264,19 +254,9 @@ describe("Kamboja", () => {
         let result: Core.KambojaOption = initSpy.getCall(0).args[1]
     })
 
-    it("Should able to hide log detail", () => {
-        let kamboja = new Kamboja(engine, {
-            rootPath: __dirname,
-            showConsoleLog: false
-        })
-        kamboja.init()
-        let result: Core.KambojaOption = initSpy.getCall(0).args[1]
-    })
-
     it("Should able to add middleware from outside option", () => {
         let opt: Core.KambojaOption = {
             rootPath: __dirname,
-            showConsoleLog: false
         }
         let kamboja = new Kamboja(engine, opt)
         kamboja.use(new FakeInterceptor())
@@ -288,7 +268,6 @@ describe("Kamboja", () => {
     it("Should able to mix middleware from option and method", () => {
         let opt: Core.KambojaOption = {
             rootPath: __dirname,
-            showConsoleLog: false,
             middlewares: [
                 new FakeInterceptor()
             ]

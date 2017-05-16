@@ -33,15 +33,10 @@ export class Kamboja {
         let override: Core.KambojaOption;
         if (typeof opt === "string") override = { rootPath: opt }
         else override = opt
-        let options = Lodash.assign({
+        let options = Lodash.assign(<Core.KambojaOption>{
             skipAnalysis: false,
-            showConsoleLog: true,
             controllerPaths: ["controller"],
             modelPath: Kamboja.defaultModelPath,
-            viewPath: "view",
-            staticFilePath: "../www",
-            viewEngine: "hbs",
-            defaultPage: "/home/index",
             autoValidation: true,
             rootPath: undefined
         }, override)
@@ -56,7 +51,7 @@ export class Kamboja {
 
         this.options = options
         Kamboja.facade = options;
-        this.log = new Logger(this.options.showConsoleLog ? "Info" : "Error")
+        this.log = new Logger("Info")
         this.storage = <MetaDataLoader>this.options.metaDataStorage
     }
 

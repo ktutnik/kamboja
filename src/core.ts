@@ -136,16 +136,9 @@ export interface Facade {
 
 export interface KambojaOption extends Facade {
     skipAnalysis?: boolean
-    showConsoleLog?: boolean
-    overrideAppEngine?: (app) => void
     controllerPaths?: string[]
-    viewPath?: string
-    viewEngine?: string
-    staticFilePath?: string
     modelPath?: string
-    errorHandler?: (err: HttpError) => void
     rootPath: string
-    defaultPage?: string
 }
 
 export interface MetaDataStorage {
@@ -189,9 +182,7 @@ export interface HttpRequest {
     getParam(key: string): string
     isAccept(mime: string): boolean
     isAuthenticated(): boolean
-    getUserRole(): string
-    controllerInfo?:ControllerInfo
-    middlewares?: Middleware[]    
+    getUserRole(): string 
 }
 
 export interface ControllerInfo{
@@ -243,6 +234,8 @@ export class HttpError {
 export abstract class Invocation {
     abstract proceed(): Promise<ActionResult>
     parameters: any[]
+    controllerInfo?:ControllerInfo
+    middlewares?: Middleware[]   
 }
 
 export interface Middleware {

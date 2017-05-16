@@ -2,60 +2,26 @@ import * as Core from "../core"
 import { ValidatorImpl } from "../validator"
 import { Kamboja } from "../kamboja"
 import { Middleware } from "../index"
+import { ControllerFactory } from "./controller-factory"
 
 
-export class ControllerFactory {
+export class MiddlewareFactory {
     validatorCommands: Core.ValidatorCommand[]
-    constructor(public facade: Core.Facade, public routeInfo?: Core.RouteInfo) {
-        this.validatorCommands = this.getValidatorCommands()
-    }
-
-    createController(): Core.BaseController {
-        try {
-            return this.facade.dependencyResolver.resolve(this.routeInfo.classId)
-        }
-        catch (e) {
-            throw new Error(`Can not instantiate [${this.routeInfo.classId}] as Controller.\n\t Inner message: ${e.message}`)
-        }
-    }
-
-    createValidatorForValue(values: any[]) {
-        let validator = new ValidatorImpl(this.facade.metaDataStorage, this.validatorCommands)
-        validator.setValue(values, this.routeInfo.classMetaData, this.routeInfo.methodMetaData.name)
-        return validator
-    }
+    constructor(private facade: Core.Facade,
+        private controller?: Core.BaseController,
+        private routeInfo?: Core.RouteInfo) { }
 
     createMiddlewares() {
         let result: Core.Middleware[] = []
         result = result.concat(this.getGlobalMiddlewares())
         if (this.routeInfo) {
-            let controller = this.createController()
-            result = result.concat(this.getClassMiddlewares(controller))
-            result = result.concat(this.getMethodMiddlewares(controller))
+            result = result.concat(this.getClassMiddlewares(this.controller))
+            result = result.concat(this.getMethodMiddlewares(this.controller))
         }
         return result;
     }
 
-    private getValidatorCommands() {
-        let commands: Core.ValidatorCommand[] = [];
-        if (this.facade.validators) {
-            this.facade.validators.forEach(x => {
-                if (typeof x == "string") {
-                    try {
-                        let validator = this.facade.dependencyResolver.resolve(x)
-                        commands.push(validator)
-                    }
-                    catch (e) {
-                        throw new Error(`Can not instantiate custom validator [${x}]`)
-                    }
-                }
-                else commands.push(x)
-            })
-        }
-        return commands
-    }
-
-    private getMethodMiddlewares(controller: Core.BaseController) {
+    getMethodMiddlewares(controller: Core.BaseController) {
         let middlewares = Middleware.getMiddlewares(controller, this.routeInfo.methodMetaData.name) || []
         let result: Core.Middleware[] = []
         for (let middleware of middlewares) {
@@ -75,7 +41,7 @@ export class ControllerFactory {
         return result;
     }
 
-    private getClassMiddlewares(controller: Core.BaseController) {
+    getClassMiddlewares(controller: Core.BaseController) {
         let middlewares = Middleware.getMiddlewares(controller)
         if (!middlewares) middlewares = []
         let result: Core.Middleware[] = []

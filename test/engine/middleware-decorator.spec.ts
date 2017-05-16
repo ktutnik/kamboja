@@ -1,5 +1,8 @@
-import { Middleware, middleware } from "../../src"
+import { Middleware } from "../../src"
 import * as Chai from "chai"
+
+let middleware = new Middleware.MiddlewareDecorator()
+
 
 @middleware.use("Interceptor, interceptor/path")
 @middleware.use("SecondInterceptor, interceptor/path")

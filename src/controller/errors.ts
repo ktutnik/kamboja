@@ -1,7 +1,11 @@
+import * as Tslib from "tslib"
 
 export class HttpStatusError {
-    stack:string
     constructor(public status:number, public message?:string){
-        this.stack = new Error().stack
+        var err = Error.call(this, message);
+        err.status = status;
+        Object.setPrototypeOf(err, HttpStatusError.prototype);
+        return err;     
     }
 }
+Tslib.__extends(HttpStatusError, Error)

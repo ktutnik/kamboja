@@ -1,6 +1,8 @@
 import { Controller } from "../../../src/controller"
-import { middleware } from "../../../src"
+import { Middleware } from "../../../src"
 import { val, JsonActionResult } from "../../../src"
+
+let middleware = new Middleware.MiddlewareDecorator()
 
 export class UnQualifiedNameOnMethodController extends Controller {
 
