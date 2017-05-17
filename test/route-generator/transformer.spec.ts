@@ -420,8 +420,6 @@ describe("Transformer", () => {
         it("Should automatically add required validator on appropriate parameter", () => {
             let meta = H.fromFile("./transformer-dummy/root-decorator-parameterized.js", new DefaultPathResolver(__dirname))
             let result = Transformer.transform(meta);
-            
-            console.log(Util.inspect(result[2].methodMetaData, false, null))
             Chai.expect(result[2].methodMetaData.parameters[1].decorators[0].name).eq("required")
         })
     })

@@ -38,7 +38,8 @@ export class Kamboja {
             controllerPaths: ["controller"],
             modelPath: Kamboja.defaultModelPath,
             autoValidation: true,
-            rootPath: undefined
+            rootPath: undefined,
+            showLog: "Info"
         }, override)
         let idResolver = new DefaultIdentifierResolver()
         let pathResolver = new DefaultPathResolver(options.rootPath)
@@ -51,7 +52,7 @@ export class Kamboja {
 
         this.options = options
         Kamboja.facade = options;
-        this.log = new Logger("Info")
+        this.log = new Logger(this.options.showLog)
         this.storage = <MetaDataLoader>this.options.metaDataStorage
     }
 

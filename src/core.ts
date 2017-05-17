@@ -141,7 +141,7 @@ export interface KambojaOption extends Facade {
     controllerPaths?: string[]
     modelPath?: string
     rootPath: string
-    logType?:LogType
+    showLog?:LogType
 }
 
 export interface MetaDataStorage {

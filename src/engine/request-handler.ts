@@ -24,7 +24,7 @@ export class RequestHandler {
                 invocation = new PageNotFoundInvocation(this.request, this.response)
             }
             else if (this.info instanceof Error) {
-                invocation = new ErrorInvocation(this.request, this.response, this.info)
+                invocation = new ErrorInvocation(this.request, this.response, this.info, this.option.routeInfos)
             }
             else {
                 routeInfo = this.info;
