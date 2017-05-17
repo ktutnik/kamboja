@@ -1,5 +1,5 @@
-import { Invocation, HttpRequest, HttpResponse, KambojaOption } from "../core"
-import { StatusActionResult } from "../controller/status-action-result"
+import { Invocation, HttpRequest, HttpResponse, ActionResult } from "../core"
+import { HttpStatusError } from "../controller/errors"
 import * as Url from "url"
 
 export class PageNotFoundInvocation extends Invocation {
@@ -7,7 +7,7 @@ export class PageNotFoundInvocation extends Invocation {
         private response: HttpResponse) {
         super()
     }
-    async proceed() {
-        return new StatusActionResult(404, "Requested url not found")
+    async proceed():Promise<ActionResult> {
+        throw new HttpStatusError(404, "Requested url not found")
     }
 }

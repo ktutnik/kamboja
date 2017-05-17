@@ -1,7 +1,7 @@
 import "reflect-metadata"
 import * as Core from "../core"
 import { ControllerInvocation } from "./controller-invocation"
-import { MiddlewareInvocation } from "./interceptor-invocation"
+import { MiddlewareInvocation } from "./middleware-invocation"
 import { ControllerExecutor } from "./controller-executor"
 import { PageNotFoundInvocation } from "./page-not-found-invocation"
 import { ErrorInvocation } from "./error-invocation"
@@ -19,7 +19,6 @@ export class RequestHandler {
         let invocation: Core.Invocation;
         let controller: Core.BaseController;
         let routeInfo: Core.RouteInfo;
-        let controllerInfo: Core.ControllerInfo;
         try {
             if (!this.info) {
                 invocation = new PageNotFoundInvocation(this.request, this.response)
@@ -33,21 +32,12 @@ export class RequestHandler {
                 controller = factory.createController()
                 let controllerExecutor = new ControllerExecutor(factory, this.request)
                 invocation = new ControllerInvocation(controllerExecutor, routeInfo, this.request)
-                controllerInfo = {
-                    classId: routeInfo.classId,
-                    classMetaData: routeInfo.classMetaData,
-                    methodMetaData: routeInfo.methodMetaData,
-                    qualifiedClassName: routeInfo.qualifiedClassName
-                }
             }
             let factory = new MiddlewareFactory(this.option, controller, routeInfo)
             let middlewares = factory.createMiddlewares()
-            invocation.controllerInfo = controllerInfo;
             invocation.middlewares = middlewares
             for (let middleware of middlewares) {
                 invocation = new MiddlewareInvocation(invocation, this.request, middleware)
-                invocation.controllerInfo = controllerInfo;
-                invocation.middlewares = middlewares
             }
             let result = await invocation.proceed()
             await result.execute(this.request, this.response, routeInfo)

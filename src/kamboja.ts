@@ -130,6 +130,7 @@ export class Kamboja {
             this.log.info(`${method} ${x.route}`)
         })
         this.log.info("--------------------------------------")
+        this.options.routeInfos = validRoutes;
         return true;
     }
 

@@ -1,7 +1,8 @@
 import * as Chalk from "chalk"
+import { LogType } from "./core"
 
 export class Logger {
-    constructor(private type: "Info" | "Warning" | "Error" | "None") { }
+    constructor(private type: LogType) { }
 
     private log(type: "Info" | "Warning" | "Error", message: string) {
         let chalk: (...string) => string;
