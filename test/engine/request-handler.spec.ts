@@ -9,7 +9,7 @@ import { ConcatInterceptor } from "./controller/interception-order-controller"
 import { Kamboja } from "../../src/kamboja"
 import { DefaultPathResolver } from "../../src/resolver"
 import { HttpStatusError, JsonActionResult } from "../../src/controller"
-
+import { ErrorHandlerMiddleware } from "./interceptor/error-handler"
 describe("RequestHandler", () => {
     let responseMock: H.Spies<H.HttpResponse>
     let httpResponse: H.HttpResponse
@@ -50,7 +50,7 @@ describe("RequestHandler", () => {
             Chai.expect(result).eq("Hello world!")
         })
 
-        
+
     })
 
     describe("ApiController Functions", () => {
@@ -395,6 +395,9 @@ describe("RequestHandler", () => {
 
     describe("Default Error Handler Function", () => {
         it("Should handle error from global error", async () => {
+            let info = H.getRouteInfo(facade, "controller/controller.js", "returnView")
+            facade.routeInfos = [info]
+            httpRequest.route = "/dummyapi/returnview"
             let executor = new RequestHandler(facade, httpRequest, httpResponse, new HttpStatusError(400))
             await executor.execute()
             let result = responseMock.status.getCall(0).args[0]
@@ -435,7 +438,31 @@ describe("RequestHandler", () => {
     })
 
     describe("Error Handler Using Middleware", () => {
+        it("Should able to get controllerInfo from global middleware", async () => {
+            let info = H.getRouteInfo(facade, "controller/controller.js", "returnView")
+            facade.routeInfos = [info]
+            httpRequest.route = "/dummyapi/returnview"
+            facade.middlewares = [
+                new ErrorHandlerMiddleware((i) => {
+                    let clean = H.cleanUp([i.controllerInfo])
+                    Chai.expect(clean).deep.eq([{
+                        initiator: undefined,
+                        route: undefined,
+                        httpMethod: undefined,
+                        methodMetaData: { name: 'returnView' },
+                        qualifiedClassName: 'DummyApi, controller/controller.js',
+                        classMetaData: { name: 'DummyApi', baseClass: 'Controller' },
+                        collaborator: undefined
+                    }])
+                })
+            ]
+            let executor = new RequestHandler(facade, httpRequest, httpResponse, new HttpStatusError(400))
+            await executor.execute()
+        })
+
         it("Should handle error from global error", async () => {
+            let info = H.getRouteInfo(facade, "controller/controller.js", "returnView")
+            facade.routeInfos = [info]
             facade.middlewares = [
                 "ErrorHandlerMiddleware, interceptor/error-handler"
             ]

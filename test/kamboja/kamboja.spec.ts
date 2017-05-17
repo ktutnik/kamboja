@@ -33,7 +33,8 @@ describe("Kamboja", () => {
 
     it("Should run if no error", () => {
         let kamboja = new Kamboja(engine, {
-            rootPath: __dirname
+            rootPath: __dirname,
+            showLog: "None"
         })
         kamboja.init()
         let result = initSpy.getCall(0).args
@@ -42,7 +43,8 @@ describe("Kamboja", () => {
 
     it("Should generate routes properly", () => {
         let kamboja = new Kamboja(engine, {
-            rootPath: __dirname
+            rootPath: __dirname,
+            showLog: "None"
         })
         kamboja.init()
         let result = initSpy.getCall(0).args[0]
@@ -168,7 +170,8 @@ describe("Kamboja", () => {
 
     it("Should provide default option properly", () => {
         let kamboja: any = new Kamboja(engine, {
-            rootPath: __dirname
+            rootPath: __dirname,
+            showLog: "None"
         })
 
         let option: Core.KambojaOption = kamboja.options;
@@ -194,7 +197,8 @@ describe("Kamboja", () => {
 
     it("Should ok if no model defined", () => {
         let kamboja = new Kamboja(engine, {
-            rootPath: __dirname
+            rootPath: __dirname,
+            showLog: "None"
         })
         kamboja.init()
         let result = initSpy.getCall(0).args
@@ -204,7 +208,8 @@ describe("Kamboja", () => {
     it("Should throw if provided model directory not exists", () => {
         let kamboja = new Kamboja(engine, {
             rootPath: __dirname,
-            modelPath: "not/a/valid/path"
+            modelPath: "not/a/valid/path",
+            showLog: "None"
         })
         Chai.expect(() => {
             kamboja.init()
@@ -214,7 +219,8 @@ describe("Kamboja", () => {
     it("Should throw if controller path not found", () => {
         let kamboja = new Kamboja(engine, {
             rootPath: __dirname,
-            controllerPaths: ["path/of/nowhere"]
+            controllerPaths: ["path/of/nowhere"],
+            showLog: "None"
         })
         Chai.expect(() => kamboja.init()).throw()
     })
@@ -223,6 +229,7 @@ describe("Kamboja", () => {
         let kamboja = new Kamboja(engine, {
             rootPath: __dirname,
             controllerPaths: ["folder-without-controllers"],
+            showLog: "None"
         })
         Chai.expect(() => kamboja.init()).throw()
     })
@@ -231,6 +238,7 @@ describe("Kamboja", () => {
         let kamboja = new Kamboja(engine, {
             rootPath: __dirname,
             controllerPaths: ["controller-with-errors"],
+            showLog: "None"
         })
         Chai.expect(() => kamboja.init()).throw()
     })
@@ -239,6 +247,7 @@ describe("Kamboja", () => {
         let kamboja = new Kamboja(engine, {
             rootPath: __dirname,
             controllerPaths: ["controller-not-exported"],
+            showLog: "None"
         })
         Chai.expect(() => kamboja.init()).throw()
     })
@@ -248,7 +257,8 @@ describe("Kamboja", () => {
             rootPath: __dirname,
             validators: [
                 new FakeValidator()
-            ]
+            ],
+            showLog: "None"
         })
         kamboja.init()
         let result: Core.KambojaOption = initSpy.getCall(0).args[1]
@@ -257,6 +267,7 @@ describe("Kamboja", () => {
     it("Should able to add middleware from outside option", () => {
         let opt: Core.KambojaOption = {
             rootPath: __dirname,
+            showLog: "None",
         }
         let kamboja = new Kamboja(engine, opt)
         kamboja.use(new FakeInterceptor())
@@ -270,7 +281,8 @@ describe("Kamboja", () => {
             rootPath: __dirname,
             middlewares: [
                 new FakeInterceptor()
-            ]
+            ],
+            showLog: "None"
         }
         let kamboja = new Kamboja(engine, opt)
         kamboja.use(new FakeInterceptor())
@@ -281,7 +293,8 @@ describe("Kamboja", () => {
 
     it("Should provide facade properly before init", () => {
         let kamboja = new Kamboja(engine, {
-            rootPath: __dirname
+            rootPath: __dirname,
+            showLog: "None"
         })
         let metadata = Kamboja.getFacade();
         Chai.expect(metadata).not.null

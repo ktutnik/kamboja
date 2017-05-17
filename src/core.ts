@@ -7,6 +7,7 @@ export type TransformStatus = "ExitWithResult" | "Next" | "Exit"
 export type TransformerName = "DefaultAction" | "IndexAction" | "HttpMethodDecorator" | "ApiConvention" | "InternalDecorator" | "Controller" | "ControllerWithDecorator" | "Module"
 export type MetaDataLoaderCategory = "Controller" | "Model"
 export const ValidationTypesAccepted = ["string", "string[]", "number", "number[]", "boolean", "boolean[]", "date", "date[]"]
+export type LogType = "Info" | "Warning" | "Error" | "None"
 
 export type MiddlewaresType = string | string[] | Middleware | Middleware[] 
 export type MiddlewareFactory = (opt: KambojaOption) => MiddlewaresType
@@ -132,6 +133,7 @@ export interface Facade {
     metaDataStorage?: MetaDataStorage
     middlewares?: (Middleware | string)[]
     autoValidation?: boolean
+    routeInfos?: RouteInfo[]
 }
 
 export interface KambojaOption extends Facade {
@@ -139,6 +141,7 @@ export interface KambojaOption extends Facade {
     controllerPaths?: string[]
     modelPath?: string
     rootPath: string
+    showLog?:LogType
 }
 
 export interface MetaDataStorage {
@@ -182,7 +185,8 @@ export interface HttpRequest {
     getParam(key: string): string
     isAccept(mime: string): boolean
     isAuthenticated(): boolean
-    getUserRole(): string 
+    getUserRole(): string
+    route:string
 }
 
 export interface ControllerInfo{

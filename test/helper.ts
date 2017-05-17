@@ -111,6 +111,7 @@ export class HttpRequest implements Core.HttpRequest {
     getUserRole() { return "" }
     controllerInfo?: Core.ControllerInfo
     middlewares?: Core.Middleware[]
+    route:string
 }
 
 export function createFacade(rootPath: string) {

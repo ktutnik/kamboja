@@ -1,7 +1,7 @@
 import * as Chai from "chai"
 import * as Core from "../../src/core"
 import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
-import { DefaultIdentifierResolver, DefaultPathResolver } from "../../src/resolver"
+import { DefaultIdentifierResolver, DefaultPathResolver, QualifiedName } from "../../src/resolver"
 import * as H from "../helper"
 import { Kamboja } from "../../src/kamboja"
 
@@ -55,7 +55,8 @@ describe("MetaDataLoader", () => {
         it("Should provide qualifiedClassName properly", () => {
             storage.load("controller", "Controller")
             let result = storage.get("DummyController, controller/dummy-controller.js")
-            Chai.expect(result.qualifiedClassName).eq("DummyController, controller/dummy-controller")
+            let q = new QualifiedName(result.qualifiedClassName, new DefaultPathResolver(__dirname))
+            Chai.expect(q.equals("DummyController, controller/dummy-controller")).true
         })
 
         it("Should not return if provided wrong namespace", () => {
