@@ -25,7 +25,6 @@ describe("MiddlewareFactory", () => {
             "DefaultInterceptor, interceptor/default-interceptor",
             new ChangeValueToHelloWorld()
         ]
-
         let factory = new MiddlewareFactory(facade, new DummyApi(), info)
         let result = factory.createMiddlewares()
         Chai.expect(result.length).eq(6)

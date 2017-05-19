@@ -1,15 +1,15 @@
 import { Controller, ApiController } from "../../../src/controller"
-import { Middleware, Core, JsonActionResult } from "../../../src"
+import { Middleware, Core } from "../../../src"
 
 let middleware = new Middleware.MiddlewareDecorator()
 
 export class ConcatInterceptor implements Core.Middleware {
     constructor(private msg: string) { }
 
-    async execute(request:Core.HttpRequest, invocation: Core.Invocation):Promise<Core.ActionResult> {
+    async execute(request:Core.HttpRequest, invocation: Core.Invocation) {
         let invocationResult = await invocation.proceed();
-        let result = (<JsonActionResult>invocationResult).body;
-        return new JsonActionResult(this.msg + ", " + result)
+        let result = invocationResult.body;
+        return this.msg + ", " + result
     }
 }
 

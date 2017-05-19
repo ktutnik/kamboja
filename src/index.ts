@@ -10,7 +10,7 @@ export { Core }
 export { Resolver }
 export { RouteGenerator }
 export { Middleware }
-export { ApiActionResult, ApiController, Controller, FileActionResult, JsonActionResult, RedirectActionResult, ViewActionResult, HttpStatusError, StatusActionResult } from "./controller"
+export { ApiActionResult, ApiController, Controller, HttpStatusError } from "./controller"
 export { Kamboja } from "./kamboja"
 export { MetaDataLoader } from "./metadata-loader/metadata-loader"
 export { RequestHandler } from "./engine/request-handler"

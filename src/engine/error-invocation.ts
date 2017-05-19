@@ -1,5 +1,4 @@
 import { Invocation, HttpRequest, HttpResponse, KambojaOption, ActionResult, RouteInfo } from "../core"
-import { StatusActionResult } from "../controller/status-action-result"
 import * as Url from "url"
 
 export class ErrorInvocation extends Invocation {

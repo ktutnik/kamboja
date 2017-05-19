@@ -6,7 +6,7 @@ type ControllerMemberNames = keyof Controller
 type ApiControllerMemberNames = keyof ApiController 
 
 const reservedWords:ControllerMemberNames[] = [
-    "request", "validator", "setCookie", "view", "redirect", "file", "json"]
+    "request", "validator"]
 
 const apiReservedWords:ApiControllerMemberNames[] = [
     "request", "validator"]
