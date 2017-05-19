@@ -6,6 +6,6 @@ export namespace InvocationResult {
         let awaitedResult = await Promise.resolve(result)
         if (awaitedResult instanceof ActionResult)
             return awaitedResult
-        return new ApiActionResult(awaitedResult)
+        return new ActionResult(awaitedResult)
     }
 }

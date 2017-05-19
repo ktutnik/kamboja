@@ -7,9 +7,7 @@ import * as Util from "util"
 import { ControllerFactory } from "../../src/engine/controller-factory"
 import { ControllerExecutor } from "../../src/engine/controller-executor"
 import {
-    Kamboja, Resolver,
-    ViewActionResult, JsonActionResult,
-    FileActionResult, RedirectActionResult, ApiActionResult
+    Kamboja, Resolver, ApiActionResult
 } from "../../src"
 
 let HttpRequest: any = {
@@ -27,11 +25,11 @@ describe("ControllerExecutor", () => {
         it("Should not error if validators in facade is null", async () => {
             let meta = H.fromFile("controller/controller.js", new Resolver.DefaultPathResolver(__dirname))
             let infos = Transformer.transform(meta)
-            let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
+            let info = infos.filter(x => x.methodMetaData.name == "returnActionResult")[0]
             info.classId = info.qualifiedClassName
             let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
-            let result = <ViewActionResult>await executor.execute([])
+            let result = await executor.execute([])
             Chai.expect(result).not.null
         })
 
@@ -43,45 +41,12 @@ describe("ControllerExecutor", () => {
             facade.validators = ["CustomValidation, validator/custom-validator"]
             let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
-            let result = <JsonActionResult>await executor.execute(["par1"])
-            Chai.expect(result.body).deep.eq([{ field: 'any.field', message: 'This is error' }])
+            let result = await executor.execute(["par1"])
+            Chai.expect(result).deep.eq([{ field: 'any.field', message: 'This is error' }])
         })
     })
 
     describe("Controller", () => {
-
-        it("Should return View properly", async () => {
-            let meta = H.fromFile("controller/controller.js", new Resolver.DefaultPathResolver(__dirname))
-            let infos = Transformer.transform(meta)
-            let info = infos.filter(x => x.methodMetaData.name == "returnView")[0]
-            info.classId = info.qualifiedClassName
-            let builder = new ControllerFactory(facade, info)
-            let executor = new ControllerExecutor(builder, HttpRequest)
-            let result = <ViewActionResult>await executor.execute([])
-            Chai.expect(result.viewName).eq("index")
-        })
-
-        it("Should return File properly", async () => {
-            let meta = H.fromFile("controller/controller.js", new Resolver.DefaultPathResolver(__dirname))
-            let infos = Transformer.transform(meta)
-            let info = infos.filter(x => x.methodMetaData.name == "returnFile")[0]
-            info.classId = info.qualifiedClassName
-            let builder = new ControllerFactory(facade, info)
-            let executor = new ControllerExecutor(builder, HttpRequest)
-            let result = <FileActionResult>await executor.execute([])
-            Chai.expect(result.filePath).eq("/go/go/kamboja.js")
-        })
-
-        it("Should return Redirect properly", async () => {
-            let meta = H.fromFile("controller/controller.js", new Resolver.DefaultPathResolver(__dirname))
-            let infos = Transformer.transform(meta)
-            let info = infos.filter(x => x.methodMetaData.name == "returnRedirect")[0]
-            info.classId = info.qualifiedClassName
-            let builder = new ControllerFactory(facade, info)
-            let executor = new ControllerExecutor(builder, HttpRequest)
-            let result = <RedirectActionResult>await executor.execute([])
-            Chai.expect(result.redirectUrl).eq("/go/go/kamboja.js")
-        })
 
         it("Should set cookie properly", async () => {
             let meta = H.fromFile("controller/controller.js", new Resolver.DefaultPathResolver(__dirname))
@@ -90,7 +55,7 @@ describe("ControllerExecutor", () => {
             info.classId = info.qualifiedClassName
             let builder = new ControllerFactory(facade, info)
             let executor = new ControllerExecutor(builder, HttpRequest)
-            let result = <ViewActionResult>await executor.execute([])
+            let result = <Core.ActionResult>await executor.execute([])
             Chai.expect(result.cookies[0]).deep.eq({ key: "TheKey", value: "TheValue", options: { expires: true } })
         })
     })

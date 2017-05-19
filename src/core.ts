@@ -9,7 +9,7 @@ export type MetaDataLoaderCategory = "Controller" | "Model"
 export const ValidationTypesAccepted = ["string", "string[]", "number", "number[]", "boolean", "boolean[]", "date", "date[]"]
 export type LogType = "Info" | "Warning" | "Error" | "None"
 
-export type MiddlewaresType = string | string[] | Middleware | Middleware[] 
+export type MiddlewaresType = string | string[] | Middleware | Middleware[]
 export type MiddlewareFactory = (opt: KambojaOption) => MiddlewaresType
 
 export class Decorator {
@@ -141,7 +141,7 @@ export interface KambojaOption extends Facade {
     controllerPaths?: string[]
     modelPath?: string
     rootPath: string
-    showLog?:LogType
+    showLog?: LogType
 }
 
 export interface MetaDataStorage {
@@ -186,10 +186,10 @@ export interface HttpRequest {
     isAccept(mime: string): boolean
     isAuthenticated(): boolean
     getUserRole(): string
-    route:string
+    route: string
 }
 
-export interface ControllerInfo{
+export interface ControllerInfo {
     methodMetaData?: MethodMetaData
     classMetaData?: ClassMetaData
     qualifiedClassName?: string
@@ -214,18 +214,11 @@ export interface CookieOptions {
 }
 
 export interface HttpResponse {
-    setCookie(key: string, value: string, option?: CookieOptions)
-    removeCookie(key: string, option?: CookieOptions)
-    setContentType(type: string)
-    status(status: number, message?: string)
-    json(body, status?: number)
-    jsonp(body, status?: number)
-    error(error, status?: number)
-    view(name, model?)
-    redirect(url: string)
-    file(path: string)
-    send(body?)
-    end()
+    body: any
+    type: string
+    status: number
+    cookies: Cookie[]
+    send()
 }
 
 export class HttpError {
@@ -238,12 +231,12 @@ export class HttpError {
 export abstract class Invocation {
     abstract proceed(): Promise<ActionResult>
     parameters: any[]
-    controllerInfo?:ControllerInfo
-    middlewares?: Middleware[]   
+    controllerInfo?: ControllerInfo
+    middlewares?: Middleware[]
 }
 
 export interface Middleware {
-    execute(request:HttpRequest, next: Invocation):any;
+    execute(request: HttpRequest, next: Invocation): any;
 }
 
 export interface DependencyResolver {
@@ -262,30 +255,15 @@ export interface PathResolver {
 }
 
 export class ActionResult {
-    private contentType: string;
-    private removedCookie: { key: string, options?: CookieOptions }[] = []
-    cookies: Cookie[]
 
-    constructor(cookies: Cookie[]) {
-        this.cookies = cookies || []
-    }
-
-    setCookie(cookie: Cookie) {
-        this.cookies.push(cookie)
-    }
-
-    removeCookie(key: string, options?: CookieOptions) {
-        this.removedCookie.push({ key: key, options: options })
-    }
-
-    setContentType(type: string) {
-        this.contentType = type;
-    }
+    constructor(public body, public status?: number, public type?: string, public cookies?:Cookie[]) { }
 
     async execute(request: HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
-        if (this.contentType) response.setContentType(this.contentType)
-        this.removedCookie.forEach(x => response.removeCookie(x.key, x.options))
-        this.cookies.forEach(x => response.setCookie(x.key, x.value, x.options))
+        response.body = this.body
+        response.cookies = this.cookies
+        response.status = this.status || 200
+        response.type = this.type || "text/plain"
+        response.send()
     }
 }
 

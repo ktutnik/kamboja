@@ -210,26 +210,6 @@ describe("Analyzer", () => {
             code: 1,
             type: 'Error',
             message: '[validator] must not be used as action, because it will override the Controller method, in [[MyClass.validator example-file.js]]'
-        },
-        {
-            code: 1,
-            type: 'Error',
-            message: '[view] must not be used as action, because it will override the Controller method, in [[MyClass.view example-file.js]]'
-        },
-        {
-            code: 1,
-            type: 'Error',
-            message: '[json] must not be used as action, because it will override the Controller method, in [[MyClass.json example-file.js]]'
-        },
-        {
-            code: 1,
-            type: 'Error',
-            message: '[redirect] must not be used as action, because it will override the Controller method, in [[MyClass.redirect example-file.js]]'
-        },
-        {
-            code: 1,
-            type: 'Error',
-            message: '[file] must not be used as action, because it will override the Controller method, in [[MyClass.file example-file.js]]'
         }])
     })
 

@@ -43,8 +43,9 @@ export class RequestHandler {
             await result.execute(this.request, this.response, routeInfo)
         }
         catch (e) {
-            this.response.status(e.status || 500)
-            this.response.send(e.message)
+            this.response.body = e.message
+            this.response.status = e.status || 500
+            this.response.send()
         }
     }
 }

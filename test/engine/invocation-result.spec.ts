@@ -1,33 +1,24 @@
 import * as Chai from "chai"
 import { InvocationResult } from "../../src/engine/invocation-result"
-import { ApiActionResult, JsonActionResult, Core } from "../../src"
+import { ApiActionResult, Core } from "../../src"
 import * as H from "../helper"
+import {HttpRequest, HttpResponse, Mock} from "../../src/test"
+import * as Sinon from "sinon"
 
 describe("InvocationResult", () => {
-    let responseMock: H.Spies<H.HttpResponse>
-    let httpResponse: H.HttpResponse
-    let requestMock: H.Stubs<H.HttpRequest>
-    let httpRequest: H.HttpRequest
-    let facade: Core.Facade
+    let request:Core.HttpRequest & Mock.Mockable<Core.HttpRequest, Sinon.SinonStub>
+    let response:Core.HttpResponse & Mock.Mockable<Core.HttpResponse, Sinon.SinonSpy>
 
     beforeEach(() => {
-        responseMock = H.spy(new H.HttpResponse());
-        httpResponse = <H.HttpResponse><any>responseMock
-        requestMock = H.stub(new H.HttpRequest())
-        httpRequest = <H.HttpRequest><any>requestMock
-        facade = H.createFacade(__dirname)
-    })
-
-    afterEach(() => {
-        H.restore(responseMock)
-        H.restore(requestMock)
+        request = Mock.stub(new HttpRequest())
+        response = Mock.spy(new HttpResponse())
     })
 
     it("Should allow primitive value result", async () => {
         let result = await InvocationResult.create("Hello")
         let actionResult = <ApiActionResult>result
         Chai.expect(actionResult.body).eq("Hello")
-        result.execute(httpRequest, httpResponse, {})
+        result.execute(request, response, {})
     })
 
     it("Should allow undefined value result", async () => {
@@ -37,9 +28,8 @@ describe("InvocationResult", () => {
     })
 
     it("Should allow ActionResult result", async () => {
-        let result = await InvocationResult.create(new JsonActionResult({ message: "Hello" }))
-        let actionResult = <JsonActionResult>result
-        Chai.expect(actionResult.body).deep.eq({ message: "Hello" })
+        let result = await InvocationResult.create(new Core.ActionResult({ message: "Hello" }))
+        Chai.expect(result.body).deep.eq({ message: "Hello" })
     })
 
     it("Should allow Promise value result", async () => {
@@ -49,8 +39,7 @@ describe("InvocationResult", () => {
     })
 
     it("Should allow Promise of ActionResult", async () => {
-        let result = await InvocationResult.create(Promise.resolve(new JsonActionResult({ message: "Hello" })))
-        let actionResult = <JsonActionResult>result
-        Chai.expect(actionResult.body).deep.eq({ message: "Hello" })
+        let result = await InvocationResult.create(Promise.resolve(new Core.ActionResult({ message: "Hello" })))
+        Chai.expect(result.body).deep.eq({ message: "Hello" })
     })
 })

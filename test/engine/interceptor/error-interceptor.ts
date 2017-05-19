@@ -1,4 +1,4 @@
-import { Controller, JsonActionResult } from "../../../src/controller"
+import { Controller } from "../../../src/controller"
 import { val, Core } from "../../../src"
 
 export class ErrorInterceptor implements Core.Middleware {

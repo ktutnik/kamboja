@@ -3,6 +3,8 @@ import * as H from "../helper"
 import * as Sinon from "sinon"
 import * as Kecubung from "kecubung"
 import * as Chai from "chai"
+import {HttpRequest, HttpResponse, Mock} from "../../src/test"
+
 
 let RouteInfo: any = <Core.RouteInfo>{
     qualifiedClassName: 'SimpleController, .simple-controller.js',
@@ -14,24 +16,15 @@ let RouteInfo: any = <Core.RouteInfo>{
 }
 
 describe("ApiActionResult", () => {
-    let jsonSpy: Sinon.SinonSpy;
-    let sendSpy: Sinon.SinonSpy;
-    let endSpy: Sinon.SinonSpy;
     let isAcceptStub: Sinon.SinonStub
-    let HttpResponse = new H.HttpResponse()
-    let HttpRequest = new H.HttpRequest()
+    let response = new HttpResponse()
+    let request = new HttpRequest()
 
     beforeEach(() => {
-        jsonSpy = Sinon.spy(HttpResponse, "json")
-        endSpy = Sinon.spy(HttpResponse, "end")
-        sendSpy = Sinon.spy(HttpResponse, "send")
-        isAcceptStub = Sinon.stub(HttpRequest, "isAccept")
+        isAcceptStub = Sinon.stub(request, "isAccept")
     })
 
     afterEach(() => {
-        jsonSpy.restore();
-        endSpy.restore();
-        sendSpy.restore();
         isAcceptStub.restore()
     })
 
@@ -42,15 +35,23 @@ describe("ApiActionResult", () => {
 
     it("Should return json properly", () => {
         let view = new ApiActionResult({ message: "Hello" })
-        view.execute(HttpRequest, HttpResponse, RouteInfo)
-        let body = jsonSpy.getCall(0).args[0]
-        Chai.expect(body).deep.eq({ message: "Hello" })
+        view.execute(request, response, RouteInfo)
+        Chai.expect(response.type).eq("application/json")
+        Chai.expect(response.body).deep.eq({ message: "Hello" })
+    })
+
+    it("Should return xml properly", () => {
+        let view = new ApiActionResult({ message: "Hello" })
+        isAcceptStub.withArgs("text/xml").returns(true)
+        view.execute(request, response, RouteInfo)
+        Chai.expect(response.type).eq("text/xml")
+        Chai.expect(response.body).deep.eq("<message>Hello</message>")
     })
 
     it("Should able to return empty response", () => {
         let view = new ApiActionResult(undefined)
-        view.execute(HttpRequest, HttpResponse, RouteInfo)
-        Chai.expect(endSpy.called).true
+        view.execute(request, response, RouteInfo)
+        Chai.expect(response.body).undefined
     })
 
 })
