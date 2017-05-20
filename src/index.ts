@@ -15,7 +15,7 @@ export { Kamboja } from "./kamboja"
 export { MetaDataLoader } from "./metadata-loader/metadata-loader"
 export { RequestHandler } from "./engine/request-handler"
 
-import * as Test from "./test"
+import * as Test from "./unit-test"
 export {Test}
 //decorators
 const middleware: Middleware.MiddlewareDecorator = new Middleware.MiddlewareDecorator()
