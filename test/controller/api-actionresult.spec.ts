@@ -16,16 +16,16 @@ let RouteInfo: any = <Core.RouteInfo>{
 }
 
 describe("ApiActionResult", () => {
-    let isAcceptStub: Sinon.SinonStub
+    let acceptsStub: Sinon.SinonStub
     let response = new HttpResponse()
     let request = new HttpRequest()
 
     beforeEach(() => {
-        isAcceptStub = Sinon.stub(request, "isAccept")
+        acceptsStub = Sinon.stub(request, "getAccepts")
     })
 
     afterEach(() => {
-        isAcceptStub.restore()
+        acceptsStub.restore()
     })
 
     it("Should be instanceof Core.ActionResult", () => {
@@ -35,6 +35,7 @@ describe("ApiActionResult", () => {
 
     it("Should return json properly", () => {
         let view = new ApiActionResult({ message: "Hello" })
+        acceptsStub.withArgs("xml").returns(false)
         view.execute(request, response, RouteInfo)
         Chai.expect(response.type).eq("application/json")
         Chai.expect(response.body).deep.eq({ message: "Hello" })
@@ -42,7 +43,7 @@ describe("ApiActionResult", () => {
 
     it("Should return xml properly", () => {
         let view = new ApiActionResult({ message: "Hello" })
-        isAcceptStub.withArgs("text/xml").returns(true)
+        acceptsStub.withArgs("xml").returns("xml")
         view.execute(request, response, RouteInfo)
         Chai.expect(response.type).eq("text/xml")
         Chai.expect(response.body).deep.eq("<message>Hello</message>")

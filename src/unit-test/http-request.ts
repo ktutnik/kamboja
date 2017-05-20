@@ -14,10 +14,10 @@ export class HttpRequest implements Core.HttpRequest {
     getHeader(key: string): string { return }
     getCookie(key: string): string { return }
     getParam(key: string): string { return }
-    isAccept(mime: string) { return false }
     isAuthenticated() { return false }
+    getAccepts(key: string | string[]): string | boolean { return false }
     getUserRole() { return "" }
     controllerInfo?: Core.ControllerInfo
     middlewares?: Core.Middleware[]
-    route:string
+    route: string
 }

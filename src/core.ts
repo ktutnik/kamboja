@@ -183,7 +183,8 @@ export interface HttpRequest {
     getHeader(key: string): string
     getCookie(key: string): string
     getParam(key: string): string
-    isAccept(mime: string): boolean
+    getAccepts(key:string|string[]): string | boolean
+    //isAccept(mime: string): boolean
     isAuthenticated(): boolean
     getUserRole(): string
     route: string

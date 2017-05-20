@@ -8,7 +8,7 @@ export class ApiActionResult extends ActionResult {
 
     async execute(request: HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
         this.type = "application/json"
-        if (request.isAccept("text/xml")) {
+        if (request.getAccepts("xml")) {
             this.type = "text/xml"
             this.body = Xml(this.body)
         }

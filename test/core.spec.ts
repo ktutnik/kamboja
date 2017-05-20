@@ -15,7 +15,7 @@ describe("Core", () => {
         request.getHeader("")
         request.getParam("")
         request.getUserRole()
-        request.isAccept("")
+        request.getAccepts("")
         request.isAuthenticated()
     })
 
