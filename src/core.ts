@@ -259,7 +259,7 @@ export interface PathResolver {
 export class ActionResult {
     header: { [key: string]: string | string[] }
     cookies?: Cookie[]
-    
+
     constructor(public body, public status?: number, public type?: string) { }
 
     async execute(request: HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
@@ -267,8 +267,8 @@ export class ActionResult {
         response.cookies = this.cookies
         response.status = this.status || 200
         response.type = this.type || "text/plain"
-        response.header =
-            response.send()
+        response.header = this.header
+        response.send()
     }
 }
 
