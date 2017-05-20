@@ -8,7 +8,7 @@ import { ConcatInterceptor } from "./controller/interception-order-controller"
 import { DefaultPathResolver } from "../../src/resolver"
 import { HttpStatusError } from "../../src/controller"
 import { ErrorHandlerMiddleware } from "./interceptor/error-handler"
-import { Test} from "../../src"
+import { Test } from "../../src"
 
 describe("RequestHandler", () => {
     let request: Core.HttpRequest & Test.Mockable<Core.HttpRequest, Sinon.SinonStub>
@@ -281,6 +281,8 @@ describe("RequestHandler", () => {
             let executor = new RequestHandler(facade, request, response, info)
             await executor.execute()
             Chai.expect(response.body).eq("This is dumb")
+            Chai.expect(response.type).eq("application/json")
+            Chai.expect(response.status).eq(200)
             Chai.expect(response.MOCKS.send.called).true
         })
 
@@ -289,6 +291,8 @@ describe("RequestHandler", () => {
             let executor = new RequestHandler(facade, request, response, info)
             await executor.execute()
             Chai.expect(response.body).eq("This is dumb")
+            Chai.expect(response.type).eq("application/json")
+            Chai.expect(response.status).eq(200)
             Chai.expect(response.MOCKS.send.called).true
         })
 
