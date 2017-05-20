@@ -16,7 +16,8 @@ describe("ActionResult", () => {
     })
 
     it("Should fill response properties properly", async () => {
-        let result = new Core.ActionResult("Halo", 400, "application/json", [{key: "Halo", value: "Hello"}])
+        let result = new Core.ActionResult("Halo", 400, "application/json")
+        result.cookies = [{key: "Halo", value: "Hello"}]
         await result.execute(request, response, null)
         Chai.expect(response.body).eq("Halo")
         Chai.expect(response.status).eq(400)

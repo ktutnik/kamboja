@@ -183,7 +183,7 @@ export interface HttpRequest {
     getHeader(key: string): string
     getCookie(key: string): string
     getParam(key: string): string
-    getAccepts(key:string|string[]): string | boolean
+    getAccepts(key: string | string[]): string | boolean
     //isAccept(mime: string): boolean
     isAuthenticated(): boolean
     getUserRole(): string
@@ -218,7 +218,7 @@ export interface HttpResponse {
     body: any
     type: string
     status: number
-    header: {[key:string]: string | string[]}
+    header: { [key: string]: string | string[] }
     cookies: Cookie[]
     send()
 }
@@ -257,15 +257,18 @@ export interface PathResolver {
 }
 
 export class ActionResult {
-
-    constructor(public body, public status?: number, public type?: string, public cookies?:Cookie[]) { }
+    header: { [key: string]: string | string[] }
+    cookies?: Cookie[]
+    
+    constructor(public body, public status?: number, public type?: string) { }
 
     async execute(request: HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
         response.body = this.body
         response.cookies = this.cookies
         response.status = this.status || 200
         response.type = this.type || "text/plain"
-        response.send()
+        response.header =
+            response.send()
     }
 }
 
