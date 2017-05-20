@@ -1,17 +1,16 @@
 import * as Chai from "chai"
 import { InvocationResult } from "../../src/engine/invocation-result"
-import { ApiActionResult, Core } from "../../src"
+import { ApiActionResult, Core, Test } from "../../src"
 import * as H from "../helper"
-import {HttpRequest, HttpResponse, Mock} from "../../src/test"
 import * as Sinon from "sinon"
 
 describe("InvocationResult", () => {
-    let request:Core.HttpRequest & Mock.Mockable<Core.HttpRequest, Sinon.SinonStub>
-    let response:Core.HttpResponse & Mock.Mockable<Core.HttpResponse, Sinon.SinonSpy>
+    let request:Core.HttpRequest & Test.Mockable<Core.HttpRequest, Sinon.SinonStub>
+    let response:Core.HttpResponse & Test.Mockable<Core.HttpResponse, Sinon.SinonSpy>
 
     beforeEach(() => {
-        request = Mock.stub(new HttpRequest())
-        response = Mock.spy(new HttpResponse())
+        request = Test.stub(new Test.HttpRequest())
+        response = Test.spy(new Test.HttpResponse())
     })
 
     it("Should allow primitive value result", async () => {

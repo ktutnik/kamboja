@@ -1,4 +1,3 @@
 export { HttpRequest } from "./http-request"
 export { HttpResponse } from "./http-response"
-import * as Mock from "./mock"
-export { Mock }
+export { Mock, Mockable, spy, stub } from "./mock"

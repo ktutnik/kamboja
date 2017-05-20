@@ -3,16 +3,16 @@ import * as H from "../helper"
 import * as Chai from "chai"
 import * as Core from "../../src/core"
 import * as Kecubung from "kecubung"
-import {HttpRequest, HttpResponse, Mock} from "../../src/test"
+import {Test} from "../../src"
 import * as Sinon from "sinon"
 
 describe("ActionResult", () => {
-    let request:Core.HttpRequest & Mock.Mockable<Core.HttpRequest, Sinon.SinonStub>
-    let response:Core.HttpResponse & Mock.Mockable<Core.HttpResponse, Sinon.SinonSpy>
+    let request:Core.HttpRequest & Test.Mockable<Core.HttpRequest, Sinon.SinonStub>
+    let response:Core.HttpResponse & Test.Mockable<Core.HttpResponse, Sinon.SinonSpy>
 
     beforeEach(() => {
-        request = Mock.stub(new HttpRequest())
-        response = Mock.spy(new HttpResponse())
+        request = Test.stub(new Test.HttpRequest())
+        response = Test.spy(new Test.HttpResponse())
     })
 
     it("Should fill response properties properly", async () => {
