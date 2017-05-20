@@ -217,6 +217,7 @@ export interface HttpResponse {
     body: any
     type: string
     status: number
+    header: {[key:string]: string | string[]}
     cookies: Cookie[]
     send()
 }
