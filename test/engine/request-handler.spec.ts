@@ -8,16 +8,16 @@ import { ConcatInterceptor } from "./controller/interception-order-controller"
 import { DefaultPathResolver } from "../../src/resolver"
 import { HttpStatusError } from "../../src/controller"
 import { ErrorHandlerMiddleware } from "./interceptor/error-handler"
-import { HttpRequest, HttpResponse, Mock } from "../../src/test"
+import { Test} from "../../src"
 
 describe("RequestHandler", () => {
-    let request: Core.HttpRequest & Mock.Mockable<Core.HttpRequest, Sinon.SinonStub>
-    let response: Core.HttpResponse & Mock.Mockable<Core.HttpResponse, Sinon.SinonSpy>
+    let request: Core.HttpRequest & Test.Mockable<Core.HttpRequest, Sinon.SinonStub>
+    let response: Core.HttpResponse & Test.Mockable<Core.HttpResponse, Sinon.SinonSpy>
     let facade: Core.Facade
 
     beforeEach(() => {
-        request = Mock.stub(new HttpRequest())
-        response = Mock.spy(new HttpResponse())
+        request = Test.stub(new Test.HttpRequest())
+        response = Test.spy(new Test.HttpResponse())
         facade = H.createFacade(__dirname)
     })
 

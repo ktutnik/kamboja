@@ -15,6 +15,8 @@ export { Kamboja } from "./kamboja"
 export { MetaDataLoader } from "./metadata-loader/metadata-loader"
 export { RequestHandler } from "./engine/request-handler"
 
+import * as Test from "./test"
+export {Test}
 //decorators
 const middleware: Middleware.MiddlewareDecorator = new Middleware.MiddlewareDecorator()
 export const val: Validator.ValidatorDecorator = new Validator.ValidatorDecorator();

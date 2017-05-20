@@ -1,7 +1,7 @@
 import * as Chai from "chai"
 import * as Core from "../src/core"
 import * as H from "./helper"
-import {HttpRequest} from "../src/test"
+import {Test} from "../src"
 
 describe("Core", () => {
     it("Instantiate HttpError properly", () => {
@@ -10,7 +10,7 @@ describe("Core", () => {
     })
 
     it("Should instantiate HttpRequest properly", () => {
-        let request = new HttpRequest();
+        let request = new Test.HttpRequest();
         request.getCookie("")
         request.getHeader("")
         request.getParam("")
