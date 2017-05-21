@@ -50,6 +50,7 @@ describe("RequestHandler", () => {
             let executor = new RequestHandler(facade, request, response, info)
             await executor.execute()
             Chai.expect(response.body).eq(12345)
+            Chai.expect(response.type).eq("application/json")
         })
 
         it("Should execute list(iOffset, iLimit) properly", async () => {
@@ -58,6 +59,7 @@ describe("RequestHandler", () => {
             request.MOCKS.getParam.withArgs("iLimit").returns("10")
             let executor = new RequestHandler(facade, request, response, info)
             await executor.execute()
+            Chai.expect(response.type).eq("application/json")
             Chai.expect(response.body).deep.eq({
                 iOffset: 1,
                 iLimit: 10
@@ -72,6 +74,7 @@ describe("RequestHandler", () => {
             }
             let executor = new RequestHandler(facade, request, response, info)
             await executor.execute()
+            Chai.expect(response.type).eq("application/json")
             Chai.expect(response.body).deep.eq({
                 message: "HELLO!"
             })
@@ -281,7 +284,7 @@ describe("RequestHandler", () => {
             let executor = new RequestHandler(facade, request, response, info)
             await executor.execute()
             Chai.expect(response.body).eq("This is dumb")
-            Chai.expect(response.type).eq("application/json")
+            Chai.expect(response.type).eq("text/html")
             Chai.expect(response.status).eq(200)
             Chai.expect(response.MOCKS.send.called).true
         })
@@ -291,7 +294,7 @@ describe("RequestHandler", () => {
             let executor = new RequestHandler(facade, request, response, info)
             await executor.execute()
             Chai.expect(response.body).eq("This is dumb")
-            Chai.expect(response.type).eq("application/json")
+            Chai.expect(response.type).eq("text/html")
             Chai.expect(response.status).eq(200)
             Chai.expect(response.MOCKS.send.called).true
         })

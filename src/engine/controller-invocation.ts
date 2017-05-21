@@ -24,6 +24,8 @@ export class ControllerInvocation extends Core.Invocation {
 
     async proceed(): Promise<Core.ActionResult> {
         let result = this.executor.execute(this.parameters)
-        return InvocationResult.create(result)
+        if (this.controllerInfo.classMetaData.baseClass == "ApiController")
+            return InvocationResult.create(result, 200, "application/json")
+        return InvocationResult.create(result, 200, "text/html")
     }
 }
