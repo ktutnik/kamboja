@@ -16,8 +16,8 @@ describe("RequestHandler", () => {
     let facade: Core.Facade
 
     beforeEach(() => {
-        request = Test.stub(new Test.HttpRequest())
-        response = Test.spy(new Test.HttpResponse())
+        request = H.stub(new Test.HttpRequest())
+        response = H.spy(new Test.HttpResponse())
         facade = H.createFacade(__dirname)
     })
 
