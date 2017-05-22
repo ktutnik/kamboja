@@ -1,10 +1,11 @@
 import * as Kecubung from "kecubung";
 import * as Babylon from "babylon"
 import * as Fs from "fs"
-import * as Core from "../src/core"
+import {Core, Test} from "../src"
 import * as Transformer from "../src/route-generator/transformers"
 import { DefaultDependencyResolver, DefaultIdentifierResolver, DefaultPathResolver } from "../src/resolver"
 import { MetaDataLoader } from "../src/metadata-loader/metadata-loader"
+import * as Sinon from "sinon"
 
 export function fromFile(filePath: string, pathResolver: Core.PathResolver) {
     let path = pathResolver.resolve(filePath)
@@ -61,4 +62,13 @@ export function getRouteInfo(facade: Core.Facade, path: string, methodName: stri
     let info = infos.filter(x => x.methodMetaData.name == methodName)[0]
     info.classId = info.qualifiedClassName
     return info
+}
+
+
+export function spy<T>(obj:T) {
+    return Test.mock(obj, Sinon.spy);
+}
+
+export function stub<T>(obj:T) {
+    return Test.mock(obj, Sinon.stub)
 }

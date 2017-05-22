@@ -257,7 +257,7 @@ export interface PathResolver {
 }
 
 export class ActionResult {
-    header: { [key: string]: string | string[] }
+    header: { [key: string]: string | string[] } = {}
     cookies?: Cookie[]
 
     constructor(public body, public status?: number, public type?: string) { }
