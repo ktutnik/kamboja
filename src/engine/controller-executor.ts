@@ -17,7 +17,6 @@ export class ControllerExecutor {
         let method = <Function>controller[this.factory.routeInfo.methodMetaData.name]
         if (this.factory.routeInfo.classMetaData.baseClass == "ApiController" &&
             this.factory.facade.autoValidation && !controller.validator.isValid()) {
-            let result = method.apply(controller, parameters);
             return new Core.ActionResult(controller.validator.getValidationErrors(), 400, "application/json")
         }
         return method.apply(controller, parameters);

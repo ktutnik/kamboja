@@ -95,6 +95,23 @@ describe("ControllerExecutor", () => {
             Chai.expect(result.body).deep.eq([{ field: 'required', message: '[required] is required' }])
         })
 
+        it("Should not execute action if in auto validate", async () => {
+            let meta = H.fromFile("controller/api-controller.js", new Resolver.DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            let info = infos.filter(x => x.methodMetaData.name == "validationTestThrowError")[0]
+            info.classId = info.qualifiedClassName
+            let builder = new ControllerFactory(facade, info)
+            let executor = new ControllerExecutor(builder, HttpRequest)
+            let error = false;
+            try {
+                let result = await executor.execute([])
+            }
+            catch(e){
+                error = true;
+            }
+            Chai.expect(error).false
+        })
+
         it("Should not auto validate if the setting is turned off", async () => {
             let meta = H.fromFile("controller/api-controller.js", new Resolver.DefaultPathResolver(__dirname))
             let infos = Transformer.transform(meta)
