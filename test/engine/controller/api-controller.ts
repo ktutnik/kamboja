@@ -24,6 +24,10 @@ export class DummyApi extends ApiController {
         return "OK"
     }
 
+    validationTestThrowError(@val.required() required){
+        throw new Error("Internal error")
+    }
+
     statusError(){
         throw new HttpStatusError(404, "Not found")
     }
