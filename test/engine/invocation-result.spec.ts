@@ -5,8 +5,8 @@ import * as H from "../helper"
 import * as Sinon from "sinon"
 
 describe("InvocationResult", () => {
-    let request:Core.HttpRequest & Test.Mockable<Core.HttpRequest, Sinon.SinonStub>
-    let response:Core.HttpResponse & Test.Mockable<Core.HttpResponse, Sinon.SinonSpy>
+    let request: Core.HttpRequest & Test.Mockable<Core.HttpRequest, Sinon.SinonStub>
+    let response: Core.HttpResponse & Test.Mockable<Core.HttpResponse, Sinon.SinonSpy>
 
     beforeEach(() => {
         request = H.stub(new Test.HttpRequest())

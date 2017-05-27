@@ -33,23 +33,22 @@ export class Kamboja {
         let override: Core.KambojaOption;
         if (typeof opt === "string") override = { rootPath: opt }
         else override = opt
+        let idResolver = new DefaultIdentifierResolver()
+        let pathResolver = new DefaultPathResolver(override.rootPath)
+        let resolver = new DefaultDependencyResolver(idResolver, pathResolver)
+        let storage = new MetaDataLoader(idResolver, pathResolver)
         let options = Lodash.assign(<Core.KambojaOption>{
             skipAnalysis: false,
             controllerPaths: ["controller"],
             modelPath: Kamboja.defaultModelPath,
             autoValidation: true,
             rootPath: undefined,
-            showLog: "Info"
+            showLog: "Info",
+            identifierResolver:idResolver,
+            pathResolver: pathResolver,
+            dependencyResolver: resolver,
+            metaDataStorage: storage
         }, override)
-        let idResolver = new DefaultIdentifierResolver()
-        let pathResolver = new DefaultPathResolver(options.rootPath)
-        let resolver = new DefaultDependencyResolver(idResolver, pathResolver)
-        let storage = new MetaDataLoader(options.identifierResolver, pathResolver)
-        options.identifierResolver = idResolver
-        options.pathResolver = pathResolver
-        options.dependencyResolver = resolver
-        options.metaDataStorage = storage
-
         this.options = options
         Kamboja.facade = options;
         this.log = new Logger(this.options.showLog)

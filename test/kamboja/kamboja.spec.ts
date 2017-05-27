@@ -16,8 +16,22 @@ class FakeValidator extends Validator.ValidatorBase {
 
 class FakeInterceptor implements Core.Middleware {
     constructor() { }
-    async execute(request:Core.HttpRequest, invocation: Core.Invocation) {
+    async execute(request: Core.HttpRequest, invocation: Core.Invocation) {
         return invocation.proceed()
+    }
+}
+
+class MyIdResolver implements Core.IdentifierResolver {
+    getClassId(qualifiedClassName: string) {
+        return qualifiedClassName;
+    }
+    getClassName(classId: string) {
+        return classId;
+    }
+}
+
+class MyDependencyResolver implements Core.DependencyResolver {
+    resolve<T>(qualifiedClassName: string) {
     }
 }
 
@@ -300,5 +314,25 @@ describe("Kamboja", () => {
         Chai.expect(metadata).not.null
     })
 
+    it("Should able to use custom identifier resolver", () => {
+        let opt: Core.KambojaOption = {
+            rootPath: __dirname,
+            showLog: "None",
+            identifierResolver: new MyIdResolver()
+        }
+        let kamboja = new Kamboja(engine, opt)
+        let idResolver = Kamboja.getFacade().identifierResolver;
+        Chai.expect(idResolver instanceof MyIdResolver).true
+    })
 
+    it("Should able to use custom dependency resolver", () => {
+        let opt: Core.KambojaOption = {
+            rootPath: __dirname,
+            showLog: "None",
+            dependencyResolver: new MyDependencyResolver()
+        }
+        let kamboja = new Kamboja(engine, opt)
+        let dependencyResolver = Kamboja.getFacade().dependencyResolver;
+        Chai.expect(dependencyResolver instanceof MyDependencyResolver).true
+    })
 })
