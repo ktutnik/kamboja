@@ -1,0 +1,8 @@
+import { internal, Controller } from "kamboja"
+import {response} from "../../../src"
+
+export class HomeController extends Controller {
+    index() {
+        return response.view()
+    }
+}

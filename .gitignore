@@ -1,8 +1,11 @@
 .DS_Store
+.nyc_output
 coverage
 lib
-node_modules/*
+node_modules
 npm-debug.log
+debug.log
+lerna-debug.log
 build.sh
 *.js
 *.js.map
