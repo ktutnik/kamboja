@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Gulp test",
-            "program": "${cwd}/node_modules/gulp/bin/gulp.js",
+            "program": "${cwd}/node_modules/.bin/gulp",
             "args": [
                 "test"
             ]

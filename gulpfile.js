@@ -13,8 +13,8 @@ var gulp = require("gulp"),
 
 var PACKAGES = [
     "packages/kamboja", 
-    "packages/kamboja-express"
-    //"packages/kamboja-mongoose"
+    "packages/kamboja-express",
+    "packages/kamboja-mongoose"
     ]
 
 

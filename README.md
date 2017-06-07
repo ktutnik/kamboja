@@ -7,7 +7,7 @@
 [![dependencies Status](https://david-dm.org/kambojajs/kamboja/status.svg)](https://david-dm.org/kambojajs/kamboja)
 [![devDependencies Status](https://david-dm.org/kambojajs/kamboja/dev-status.svg)](https://david-dm.org/kambojajs/kamboja?type=dev)
 
-KambojaJS aims to fix some problems occurs when using the [old guy](https://expressjs.com/), like increase testability, add convention over configuration and use modern language feature like async/await decorator etc, read more http://kambojajs.com/
+KambojaJS aims to fix some problems occurs when using the [old guy](https://expressjs.com/), and increase testability, add convention over configuration and use modern language feature like async/await decorator etc, read more http://kambojajs.com/
 
 ## Convention Over Configuration
 

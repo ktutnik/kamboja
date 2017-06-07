@@ -22,7 +22,7 @@ describe("ControllerExecutor", () => {
     })
 
     describe("General", () => {
-        it("Should not error if validators in facade is null", async () => {
+        it.only("Should not error if validators in facade is null", async () => {
             let meta = H.fromFile("controller/controller.js", new Resolver.DefaultPathResolver(__dirname))
             let infos = Transformer.transform(meta)
             let info = infos.filter(x => x.methodMetaData.name == "returnActionResult")[0]

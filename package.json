@@ -28,5 +28,8 @@
     "mocha": "^3.4.1",
     "run-sequence": "^1.2.2",
     "typescript": "^2.3.4"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.10"
   }
 }
