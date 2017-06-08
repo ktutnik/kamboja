@@ -20,14 +20,16 @@ describe("Integration Test", () => {
         await Mongoose.disconnect()
     })
 
-    it.only("Should throw if singleton called before Kamboja instantiation", () => {
+    
+    it("Should throw if singleton called before Kamboja instantiation", () => {
         Chai.expect(() => {
+            (<any>Kamboja).facade = undefined;
             let instance = MongooseHelper.getInstance();
         }).throw("Instance of Kamboja not found, do setup after Kamboja instantiation")
     })
 
     it("Should provide access to schemas", () => {
-        for(let key in test.schemas){
+        for (let key in test.schemas) {
             Chai.expect(test.schemas[key] instanceof Mongoose.Schema).true
         }
     })
@@ -128,16 +130,16 @@ describe("Integration Test", () => {
 
     it("Should able to add relation to model with shortid", async () => {
         let Product = test.createModel<ProductModel>("Product")
-        let ParentProduct = test.createModel<ParentProductModel>("ParentProduct") 
+        let ParentProduct = test.createModel<ParentProductModel>("ParentProduct")
 
         await Promise.all([
             Product.remove(x => { }),
             ParentProduct.remove(x => { })
         ])
 
-        let productModel = new Product({name: "i-Phone 7s Plus"})
+        let productModel = new Product({ name: "i-Phone 7s Plus" })
         let prod = await productModel.save()
-        let parentModel = new ParentProduct({name: "The parent", child: prod._id })
+        let parentModel = new ParentProduct({ name: "The parent", child: prod._id })
         let parent = await parentModel.save()
 
         let result = await ParentProduct.find().populate("child").exec();
@@ -147,18 +149,18 @@ describe("Integration Test", () => {
 
     it("Should able to map one to many", async () => {
         let Product = test.createModel<ProductModel>("Product")
-        let ParentProduct = test.createModel<ParentMultiChildModel>("ParentMultiChild") 
+        let ParentProduct = test.createModel<ParentMultiChildModel>("ParentMultiChild")
 
         await Promise.all([
             Product.remove(x => { }),
             ParentProduct.remove(x => { })
         ])
 
-        let iphoneModel = new Product({name: "i-Phone 7s Plus"})
+        let iphoneModel = new Product({ name: "i-Phone 7s Plus" })
         let iphone = await iphoneModel.save()
-        let iPadModel = new Product({name: "i-Pad Pro 9 inch"})
+        let iPadModel = new Product({ name: "i-Pad Pro 9 inch" })
         let ipad = await iPadModel.save()
-        let parentModel = new ParentProduct({name: "The parent", child: [iphone._id, ipad._id] })
+        let parentModel = new ParentProduct({ name: "The parent", child: [iphone._id, ipad._id] })
         let parent = await parentModel.save()
 
         let result = await ParentProduct.find().populate("child").exec();

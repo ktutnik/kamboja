@@ -12,6 +12,7 @@ var gulp = require("gulp"),
 //********CLEAN ************
 
 var PACKAGES = [
+    "packages/kecubung", 
     "packages/kamboja", 
     "packages/kamboja-express",
     "packages/kamboja-mongoose"
@@ -33,7 +34,11 @@ gulp.task("clean-test", function (cb) {
 })
 
 gulp.task("clean-lib", function (cb) {
-    return del(["./coverage", "./packages/*/lib", "./packages/*/coverage"], cb)
+    return del([
+        "./coverage", 
+        "./packages/*/lib", 
+        "./packages/*/coverage",
+        "./packages/*/node_modules/reflect-metadata"], cb)
 })
 
 

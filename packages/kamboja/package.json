@@ -1,6 +1,6 @@
 {
   "name": "kamboja",
-  "version": "0.0.1-59",
+  "version": "0.1.0",
   "description": "MVC Framework powered by TypeScript",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -29,7 +29,7 @@
     "@types/validator": "^6.2.0",
     "babylon": "^6.17.1",
     "chalk": "^1.1.3",
-    "kecubung": "0.0.7-3",
+    "kecubung": "0.1.0",
     "lodash": "^4.17.4",
     "reflect-metadata": "^0.1.10",
     "tslib": "^1.7.1",
