@@ -8,7 +8,6 @@ var gulp = require("gulp"),
     mocha = require("gulp-mocha"),
     fs = require("fs"),
     path = require("path"),
-    shell = require("gulp-shell"),
     istanbul = require("gulp-istanbul");
 
 var PACKAGES = [
