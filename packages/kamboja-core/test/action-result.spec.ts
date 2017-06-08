@@ -1,18 +1,17 @@
-import { Controller, ApiController, ApiActionResult, HttpStatusError } from "../../src"
-import * as H from "../helper"
 import * as Chai from "chai"
-import * as Core from "kamboja-core"
+import * as Core from "../src"
 import * as Kecubung from "kecubung"
-import * as Test from "kamboja-testing"
 import * as Sinon from "sinon"
+import * as Url from "url"
+import { HttpRequest, HttpResponse } from "./helper"
 
 describe("ActionResult", () => {
-    let request: Core.HttpRequest & Test.Mockable<Core.HttpRequest, Sinon.SinonStub>
-    let response: Core.HttpResponse & Test.Mockable<Core.HttpResponse, Sinon.SinonSpy>
+    let request: HttpRequest;
+    let response: HttpResponse;
 
     beforeEach(() => {
-        request = Test.stub(new Test.HttpRequest())
-        response = Test.spy(new Test.HttpResponse())
+        request = new HttpRequest()
+        response = new HttpResponse()
     })
 
     it("Should fill response properties properly", async () => {
@@ -25,7 +24,17 @@ describe("ActionResult", () => {
         Chai.expect(response.type).eq("application/json")
         Chai.expect(response.cookies).deep.eq([{ key: "Halo", value: "Hello" }])
         Chai.expect(response.header).deep.eq({ Accept: "text/*, application/json" })
-        Chai.expect(response.MOCKS.send.called).true
     })
 
+    it("Should give 200 if status not provided", async () => {
+        let result = new Core.ActionResult("Halo")
+        await result.execute(request, response, null)
+        Chai.expect(response.status).eq(200)
+    })
+
+    it("Should give text/plain if type not provided", async () => {
+        let result = new Core.ActionResult("Halo")
+        await result.execute(request, response, null)
+        Chai.expect(response.type).eq("text/plain")
+    })
 })

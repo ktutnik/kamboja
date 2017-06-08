@@ -13,7 +13,7 @@ import { KambojaApplication } from "../../src/kamboja-express"
 import { ErrorHandler } from "../harness/interceptor/error-handler"
 import * as Path from "path"
 import { ConcatMiddleware } from "./interceptor/concat-middleware"
-
+import {LoginUser} from "../../src/login-user"
 describe("Integration", () => {
 
     describe("Controller", () => {

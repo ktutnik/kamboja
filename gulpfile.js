@@ -101,7 +101,7 @@ gulp.task("build", function (cb) {
 
 gulp.task("pre-test", function () {
     return gulp.src(PACKAGES.map(function (x) { return x + "/src/**/*.js" }))
-        .pipe(istanbul({ includeUntested: true }))
+        .pipe(istanbul({ includeUntested: false }))
         .pipe(istanbul.hookRequire());
 });
 
