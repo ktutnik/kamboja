@@ -1,6 +1,6 @@
 {
   "name": "kamboja-testing",
-  "version": "0.1.0",
+  "version": "0.1.0-0",
   "description": "Testing library for KambojaJS",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -25,8 +25,8 @@
     "@types/lodash": "^4.14.64",
     "@types/node": "^7.0.21",
     "@types/sinon": "^2.3.1",
-    "kamboja-core": "0.1.0",
-    "kecubung": "0.1.0",
+    "kamboja-core": "^0.1.0-0",
+    "kecubung": "^0.1.0-0",
     "lodash": "^4.17.4",
     "reflect-metadata": "^0.1.10",
     "sinon": "^2.3.2",
