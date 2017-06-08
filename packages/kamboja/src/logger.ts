@@ -17,7 +17,7 @@ export class Logger {
                 chalk = Chalk.yellow;
                 break
             default:
-                chalk = Chalk.black;
+                chalk = (msg) => msg
                 break
         }
         console.log(chalk(Chalk.bold("  [Kamboja] ")) + chalk(prefix + message))

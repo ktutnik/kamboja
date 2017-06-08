@@ -2,7 +2,7 @@
   "name": "kamboja",
   "description": "MVC Framework powered by TypeScript",
   "scripts": {
-    "test": "gulp"
+    "test": "lerna bootstrap && gulp"
   },
   "repository": {
     "type": "git",
@@ -16,6 +16,7 @@
   },
   "homepage": "http://kambojajs.com",
   "devDependencies": {
+    "@types/chai": "^4.0.0",
     "@types/mocha": "^2.2.41",
     "@types/node": "^7.0.29",
     "coveralls": "^2.13.1",

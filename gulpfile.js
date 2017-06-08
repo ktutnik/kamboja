@@ -8,8 +8,8 @@ var gulp = require("gulp"),
     mocha = require("gulp-mocha"),
     fs = require("fs"),
     path = require("path"),
+    shell = require("gulp-shell"),
     istanbul = require("gulp-istanbul");
-//********CLEAN ************
 
 var PACKAGES = [
     "packages/kecubung",
@@ -20,7 +20,7 @@ var PACKAGES = [
     "packages/kamboja-mongoose"
 ]
 
-
+//********CLEAN ************
 gulp.task("clean-source", function (cb) {
     return del([
         "./packages/*/src/**/*.js",
@@ -41,7 +41,19 @@ gulp.task("clean-lib", function (cb) {
     return del([
         "./coverage",
         "./packages/*/lib",
-        "./packages/*/coverage"], cb)
+        "./packages/*/coverage",
+        /* 
+            reflect-metadata need to removed in packages children
+            due to issue with global value which referencing different
+            reflect-metadata library
+        */
+        "./packages/*/node_modules/reflect-metadata",
+        /*
+            @types/chai need to removed due to typescript issue
+            reporting duplicate operator error 
+        */
+        "./packages/*/node_modules/@types/chai"], 
+        cb)
 })
 
 
@@ -53,7 +65,7 @@ gulp.task("clean", function (cb) {
 
 function buildTypeScript(name, root, path, target, declaration) {
     if (!declaration) declaration = false
-    var tsProject = tsc.createProject(root + "/tsconfig.json", {
+    var tsProject = tsc.createProject("tsconfig.json", {
         declaration: declaration,
         noResolve: false,
         typescript: require("typescript")
@@ -74,7 +86,7 @@ function buildTypeScript(name, root, path, target, declaration) {
 var buildSequence = []
 for (var i = 0; i < PACKAGES.length; i++) {
     var pack = PACKAGES[i];
-    var lean = pack.replace("/", "-")
+    var lean = pack.replace("packages/", "")
     buildSequence.push(buildTypeScript("build-source-" + lean, pack, "/src", "/src"))
     buildSequence.push(buildTypeScript("build-test-" + lean, pack, "/test", "/test"))
     buildSequence.push(buildTypeScript("build-dist-" + lean, pack, "/src", "/lib", true))
@@ -86,9 +98,6 @@ gulp.task("build", function (cb) {
 });
 
 //******** TEST *************
-gulp.task("clean-reflect-metadata", function (cb) {
-    return del(["./packages/*/node_modules/reflect-metadata"], cb)
-});
 
 gulp.task("pre-test", function () {
     return gulp.src(PACKAGES.map(function (x) { return x + "/src/**/*.js" }))
@@ -96,11 +105,10 @@ gulp.task("pre-test", function () {
         .pipe(istanbul.hookRequire());
 });
 
-gulp.task("test", ["pre-test", "clean-reflect-metadata"], function () {
+gulp.task("test", ["pre-test"], function () {
     return gulp.src(PACKAGES.map(function (x) { return x + "/test/**/*.js" }))
         .pipe(mocha())
-        .pipe(istanbul.writeReports())
-        .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }));
+        .pipe(istanbul.writeReports());
 });
 
 /** DEFAULT */
