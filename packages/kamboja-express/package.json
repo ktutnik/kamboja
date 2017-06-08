@@ -1,6 +1,6 @@
 {
   "name": "kamboja-express",
-  "version": "0.1.0-0",
+  "version": "0.1.0-1",
   "description": "KambojaJS engine implementation using ExpressJs",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -32,8 +32,8 @@
     "babylon": "^6.17.1",
     "chalk": "^1.1.3",
     "express": "^4.15.3",
-    "kamboja": "^0.1.0-0",
-    "kecubung": "^0.1.0-0",
+    "kamboja": "^0.1.0-1",
+    "kecubung": "^0.1.0-1",
     "lodash": "^4.17.4",
     "tslib": "^1.7.1",
     "validator": "^7.0.0"
@@ -56,7 +56,7 @@
     "gulp-mocha": "^3.0.1",
     "gulp-typescript": "^3.1.6",
     "hbs": "^4.0.1",
-    "kamboja-testing": "^0.1.0-0",
+    "kamboja-testing": "^0.1.0-1",
     "mocha": "^3.4.2",
     "morgan": "^1.8.2",
     "passport": "^0.3.2",
