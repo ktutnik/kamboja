@@ -1,4 +1,4 @@
-import { Invocation, HttpRequest, HttpResponse, ActionResult } from "../core"
+import { Invocation, HttpRequest, HttpResponse, ActionResult } from "kamboja-core"
 import { HttpStatusError } from "../controller/errors"
 import * as Url from "url"
 

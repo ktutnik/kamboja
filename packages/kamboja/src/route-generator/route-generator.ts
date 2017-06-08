@@ -1,4 +1,4 @@
-import * as Core from "../core"
+import * as Core from "kamboja-core"
 import * as Path from "path"
 import * as Fs from "fs"
 import * as Kecubung from "kecubung"

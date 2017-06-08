@@ -10,7 +10,7 @@ import { DefaultIdentifierResolver, DefaultPathResolver } from "../../src/resolv
 import { UserModel } from "./model/user-model"
 import { ItemModel } from "./model/item-model"
 import { CategoryModel } from "./model/category-model"
-import { ValidatorCommand } from "../../src/core"
+import { ValidatorCommand } from "kamboja-core"
 
 
 describe("TypeValidator", () => {

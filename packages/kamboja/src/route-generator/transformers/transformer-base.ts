@@ -1,5 +1,5 @@
 import * as Kecubung from "kecubung"
-import * as Core from "../../core"
+import * as Core from "kamboja-core"
 
 
 const META_DATA_KEY = "kamboja:Call.when";

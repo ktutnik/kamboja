@@ -1,5 +1,5 @@
 import * as Chalk from "chalk"
-import { LogType } from "./core"
+import { LogType } from "kamboja-core"
 
 export class Logger {
     constructor(private type: LogType) { }

@@ -3,7 +3,7 @@ import * as H from "../helper"
 import * as Sinon from "sinon"
 import * as Kecubung from "kecubung"
 import * as Chai from "chai"
-import {HttpRequest, HttpResponse, Mock} from "../../src/unit-test"
+import {HttpRequest, HttpResponse, Mock} from "kamboja-testing"
 
 
 let RouteInfo: any = <Core.RouteInfo>{

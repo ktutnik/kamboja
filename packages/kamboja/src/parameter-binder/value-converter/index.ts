@@ -4,7 +4,7 @@ import { BaseConverter, ConverterResult } from "./base-converter"
 import { DecoratedValueConverter } from "./decorated-value-converter"
 import { DefaultValueConverter } from "./default-value-converter"
 import { ConventionValueConverter } from "./convention-value-converter"
-import * as Core from "../../core"
+import * as Core from "kamboja-core"
 
 
 export function convert(routeInfo: Core.RouteInfo, name:string, value: any) {

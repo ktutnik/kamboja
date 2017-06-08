@@ -1,6 +1,6 @@
 import * as Kecubung from "kecubung"
 import { decoratorName, ValidatorBase } from "./baseclasses"
-import { ValidationError, MetaDataStorage, FieldValidatorArg, ValidationTypesAccepted } from "../core"
+import { ValidationError, MetaDataStorage, FieldValidatorArg, ValidationTypesAccepted } from "kamboja-core"
 import { QualifiedName } from "../resolver/qualified-name"
 
 

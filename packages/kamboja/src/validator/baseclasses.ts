@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import * as Kecubung from "kecubung"
-import { ValidationError, FieldValidatorArg, ValidatorCommand } from "../core"
+import { ValidationError, FieldValidatorArg, ValidatorCommand } from "kamboja-core"
 import * as Validator from "validator"
 const MetaDataKey = "kamboja:Validator"
 

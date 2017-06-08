@@ -1,5 +1,5 @@
 import * as Kecubung from "kecubung"
-import * as Core from "../../core"
+import * as Core from "kamboja-core"
 import { when, TransformerBase } from "./transformer-base"
 import { ApiConventionTransformer } from "./api-convention"
 import { DefaultActionTransformer } from "./default-action"

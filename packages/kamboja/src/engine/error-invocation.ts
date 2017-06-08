@@ -1,4 +1,4 @@
-import { Invocation, HttpRequest, HttpResponse, KambojaOption, ActionResult, RouteInfo } from "../core"
+import { Invocation, HttpRequest, HttpResponse, KambojaOption, ActionResult, RouteInfo } from "kamboja-core"
 import * as Url from "url"
 
 export class ErrorInvocation extends Invocation {

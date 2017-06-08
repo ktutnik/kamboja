@@ -1,0 +1,54 @@
+{
+  "name": "kamboja-testing",
+  "version": "0.1.0",
+  "description": "Testing library for KambojaJS",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kambojajs/kamboja.git"
+  },
+  "keywords": [],
+  "author": "Ketut Sandiarsa <ktutnik@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kambojajs/kamboja/issues"
+  },
+  "homepage": "http://kambojajs.com",
+  "dependencies": {
+    "@types/lodash": "^4.14.64",
+    "@types/node": "^7.0.21",
+    "@types/sinon": "^2.3.1",
+    "kamboja-core": "0.1.0",
+    "kecubung": "0.1.0",
+    "lodash": "^4.17.4",
+    "reflect-metadata": "^0.1.10",
+    "sinon": "^2.3.2",
+    "tslib": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.5.2",
+    "@types/mocha": "^2.2.41",
+    "@types/sinon": "^2.2.2",
+    "@types/supertest": "^2.0.0",
+    "chai": "^3.5.0",
+    "coveralls": "^2.13.1",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-istanbul": "^1.1.1",
+    "gulp-mocha": "^3.0.1",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-typescript": "^3.1.6",
+    "mocha": "^3.4.1",
+    "run-sequence": "^1.2.2",
+    "sinon": "^2.2.0",
+    "supertest": "^3.0.0",
+    "typescript": "^2.3.2"
+  }
+}

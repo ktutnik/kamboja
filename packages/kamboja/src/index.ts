@@ -1,5 +1,5 @@
 import * as Validator from "./validator"
-import * as Core from "./core"
+import * as Core from "kamboja-core"
 import * as Resolver from "./resolver"
 import * as RouteGenerator from "./route-generator"
 import * as Kecubung from "kecubung"
@@ -15,8 +15,6 @@ export { Kamboja } from "./kamboja"
 export { MetaDataLoader } from "./metadata-loader/metadata-loader"
 export { RequestHandler } from "./engine/request-handler"
 
-import * as Test from "./unit-test"
-export {Test}
 //decorators
 const middleware: Middleware.MiddlewareDecorator = new Middleware.MiddlewareDecorator()
 export const val: Validator.ValidatorDecorator = new Validator.ValidatorDecorator();

@@ -1,5 +1,5 @@
 import * as Kecubung from "kecubung"
-import * as Core from "../core"
+import * as Core from "kamboja-core"
 import { ValidatorBase, getDecoratorName, ParametersValidatorArg } from "./baseclasses"
 import { TypeValidator } from "./type-validator"
 import { RequiredValidator } from "./required-validator"

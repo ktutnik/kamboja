@@ -1,6 +1,7 @@
 import * as Chai from "chai"
 import { InvocationResult } from "../../src/engine/invocation-result"
-import { ApiActionResult, Core, Test } from "../../src"
+import { ApiActionResult, Core } from "../../src"
+import * as Test from "kamboja-testing"
 import * as H from "../helper"
 import * as Sinon from "sinon"
 
@@ -9,8 +10,8 @@ describe("InvocationResult", () => {
     let response: Core.HttpResponse & Test.Mockable<Core.HttpResponse, Sinon.SinonSpy>
 
     beforeEach(() => {
-        request = H.stub(new Test.HttpRequest())
-        response = H.spy(new Test.HttpResponse())
+        request = Test.stub(new Test.HttpRequest())
+        response = Test.spy(new Test.HttpResponse())
     })
 
     it("Should allow primitive value result", async () => {

@@ -1,4 +1,4 @@
-import * as Core from "./core"
+import * as Core from "kamboja-core"
 import * as Lodash from "lodash"
 import { MetaDataLoader } from "./metadata-loader/metadata-loader"
 import { DefaultDependencyResolver, DefaultIdentifierResolver, DefaultPathResolver } from "./resolver"

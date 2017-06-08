@@ -1,7 +1,7 @@
 import * as Kecubung from "kecubung"
 import { autoConvert } from "../baseclasses"
 import { BaseConverter, ConverterResult } from "./base-converter"
-import {getRouteDetail, ValidationTypesAccepted} from "../../core"
+import {getRouteDetail, ValidationTypesAccepted} from "kamboja-core"
 
 /*
 @val.type("string")

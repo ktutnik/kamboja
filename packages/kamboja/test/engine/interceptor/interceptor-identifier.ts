@@ -1,4 +1,4 @@
-import * as Core from "../../../src/core"
+import * as Core from "kamboja-core"
 
 const InterceptorMetadataKey = "kamboja:middleware"
 

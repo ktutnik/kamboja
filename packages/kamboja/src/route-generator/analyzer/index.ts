@@ -1,4 +1,4 @@
-import { RouteInfo, AnalysisMessage } from "../../core"
+import { RouteInfo, AnalysisMessage } from "kamboja-core"
 import { RouteAnalyzer } from "./analyzer"
 
 export function analyze(info: RouteInfo[]) {

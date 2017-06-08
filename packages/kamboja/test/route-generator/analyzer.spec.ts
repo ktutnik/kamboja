@@ -2,7 +2,7 @@ import * as Analyzer from "../../src/route-generator/analyzer"
 import * as H from "../helper"
 import * as Transformer from "../../src/route-generator/transformers"
 import * as Chai from "chai"
-import * as Core from "../../src/core"
+import * as Core from "kamboja-core"
 
 describe("Analyzer", () => {
     it("Should analyze missing action parameter", () => {

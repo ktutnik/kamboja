@@ -1,4 +1,4 @@
-import { ActionResult, HttpRequest, HttpResponse, RouteInfo, Validator } from "../core"
+import { ActionResult, HttpRequest, HttpResponse, RouteInfo, Validator } from "kamboja-core"
 import * as Xml from "xml"
 
 export class ApiActionResult extends ActionResult {

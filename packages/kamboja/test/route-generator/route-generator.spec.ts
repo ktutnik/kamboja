@@ -3,7 +3,7 @@ import { DefaultIdentifierResolver, DefaultDependencyResolver, DefaultPathResolv
 import * as Chai from "chai"
 import * as H from "../helper"
 import * as Fs from "fs"
-import * as Core from "../../src/core"
+import * as Core from "kamboja-core"
 import { MetaDataLoader } from "../../src/metadata-loader/metadata-loader"
 import { RequiredValidator } from "../../src/validator"
 import * as Util from "util"

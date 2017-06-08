@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, ActionResult, BaseController, Validator } from "../core"
+import { HttpRequest, HttpResponse, ActionResult, BaseController, Validator } from "kamboja-core"
 import { ApiActionResult } from "./api-action-result"
 
 export class ApiController implements BaseController {

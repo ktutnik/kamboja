@@ -1,4 +1,4 @@
-import * as Core from "../core"
+import * as Core from "kamboja-core"
 import { MiddlewareDecorator, MiddlewareIdMetadataKey, MiddlewareMetadataKey } from "./middleware-decorator"
 
 export { Authorize } from "./authorize"

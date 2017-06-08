@@ -1,5 +1,5 @@
 import * as Path from "path"
-import { PathResolver } from "../core"
+import { PathResolver } from "kamboja-core"
 
 export class DefaultPathResolver {
     constructor(private rootPath:string){}

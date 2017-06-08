@@ -1,5 +1,5 @@
 import * as Kecubung from "kecubung"
-import * as Core from "../../core"
+import * as Core from "kamboja-core"
 import { TransformerBase, when } from "./transformer-base"
 import { ControllerWithDecorator } from "./controller-decorator"
 import { ControllerTransformer } from "./controller"

@@ -1,6 +1,6 @@
 import * as Kecubung from "kecubung"
 import { BaseConverter, ConverterResult } from "./base-converter"
-import { getRouteDetail } from "../../core"
+import { getRouteDetail } from "kamboja-core"
 
 export class ConventionValueConverter extends BaseConverter {
     convert(meta: Kecubung.ParameterMetaData, value: string): ConverterResult {

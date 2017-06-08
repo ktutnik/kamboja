@@ -1,7 +1,8 @@
 import * as Kecubung from "kecubung";
 import * as Babylon from "babylon"
 import * as Fs from "fs"
-import {Core, Test} from "../src"
+import * as Core from "kamboja-core"
+import * as Test from "kamboja-testing"
 import * as Transformer from "../src/route-generator/transformers"
 import { DefaultDependencyResolver, DefaultIdentifierResolver, DefaultPathResolver } from "../src/resolver"
 import { MetaDataLoader } from "../src/metadata-loader/metadata-loader"
@@ -64,11 +65,3 @@ export function getRouteInfo(facade: Core.Facade, path: string, methodName: stri
     return info
 }
 
-
-export function spy<T>(obj:T) {
-    return Test.mock(obj, Sinon.spy);
-}
-
-export function stub<T>(obj:T) {
-    return Test.mock(obj, Sinon.stub)
-}

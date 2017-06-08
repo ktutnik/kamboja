@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, ActionResult, CookieOptions, Cookie, Validator, BaseController } from "../core"
+import { HttpRequest, HttpResponse, ActionResult, CookieOptions, Cookie, Validator, BaseController } from "kamboja-core"
 
 
 export class Controller implements BaseController {

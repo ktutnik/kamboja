@@ -1,4 +1,4 @@
-import * as Core from "../core"
+import * as Core from "kamboja-core"
 import { ValidatorImpl } from "../validator"
 import { Kamboja } from "../kamboja"
 import { Middleware } from "../index"

@@ -1,4 +1,4 @@
-import { ActionResult, HttpRequest, HttpResponse, RouteInfo, } from "../core"
+import { ActionResult, HttpRequest, HttpResponse, RouteInfo, } from "kamboja-core"
 
 export namespace InvocationResult {
     export async function create(result, status?:number, type?:string) {

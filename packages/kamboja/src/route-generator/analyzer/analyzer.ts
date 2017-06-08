@@ -1,4 +1,4 @@
-import { RouteInfo, AnalysisMessage } from "../../core"
+import { RouteInfo, AnalysisMessage } from "kamboja-core"
 import * as Index from "./definitions"
 import { MissingActionParameterAnalyzer } from "./missing-action-parameter"
 import { MissingRouteParameterAnalyzer } from "./missing-route-parameter"

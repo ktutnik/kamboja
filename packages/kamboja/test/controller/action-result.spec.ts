@@ -1,9 +1,9 @@
 import { Controller, ApiController, ApiActionResult, HttpStatusError } from "../../src"
 import * as H from "../helper"
 import * as Chai from "chai"
-import * as Core from "../../src/core"
+import * as Core from "kamboja-core"
 import * as Kecubung from "kecubung"
-import { Test } from "../../src"
+import * as Test from "kamboja-testing"
 import * as Sinon from "sinon"
 
 describe("ActionResult", () => {
@@ -11,8 +11,8 @@ describe("ActionResult", () => {
     let response: Core.HttpResponse & Test.Mockable<Core.HttpResponse, Sinon.SinonSpy>
 
     beforeEach(() => {
-        request = H.stub(new Test.HttpRequest())
-        response = H.spy(new Test.HttpResponse())
+        request = Test.stub(new Test.HttpRequest())
+        response = Test.spy(new Test.HttpResponse())
     })
 
     it("Should fill response properties properly", async () => {

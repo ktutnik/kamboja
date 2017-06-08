@@ -1,4 +1,4 @@
-import * as Core from "../core"
+import * as Core from "kamboja-core"
 import * as Url from "url"
 
 export class HttpRequest implements Core.HttpRequest {

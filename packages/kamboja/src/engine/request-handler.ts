@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import * as Core from "../core"
+import * as Core from "kamboja-core"
 import { ControllerInvocation } from "./controller-invocation"
 import { MiddlewareInvocation } from "./middleware-invocation"
 import { ControllerExecutor } from "./controller-executor"

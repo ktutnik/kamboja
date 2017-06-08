@@ -1,4 +1,4 @@
-import { AnalysisMessage, RouteInfo, RouteAnalysisCode } from "../../core"
+import { AnalysisMessage, RouteInfo, RouteAnalysisCode } from "kamboja-core"
 import { AnalyzerCommand, getRouteDetail } from "./definitions"
 
 export class DuplicateRouteAnalyzer implements AnalyzerCommand {

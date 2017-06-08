@@ -12,33 +12,36 @@ var gulp = require("gulp"),
 //********CLEAN ************
 
 var PACKAGES = [
-    "packages/kecubung", 
-    "packages/kamboja", 
+    "packages/kecubung",
+    "packages/kamboja-core",
+    "packages/kamboja-testing",
+    "packages/kamboja",
     "packages/kamboja-express",
     "packages/kamboja-mongoose"
-    ]
+]
 
 
 gulp.task("clean-source", function (cb) {
     return del([
         "./packages/*/src/**/*.js",
         "./packages/*/src/**/*.d.ts",
-        "./packages/*/src/**/*.js.map"], cb)
+        "./packages/*/src/**/*.js.map"
+    ], cb)
 })
 
 gulp.task("clean-test", function (cb) {
     return del([
         "./packages/*/test/**/*.js",
         "./packages/*/test/**/*.d.ts",
-        "./packages/*/test/**/*.js.map"], cb)
+        "./packages/*/test/**/*.js.map"
+    ], cb)
 })
 
 gulp.task("clean-lib", function (cb) {
     return del([
-        "./coverage", 
-        "./packages/*/lib", 
-        "./packages/*/coverage",
-        "./packages/*/node_modules/reflect-metadata"], cb)
+        "./coverage",
+        "./packages/*/lib",
+        "./packages/*/coverage"], cb)
 })
 
 
@@ -48,8 +51,8 @@ gulp.task("clean", function (cb) {
 
 //******** BUILD *************
 
-function buildTypeScript(name, root, path, target, declaration){
-    if(!declaration) declaration = false
+function buildTypeScript(name, root, path, target, declaration) {
+    if (!declaration) declaration = false
     var tsProject = tsc.createProject(root + "/tsconfig.json", {
         declaration: declaration,
         noResolve: false,
@@ -69,7 +72,7 @@ function buildTypeScript(name, root, path, target, declaration){
 
 
 var buildSequence = []
-for(var i = 0; i < PACKAGES.length; i++){
+for (var i = 0; i < PACKAGES.length; i++) {
     var pack = PACKAGES[i];
     var lean = pack.replace("/", "-")
     buildSequence.push(buildTypeScript("build-source-" + lean, pack, "/src", "/src"))
@@ -83,14 +86,18 @@ gulp.task("build", function (cb) {
 });
 
 //******** TEST *************
-gulp.task('pre-test', function () {
-    return gulp.src(PACKAGES.map(function(x){ return x + "/src/**/*.js" }))
-        .pipe(istanbul({ includeUntested: false }))
+gulp.task("clean-reflect-metadata", function (cb) {
+    return del(["./packages/*/node_modules/reflect-metadata"], cb)
+});
+
+gulp.task("pre-test", function () {
+    return gulp.src(PACKAGES.map(function (x) { return x + "/src/**/*.js" }))
+        .pipe(istanbul({ includeUntested: true }))
         .pipe(istanbul.hookRequire());
 });
 
-gulp.task('test', ['pre-test'], function () {
-    return gulp.src(PACKAGES.map(function(x){ return x + "/test/**/*.js" }))
+gulp.task("test", ["pre-test", "clean-reflect-metadata"], function () {
+    return gulp.src(PACKAGES.map(function (x) { return x + "/test/**/*.js" }))
         .pipe(mocha())
         .pipe(istanbul.writeReports())
         .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }));

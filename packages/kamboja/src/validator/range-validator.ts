@@ -1,5 +1,5 @@
 import { ValidatorBase, decoratorName } from "./baseclasses"
-import { ValidationError, FieldValidatorArg } from "../core"
+import { ValidationError, FieldValidatorArg } from "kamboja-core"
 import * as Kecubung from "kecubung"
 import * as Validator from "validator"
 

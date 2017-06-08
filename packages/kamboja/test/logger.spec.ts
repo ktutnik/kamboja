@@ -1,5 +1,5 @@
 import * as Chai from "chai"
-import * as Core from "../src/core"
+import * as Core from "kamboja-core"
 import { Logger } from "../src/logger"
 import { DefaultIdentifierResolver } from "../src/resolver"
 import * as H from "./helper"

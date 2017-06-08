@@ -1,4 +1,4 @@
-import * as Core from "../core"
+import * as Core from "kamboja-core"
 import { ControllerExecutor } from "../engine/controller-executor"
 import "reflect-metadata"
 import * as Kecubung from "kecubung"

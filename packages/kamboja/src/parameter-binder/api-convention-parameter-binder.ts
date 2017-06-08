@@ -1,4 +1,4 @@
-import * as Core from "../core"
+import * as Core from "kamboja-core"
 import { BinderCommand, BinderResult } from "./baseclasses"
 import { MethodConventionType } from "../route-generator"
 import { convert } from "./value-converter"

@@ -1,4 +1,4 @@
-import { Middleware, Invocation, ActionResult, HttpRequest } from "../core"
+import { Middleware, Invocation, ActionResult, HttpRequest } from "kamboja-core"
 import { MiddlewareDecorator } from "./middleware-decorator"
 
 let middleware = new MiddlewareDecorator()

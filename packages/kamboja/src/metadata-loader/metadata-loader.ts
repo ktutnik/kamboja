@@ -1,4 +1,4 @@
-import { MetaDataLoaderCategory, PathResolver, IdentifierResolver, MetaDataStorage, QualifiedClassMetaData } from "../core"
+import { MetaDataLoaderCategory, PathResolver, IdentifierResolver, MetaDataStorage, QualifiedClassMetaData } from "kamboja-core"
 import { DefaultPathResolver } from "../resolver/path-resolver"
 import { QualifiedName } from "../resolver/qualified-name"
 import * as Fs from "fs"

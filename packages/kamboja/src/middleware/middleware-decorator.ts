@@ -1,4 +1,4 @@
-import * as Core from "../core"
+import * as Core from "kamboja-core"
 
 export const MiddlewareMetadataKey = "kamboja:middleware"
 export const MiddlewareIdMetadataKey = "kamboja:middleware:id"

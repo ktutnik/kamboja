@@ -2,13 +2,13 @@ import * as Transformer from "../../src/route-generator/transformers"
 import * as Chai from "chai"
 import * as H from "../helper"
 import * as Sinon from "sinon"
-import * as Core from "../../src/core"
+import * as Core from "kamboja-core"
 import { RequestHandler } from "../../src/engine/request-handler"
 import { ConcatInterceptor } from "./controller/interception-order-controller"
 import { DefaultPathResolver } from "../../src/resolver"
 import { HttpStatusError } from "../../src/controller"
 import { ErrorHandlerMiddleware } from "./interceptor/error-handler"
-import { Test } from "../../src"
+import * as Test from "kamboja-testing"
 
 describe("RequestHandler", () => {
     let request: Core.HttpRequest & Test.Mockable<Core.HttpRequest, Sinon.SinonStub>
@@ -16,8 +16,8 @@ describe("RequestHandler", () => {
     let facade: Core.Facade
 
     beforeEach(() => {
-        request = H.stub(new Test.HttpRequest())
-        response = H.spy(new Test.HttpResponse())
+        request = Test.stub(new Test.HttpRequest())
+        response = Test.spy(new Test.HttpResponse())
         facade = H.createFacade(__dirname)
     })
 
