@@ -2,8 +2,8 @@
   "name": "kamboja-core",
   "version": "0.1.0",
   "description": "Core library of KambojaJS",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.ts",
   "directories": {
     "test": "test"
   },
