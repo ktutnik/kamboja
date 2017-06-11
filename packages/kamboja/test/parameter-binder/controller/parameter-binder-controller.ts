@@ -1,5 +1,5 @@
 import { Controller, ApiController } from "../../../src/controller"
-import { val } from "../../../src"
+import { val, bind } from "../../../src"
 
 export class DummyApi extends ApiController {
     myMethod(par1, par2) {
@@ -19,4 +19,6 @@ export class DummyApi extends ApiController {
     conventionConversion(sName, iAge, bIsDirty, sname, iage, bisdirty){}
     arrayDecorated(@val.type("string[]") str, @val.type("number[]") num, @val.type("boolean[]") bool){}
     priority(@val.type("number") strName){}
+
+    decoratorBinder(@bind.body() body, @bind.cookie() cookies, @bind.cookie("age") age){}
 }

@@ -1,13 +1,3 @@
-
-export interface BinderResult {
-    status: "Next" | "Exit",
-    result?: any[]
-}
-
-export interface BinderCommand {
-    getParameters(): BinderResult;
-}
-
 export function autoConvert(source: string) {
     if(typeof source == "undefined" || source == null) return;
     if (!isNaN(+source))

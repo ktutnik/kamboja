@@ -25,6 +25,11 @@ export class HttpDecorator {
     delete(route?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
 }
 
+export class BinderDecorator {
+    body() { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+    cookie(name?: string) { return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => { }; }
+}
+
 export type DecoratorType = keyof Decorator | keyof HttpDecorator;
 
 

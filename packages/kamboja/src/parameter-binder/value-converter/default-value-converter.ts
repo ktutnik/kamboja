@@ -1,5 +1,5 @@
 import * as Kecubung from "kecubung"
-import { autoConvert } from "../baseclasses"
+import { autoConvert } from "./auto-converter"
 import { BaseConverter, ConverterResult } from "./base-converter"
 
 export class DefaultValueConverter extends BaseConverter {

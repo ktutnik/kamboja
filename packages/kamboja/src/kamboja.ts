@@ -10,7 +10,6 @@ import { Logger } from "./logger"
 import * as Babylon from "babylon"
 import * as Kecubung from "kecubung"
 
-export type KambojaEvent = "init"
 
 /**
  * Create instance of KambojaJS application
@@ -18,25 +17,12 @@ export type KambojaEvent = "init"
 export class Kamboja {
     private static defaultModelPath: string = "model"
     private static facade: Core.Facade;
-    private static events: {[key:string]:(() => void)[]} = {}
     private options: Core.KambojaOption
     private log: Logger;
     private storage: MetaDataLoader;
 
     static getFacade() {
         return Kamboja.facade;
-    }
-
-    static on(event:KambojaEvent, cb : () => void){
-        if(!Kamboja.events[event])
-            Kamboja.events[event]=[]
-        Kamboja.events[event].push(cb)
-    }
-
-    private static dispatch(event:KambojaEvent){
-        for(let cb of Kamboja.events[event]){
-            cb()
-        }
     }
 
     /**
@@ -161,7 +147,6 @@ export class Kamboja {
         if (routeInfos.length == 0) throw new Error("Fatal error")
         if (!this.analyzeRoutes(routeInfos)) throw new Error("Fatal Error")
         let app = this.engine.init(routeInfos, this.options)
-        Kamboja.dispatch("init")
         return app;
     }
 }

@@ -8,7 +8,9 @@ import * as Sinon from "sinon"
 
 let HttpRequest: any = {
     body: { data: "Hello!" },
-    getParam: (key: string) => { }
+    getParam: (key: string) => { },
+    cookies: { "name": "Nobita", "age": "9" },
+    getCookie: (key:string) => {}
 }
 
 describe("ParameterBinder", () => {
@@ -139,4 +141,26 @@ describe("ParameterBinder", () => {
 
     })
 
+    describe("Decorator", () => {
+        let getCookie: Sinon.SinonStub;
+
+        beforeEach(() => {
+            getCookie = Sinon.stub(HttpRequest, "getCookie")
+        })
+
+        afterEach(() => {
+            getCookie.restore();
+        })
+
+        it("Should bind request body properly", () => {
+            //dummy?offset=1&pageWidth=10  
+            let meta = H.fromFile("controller/parameter-binder-controller.js", new DefaultPathResolver(__dirname))
+            let infos = Transformer.transform(meta)
+            getCookie.withArgs("age").returns(9)
+
+            let binder = new ParameterBinder(infos.filter(x => x.methodMetaData.name == "decoratorBinder")[0], HttpRequest);
+            let result = binder.getParameters();
+            Chai.expect(result).deep.eq([{data: "Hello!"}, { "name": "Nobita", "age": "9" }, 9])
+        })
+    })
 })

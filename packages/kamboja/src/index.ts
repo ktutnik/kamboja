@@ -20,6 +20,7 @@ const middleware: Middleware.MiddlewareDecorator = new Middleware.MiddlewareDeco
 export const val: Validator.ValidatorDecorator = new Validator.ValidatorDecorator();
 export const internal = new Core.Decorator().internal;
 export const http = new Core.HttpDecorator();
+export const bind = new Core.BinderDecorator();
 export function authorize(role?: string | string[]) {
     return middleware.use(new Middleware.Authorize(role))
 }

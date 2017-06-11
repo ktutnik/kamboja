@@ -1,6 +1,5 @@
 import * as Core from "kamboja-core"
 import * as Kecubung from "kecubung"
-import { autoConvert } from "../baseclasses"
 
 export interface ConverterResult {
     type: "Next" | "Exit",

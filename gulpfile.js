@@ -39,8 +39,6 @@ gulp.task("clean-test", function (cb) {
 gulp.task("clean-lib", function (cb) {
     return del([
         "./coverage",
-        "./packages/*/lib",
-        "./packages/*/coverage",
         /* 
             reflect-metadata need to removed in packages children
             due to issue with global value which referencing different
@@ -88,7 +86,6 @@ for (var i = 0; i < PACKAGES.length; i++) {
     var lean = pack.replace("packages/", "")
     buildSequence.push(buildTypeScript("build-source-" + lean, pack, "/src", "/src"))
     buildSequence.push(buildTypeScript("build-test-" + lean, pack, "/test", "/test"))
-    buildSequence.push(buildTypeScript("build-dist-" + lean, pack, "/src", "/lib", true))
 }
 
 gulp.task("build", function (cb) {
@@ -97,6 +94,11 @@ gulp.task("build", function (cb) {
 });
 
 //******** TEST *************
+
+gulp.task("test-debug", function () {
+    return gulp.src(PACKAGES.map(function (x) { return x + "/test/**/*.js" }))
+        .pipe(mocha());
+});
 
 gulp.task("pre-test", function () {
     return gulp.src(PACKAGES.map(function (x) { return x + "/src/**/*.js" }))

@@ -1,8 +1,8 @@
-import { autoConvert } from "../../src/parameter-binder/baseclasses"
+import { autoConvert } from "../../src/parameter-binder/value-converter/auto-converter"
+import { DefaultPathResolver } from "../../src/resolver"
 import * as Transformer from "../../src/route-generator/transformers"
 import * as Chai from "chai"
 import * as H from "../helper"
-import { DefaultPathResolver } from "../../src/resolver"
 
 
 describe("Value Converter", () => {
