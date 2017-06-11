@@ -1,5 +1,5 @@
 import * as Chai from "chai"
-import { MongooseHelper } from "../../src"
+import { MongooseHelper, odm } from "../../src"
 import * as H from "../helper"
 import * as Mongoose from "mongoose"
 import { Core, Kamboja, Resolver } from "kamboja"
@@ -44,6 +44,12 @@ describe("Integration Test", () => {
         Chai.expect(instance).not.null
         let secondInstance = MongooseHelper.getInstance();
         Chai.expect(instance == secondInstance).true
+    })
+
+    it("Should able to create model from 'odm' function ", () => {
+        let User = odm<UserModel>("User");
+        Chai.expect(User).not.null;
+        Chai.expect(typeof User.findById == "function").true;
     })
 
     it("Should save/load simple object", async () => {

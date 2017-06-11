@@ -7,19 +7,10 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Gulp test",
-            "program": "${cwd}/node_modules/.bin/gulp",
+            "name": "Gulp",
+            "program": "${workspaceRoot}/node_modules/gulp/bin/gulp.js",
             "args": [
-                "test"
-            ]
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "program": "${file}",
-            "outFiles": [
-                "${workspaceRoot}/out/**/*.js"
+                "test-debug"
             ]
         }
     ]

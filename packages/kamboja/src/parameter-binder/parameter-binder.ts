@@ -1,15 +1,17 @@
 import * as Core from "kamboja-core"
-import {BinderCommand, BinderResult} from "./baseclasses"
-import {ApiConventionParameterBinder} from "./api-convention-parameter-binder"
-import {DefaultParameterBinder} from "./default-parameter-binder"
+import {BinderBase, BinderResult} from "./binder-base"
+import {ApiConventionBinder} from "./api-convention-binder"
+import {DecoratorBinder} from "./decorator-binder"
+import {DefaultBinder} from "./default-binder"
 
 export class ParameterBinder {
-    private commands: BinderCommand[] = []
+    private commands: BinderBase[] = []
     constructor(private routeInfo: Core.RouteInfo, private request: Core.HttpRequest) {
         //priorities
         this.commands = [
-            new ApiConventionParameterBinder(this.routeInfo, this.request),
-            new DefaultParameterBinder(this.routeInfo, this.request),
+            new DecoratorBinder(),
+            new ApiConventionBinder(),
+            new DefaultBinder()
         ]
     }
 
@@ -17,10 +19,17 @@ export class ParameterBinder {
         if(!this.routeInfo.methodMetaData.parameters 
             || this.routeInfo.methodMetaData.parameters.length == 0)
             return []
-        for (let command of this.commands) {
-            let commandResult = command.getParameters();
-            if (commandResult.status == "Exit")
-                return commandResult.result;
+        let result = []
+        for(let par of this.routeInfo.methodMetaData.parameters){
+            result.push(this.bind(par.name))
+        }
+        return result
+    }
+
+    private bind(parameterName:string){
+        for(let cmd of this.commands){
+            let result = cmd.bind(this.routeInfo, parameterName, this.request)
+            if(result.type == "Exit") return result.value;
         }
     }
 }

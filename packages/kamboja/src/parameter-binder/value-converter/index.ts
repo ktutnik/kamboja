@@ -1,6 +1,5 @@
 import * as Kecubung from "kecubung"
-import { autoConvert } from "../baseclasses"
-import { BaseConverter, ConverterResult } from "./base-converter"
+import { BaseConverter } from "./base-converter"
 import { DecoratedValueConverter } from "./decorated-value-converter"
 import { DefaultValueConverter } from "./default-value-converter"
 import { ConventionValueConverter } from "./convention-value-converter"
