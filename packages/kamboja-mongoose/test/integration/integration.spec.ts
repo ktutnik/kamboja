@@ -1,5 +1,5 @@
 import * as Chai from "chai"
-import { MongooseHelper, odm } from "../../src"
+import { MongooseHelper, model, MongooseFacility } from "../../src"
 import * as H from "../helper"
 import * as Mongoose from "mongoose"
 import { Core, Kamboja, Resolver } from "kamboja"
@@ -47,7 +47,7 @@ describe("Integration Test", () => {
     })
 
     it("Should able to create model from 'odm' function ", () => {
-        let User = odm<UserModel>("User");
+        let User = model<UserModel>("User");
         Chai.expect(User).not.null;
         Chai.expect(typeof User.findById == "function").true;
     })
@@ -173,5 +173,15 @@ describe("Integration Test", () => {
         Chai.expect(result[0].name).eq("The parent")
         Chai.expect(result[0].child[0].name).eq("i-Phone 7s Plus")
         Chai.expect(result[0].child[1].name).eq("i-Pad Pro 9 inch")
+    })
+
+    it("Should be able to add validators using facility", () => {
+        let kamboja = new Kamboja({ init: () => { } }, <Core.KambojaOption>{
+            rootPath: __dirname,
+            modelPath: "models"
+        })
+        .apply(new MongooseFacility())
+
+        Chai.expect(kamboja.get("validators").length).eq(2)
     })
 })

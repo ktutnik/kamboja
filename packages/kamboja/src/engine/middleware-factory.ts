@@ -27,7 +27,7 @@ export class MiddlewareFactory {
         for (let middleware of middlewares) {
             if (typeof middleware == "string") {
                 try {
-                    let instance = this.facade.dependencyResolver.resolve(middleware)
+                    let instance = this.facade.dependencyResolver.resolve<Core.Middleware>(middleware)
                     result.push(instance)
                 }
                 catch (e) {
@@ -48,7 +48,7 @@ export class MiddlewareFactory {
         for (let middleware of middlewares) {
             if (typeof middleware == "string") {
                 try {
-                    let instance = this.facade.dependencyResolver.resolve(middleware)
+                    let instance = this.facade.dependencyResolver.resolve<Core.Middleware>(middleware)
                     result.push(instance)
                 }
                 catch (e) {
@@ -69,7 +69,7 @@ export class MiddlewareFactory {
             let middleware = this.facade.middlewares[i]
             if (typeof middleware == "string") {
                 try {
-                    let instance = this.facade.dependencyResolver.resolve(middleware)
+                    let instance = this.facade.dependencyResolver.resolve<Core.Middleware>(middleware)
                     result.push(instance)
                 }
                 catch (e) {

@@ -13,11 +13,20 @@ export class MiddlewareActionResult extends Core.ActionResult {
         super(null)
     }
 
-    async execute(request:RequestAdapter, response: ResponseAdapter, routeInfo: Core.RouteInfo) {
-        this.middleware(request.request, response.nativeResponse, response.nativeNextFunction)
-        if(this.chain) {
-            let result = await this.chain.proceed();
-            await result.execute(request, response, routeInfo)
-        }
+    async execute(request: RequestAdapter, response: ResponseAdapter, routeInfo: Core.RouteInfo) {
+        return new Promise<void>((resolve, reject) => {
+            this.middleware(request.request, response.nativeResponse, async (er) => {
+                if (er) reject(er)
+                else if (this.chain) {
+                    let result = await this.chain.proceed();
+                    await result.execute(request, response, routeInfo)
+                    resolve()
+                }
+                else {
+                    response.nativeResponse.end()
+                    resolve();
+                }
+            })
+        })
     }
 }

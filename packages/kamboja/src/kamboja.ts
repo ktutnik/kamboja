@@ -9,12 +9,13 @@ import * as Chalk from "chalk"
 import { Logger } from "./logger"
 import * as Babylon from "babylon"
 import * as Kecubung from "kecubung"
+import { Validator } from "./index"
 
 
 /**
  * Create instance of KambojaJS application
  */
-export class Kamboja {
+export class Kamboja implements Core.Application {
     private static defaultModelPath: string = "model"
     private static facade: Core.Facade;
     private options: Core.KambojaOption
@@ -45,7 +46,10 @@ export class Kamboja {
             autoValidation: true,
             rootPath: undefined,
             showLog: "Info",
-            identifierResolver:idResolver,
+            validators: [],
+            middlewares: [],
+            facilities: [],
+            identifierResolver: idResolver,
             pathResolver: pathResolver,
             dependencyResolver: resolver,
             metaDataStorage: storage
@@ -56,16 +60,41 @@ export class Kamboja {
         this.storage = <MetaDataLoader>this.options.metaDataStorage
     }
 
+    set(key: keyof Core.KambojaOption, value: any) {
+        this.options[key] = value;
+    }
+
+    get(key: keyof Core.KambojaOption) {
+        return <any>this.options[key];
+    }
+
     /**
      * Add middleware
      * @param factory factory method that will be call after KambojaJS application initialized
      * @returns KambojaJS application
      */
     use(middleware: Core.MiddlewaresType) {
-        if (!this.options.middlewares) this.options.middlewares = []
-        if (Array.isArray(middleware)) 
+        if (Array.isArray(middleware))
             this.options.middlewares = this.options.middlewares.concat(middleware)
         else this.options.middlewares.push(middleware)
+        return this
+    }
+
+    apply(facility: string | Core.Facility) {
+        if (typeof facility == "string") {
+            try {
+                let fac = this.options.dependencyResolver.resolve<Core.Facility>(facility)
+                this.options.facilities.push(fac)
+                fac.apply(this)
+            }
+            catch (e) {
+                throw new Error(`Unable to instantiate ${facility} as Facility`)
+            }
+        }
+        else {
+            this.options.facilities.push(facility)
+            facility.apply(this)
+        }
         return this
     }
 
