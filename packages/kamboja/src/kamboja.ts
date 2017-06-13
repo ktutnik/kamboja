@@ -62,6 +62,7 @@ export class Kamboja implements Core.Application {
 
     set(key: keyof Core.KambojaOption, value: any) {
         this.options[key] = value;
+        return this;
     }
 
     get(key: keyof Core.KambojaOption) {

@@ -11,7 +11,7 @@ class Invocation extends Core.Invocation{
 
 describe("Core", () => {
     it("Instantiate HttpError properly", () => {
-        let httpError = new Core.HttpError(null, null, null, null)
+        let httpError = new Core.HttpError(200, null, new HttpRequest(), new HttpResponse())
         Chai.expect(httpError).not.null;
     })
 
@@ -34,7 +34,7 @@ describe("Core", () => {
     })
 
     it("Should instantiate HttpError properly", () => {
-        let err = new Core.HttpError(200, {message:"halo"}, undefined, undefined);
+        let err = new Core.HttpError(200, {message:"halo"}, new HttpRequest(), new HttpResponse());
         Chai.expect(err.status).eq(200)
         Chai.expect(err.error.message).eq("halo")
     })
