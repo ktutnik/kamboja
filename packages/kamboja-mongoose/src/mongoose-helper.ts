@@ -43,7 +43,7 @@ export class MongooseHelper {
     }
 }
 
-export function odm<T>(name:string){
+export function model<T>(name:string){
     return MongooseHelper.getInstance()
         .createModel<T>(name)
 }

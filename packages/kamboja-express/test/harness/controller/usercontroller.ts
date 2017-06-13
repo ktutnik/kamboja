@@ -21,7 +21,10 @@ export class UserController extends Controller {
     }
 
     executeMiddleware() {
-        return new MiddlewareActionResult(Middleware)
+        return new MiddlewareActionResult((req: Request, res: Response, next: NextFunction) => {
+            res.status(401)
+            next()
+        })
     }
 
 
@@ -39,5 +42,20 @@ export class UserController extends Controller {
         let result = new Core.ActionResult({})
         result.header = { Accept: "text/xml" }
         return result;
+    }
+
+    @middleware.use((req, res, next) => {
+        res.setHeader("custom-header", "hello")
+        next()
+    })
+    expressMiddlewareChain() {
+        return "Hello"
+    }
+
+    @middleware.use((req, res, next) => {
+        next(new Error("USER ERROR"))
+    })
+    expressMiddlewareSendError() {
+        return "Hello"
     }
 }

@@ -3,6 +3,7 @@ import { Kamboja, Validator, Core, Resolver, MetaDataLoader } from "../../src"
 import * as Sinon from "sinon"
 import * as Kecubung from "kecubung"
 import * as H from "../helper"
+import { BasicFacility } from "./facility/basic-facility"
 
 let engine = {
     init: () => { }
@@ -335,4 +336,40 @@ describe("Kamboja", () => {
         let dependencyResolver = Kamboja.getFacade().dependencyResolver;
         Chai.expect(dependencyResolver instanceof MyDependencyResolver).true
     })
+
+    it("Should be able to set and get configuration", () => {
+        let opt: Core.KambojaOption = {
+            rootPath: __dirname,
+            showLog: "None",
+            dependencyResolver: new MyDependencyResolver()
+        }
+        let kamboja = new Kamboja(engine, opt)
+        Chai.expect(kamboja.get("showLog")).eq("None")
+        kamboja.set("skipAnalysis", true)
+        Chai.expect(kamboja.get("skipAnalysis")).true;
+    })
+
+    it("Should be able to set facility using instance", () => {
+        let kamboja = new Kamboja(engine, __dirname);
+        kamboja.apply(new BasicFacility());
+        Chai.expect(kamboja.get("showLog")).eq("None")
+        Chai.expect(kamboja.get("skipAnalysis")).true;
+        Chai.expect(kamboja.get("facilities").length).eq(1)
+    })
+
+    it("Should be able to set facility using qualified name", () => {
+        let kamboja = new Kamboja(engine, __dirname);
+        kamboja.apply("BasicFacility, facility/basic-facility");
+        Chai.expect(kamboja.get("showLog")).eq("None")
+        Chai.expect(kamboja.get("skipAnalysis")).true;
+        Chai.expect(kamboja.get("facilities").length).eq(1)
+    })
+
+    it("Should throw exception if provide invalid facility qualified name", () => {
+        let kamboja = new Kamboja(engine, __dirname);
+        Chai.expect(() => {
+            kamboja.apply("AdvancedFacility, facility/basic-facility");
+        }).throw("Unable to instantiate AdvancedFacility, facility/basic-facility as Facility")
+    })
+
 })

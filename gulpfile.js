@@ -64,6 +64,7 @@ function buildTypeScript(name, root, path, target, declaration) {
     if (!declaration) declaration = false
     var tsProject = tsc.createProject("tsconfig.json", {
         declaration: declaration,
+        target: "ES5",
         noResolve: false,
         typescript: require("typescript")
     });

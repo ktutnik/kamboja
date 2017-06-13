@@ -13,8 +13,41 @@ import { KambojaApplication } from "../../src/kamboja-express"
 import { ErrorHandler } from "../harness/interceptor/error-handler"
 import * as Path from "path"
 import { ConcatMiddleware } from "./interceptor/concat-middleware"
-import {LoginUser} from "../../src/login-user"
+import { LoginUser } from "../../src/login-user"
 describe("Integration", () => {
+    describe("General", () => {
+        it("Should be able to add facility", () => {
+            let app = new KambojaApplication(__dirname)
+                .apply("BasicFacility, facility/basic-facility")
+            Chai.expect(app.get("showLog")).eq("None")
+            Chai.expect(app.get("skipAnalysis")).true;
+            Chai.expect(app.get("facilities").length).eq(1)
+        })
+
+        it("Should be able to set kamboja option", () => {
+            let app = new KambojaApplication(__dirname)
+                .set("showLog", "None")
+                .set("skipAnalysis", true)
+
+            Chai.expect(app.get("showLog")).eq("None")
+            Chai.expect(app.get("skipAnalysis")).true;
+        })
+
+        it("Should be able to set express option", () => {
+            let app = new KambojaApplication(__dirname)
+                .set("case sensitive routing", undefined)
+                .set("env", "development")
+                .set("etag", "weak")
+                .set("json replacer", undefined)
+                .set("json spaces", undefined)
+                .set("query parser", "extended")
+                .set("trust proxy", false)
+                .set("views", undefined)
+                .set("view cache", undefined)
+                .set("view engine", undefined)
+                .set("x-powered-by", undefined)
+        })
+    })
 
     describe("Controller", () => {
         let app: Express.Application
@@ -67,7 +100,7 @@ describe("Integration", () => {
 
         it("Should able to intercept unhandled url from interception", () => {
             let app = new KambojaApplication({ rootPath: __dirname, showLog: "None" })
-                .set("views", Path.join(__dirname, "harness/view"))
+                .set("views", Path.join(__dirname, "view"))
                 .set("view engine", "hbs")
                 .use("GlobalInterceptor, interceptor/global-interceptor")
                 .init()
@@ -244,14 +277,55 @@ describe("Integration", () => {
     })
 
     describe("Middleware Function", () => {
+        it("Should able to chain invocation if using express middleware", () => {
+            let app = new KambojaApplication({ rootPath: __dirname, showLog: "None" })
+                .set("views", Path.join(__dirname, "view"))
+                .set("view engine", "hbs")
+                .init()
+
+            return Supertest(app)
+                .get("/user/expressmiddlewarechain")
+                .expect((result: Supertest.Response) => {
+                    Chai.expect(result.header["custom-header"]).eq("hello")
+                    Chai.expect(result.text).eq("Hello")
+                })
+        })
+
+        it("Should be able to execute express middleware form inside action", () => {
+            let app = new KambojaApplication({ rootPath: __dirname, showLog: "None" })
+                .set("views", Path.join(__dirname, "view"))
+                .set("view engine", "hbs")
+                .init()
+
+            return Supertest(app)
+                .get("/user/executemiddleware")
+                .expect(401)
+
+        })
+
+        it("Should be able to send error from express middleware to chain invocation", () => {
+            let app = new KambojaApplication({ rootPath: __dirname, showLog: "None" })
+                .set("views", Path.join(__dirname, "view"))
+                .set("view engine", "hbs")
+                .init()
+
+            return Supertest(app)
+                .get("/user/expressmiddlewaresenderror")
+                .expect((result: Supertest.Response) => {
+                    Chai.expect(result.text).eq("USER ERROR")
+                })
+                .expect(500)
+
+        })
+
         it("Should be able to add middleware in global scope", async () => {
             let app = new KambojaApplication({ rootPath: __dirname, showLog: "None" })
-                .set("views", Path.join(__dirname, "harness/view"))
+                .set("views", Path.join(__dirname, "view"))
                 .set("view engine", "hbs")
-                .use(new ExpressMiddlewareAdapter((req, res: Express.Response, next) => {
+                .use((req, res: Express.Response, next) => {
                     res.status(501)
                     res.end()
-                }))
+                })
                 .init()
 
             //class decorated with middleware to force them return 501
@@ -271,12 +345,8 @@ describe("Integration", () => {
 
         it("Should be able to add middleware in class scope", async () => {
             let app = new KambojaApplication({ rootPath: __dirname, showLog: "None" })
-                .set("views", Path.join(__dirname, "harness/view"))
+                .set("views", Path.join(__dirname, "view"))
                 .set("view engine", "hbs")
-                .use(new ExpressMiddlewareAdapter((req, res: Express.Response, next) => {
-                    res.status(501)
-                    res.end()
-                }))
                 .init()
             //class decorated with middleware to force them return 501
             //all actions below the class should return 501
@@ -295,7 +365,7 @@ describe("Integration", () => {
 
         it("Should be able to add middleware in method scope", async () => {
             let app = new KambojaApplication({ rootPath: __dirname, showLog: "None" })
-                .set("views", Path.join(__dirname, "harness/view"))
+                .set("views", Path.join(__dirname, "view"))
                 .set("view engine", "hbs")
                 .use((req, res: Express.Response, next) => {
                     res.status(501)
@@ -322,7 +392,7 @@ describe("Integration", () => {
 
         it("Should able to use KambojaJS middleware", () => {
             let app = new KambojaApplication({ rootPath: __dirname, showLog: "None" })
-                .set("views", Path.join(__dirname, "harness/view"))
+                .set("views", Path.join(__dirname, "view"))
                 .set("view engine", "hbs")
                 .init()
 
@@ -333,7 +403,7 @@ describe("Integration", () => {
 
         it("Should invoke middleware in proper order", () => {
             let app = new KambojaApplication({ rootPath: __dirname, showLog: "None" })
-                .set("views", Path.join(__dirname, "harness/view"))
+                .set("views", Path.join(__dirname, "view"))
                 .set("view engine", "hbs")
                 .use(new ConcatMiddleware("global-01"))
                 .use(new ConcatMiddleware("global-02"))

@@ -139,6 +139,7 @@ export interface Facade {
     middlewares?: (Middleware | string)[]
     autoValidation?: boolean
     routeInfos?: RouteInfo[]
+    facilities?:Facility[]
 }
 
 export interface KambojaOption extends Facade {
@@ -246,8 +247,18 @@ export interface Middleware {
     execute(request: HttpRequest, next: Invocation): any;
 }
 
+export interface Facility{
+    apply(app:Application)
+}
+
+export interface Application {
+    use(middleware: MiddlewaresType)
+    set(key: keyof KambojaOption, value:any)
+    get(key: keyof KambojaOption)
+}
+
 export interface DependencyResolver {
-    resolve<T>(qualifiedClassName: string);
+    resolve<T>(qualifiedClassName: string):T;
 }
 
 export interface IdentifierResolver {

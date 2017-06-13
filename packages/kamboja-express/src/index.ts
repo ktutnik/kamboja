@@ -8,7 +8,8 @@ export { DownloadActionResult} from "./download-action-result"
 export { ExpressMiddlewareAdapter } from "./express-middleware-adapter"
 export {
     ApiActionResult, ApiController, authorize, Controller, Core, http, HttpStatusError,
-    internal, MetaDataLoader, Middleware, RequestHandler, Resolver, RouteGenerator, val, Validator
+    internal, MetaDataLoader, Middleware, RequestHandler, Resolver, RouteGenerator, val, 
+    Validator, bind
 } from "kamboja"
 
 import {ActionResults} from "./action-results"
