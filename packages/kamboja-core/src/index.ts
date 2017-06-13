@@ -127,7 +127,7 @@ export interface FieldValidatorArg {
 }
 
 export interface ValidatorCommand {
-    validate(args: FieldValidatorArg)
+    validate(args: FieldValidatorArg):ValidationError[]
 }
 
 export interface Facade {
@@ -226,12 +226,12 @@ export interface HttpResponse {
     status: number
     header: { [key: string]: string | string[] }
     cookies: Cookie[]
-    send()
+    send():void
 }
 
 export class HttpError {
     constructor(public status: number,
-        public error,
+        public error:any,
         public request: HttpRequest,
         public response: HttpResponse) { }
 }
@@ -248,13 +248,13 @@ export interface Middleware {
 }
 
 export interface Facility{
-    apply(app:Application)
+    apply(app:Application):void
 }
 
 export interface Application {
-    use(middleware: MiddlewaresType)
-    set(key: keyof KambojaOption, value:any)
-    get(key: keyof KambojaOption)
+    use(middleware: MiddlewaresType):Application
+    set(key: keyof KambojaOption, value:any):Application
+    get(key: keyof KambojaOption):any
 }
 
 export interface DependencyResolver {
@@ -262,25 +262,25 @@ export interface DependencyResolver {
 }
 
 export interface IdentifierResolver {
-    getClassId(qualifiedClassName: string)
-    getClassName(classId: string)
+    getClassId(qualifiedClassName: string):string
+    getClassName(classId: string):string
 }
 
 export interface PathResolver {
-    resolve(path: string)
-    relative(absolute: string)
-    normalize(path: string)
+    resolve(path: string):string
+    relative(absolute: string):string
+    normalize(path: string):string
 }
 
 export class ActionResult {
     header: { [key: string]: string | string[] } = {}
     cookies?: Cookie[]
 
-    constructor(public body, public status?: number, public type?: string) { }
+    constructor(public body:any, public status?: number, public type?: string) { }
 
-    async execute(request: HttpRequest, response: HttpResponse, routeInfo: RouteInfo) {
+    async execute(request: HttpRequest, response: HttpResponse, routeInfo?: RouteInfo) {
         response.body = this.body
-        response.cookies = this.cookies
+        response.cookies = this.cookies || []
         response.status = this.status || 200
         response.type = this.type || "text/plain"
         response.header = this.header

@@ -12,13 +12,13 @@ export class ActionResults {
     file(path: string) {
         return new FileActionResult(path)
     }
-    json(body, status?: number) {
+    json(body:any, status?: number) {
         return new JsonActionResult(body, status)
     }
     redirect(path: string) {
         return new RedirectActionResult(path)
     }
-    view(model?, viewName?: string) {
+    view(model?:any, viewName?: string) {
         return new ViewActionResult(model, viewName)
     }
 }

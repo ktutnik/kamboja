@@ -11,7 +11,7 @@ export class HttpRequest implements Core.HttpRequest {
     referrer: string
     url: Url.URL
     user: any
-    getHeader(key: string): string { return }
+    getHeader(key: string): string { return  }
     getCookie(key: string): string { return }
     getParam(key: string): string { return }
     isAuthenticated() { return false }
