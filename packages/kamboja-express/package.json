@@ -1,6 +1,6 @@
 {
   "name": "kamboja-express",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "KambojaJS engine implementation using ExpressJs",
   "main": "src/index.js",
   "types": "src/index.ts",
@@ -33,7 +33,7 @@
     "babylon": "^6.17.1",
     "chalk": "^1.1.3",
     "express": "^4.15.3",
-    "kamboja": "^0.1.4",
+    "kamboja": "^0.1.5",
     "kecubung": "^0.1.1-0",
     "lodash": "^4.17.4",
     "passport": "^0.3.2",
