@@ -17,7 +17,7 @@ function flatten(metaList: Kecubung.MetaData[], fileName: string): QualifiedClas
                     clazz.forEach(cls => {
                         cls.qualifiedClassName = file.name + "." + cls.qualifiedClassName
                     })
-                    result.push(...clazz)
+                    result = result.concat(clazz)
                 }
                 break;
             case "Class":
@@ -46,7 +46,7 @@ export class MetaDataLoader implements MetaDataStorage {
             let ast = Babylon.parse(code)
             let fileName = this.pathResolver.normalize(file)
             let meta = Kecubung.transform("ASTree", ast, fileName)
-            flatResult.push(...flatten(meta.children, meta.name))
+            flatResult = flatResult.concat(flatten(meta.children, meta.name))
             result.push(meta)
         }
         this.flatStorage[category] = flatResult;
@@ -62,7 +62,7 @@ export class MetaDataLoader implements MetaDataStorage {
             const resultPaths = Fs.readdirSync(fileDirectory)
                 .filter(x => Path.extname(x) == ".js")
                 .map(x => Path.join(fileDirectory, x));
-            result.push(...resultPaths)
+            result = result.concat(resultPaths)
         }
         return result;
     }

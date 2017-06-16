@@ -318,6 +318,38 @@ describe("Integration", () => {
 
         })
 
+        it("Should be able to use asynchronous express middleware", () => {
+            let app = new KambojaApplication({ rootPath: __dirname, showLog: "None" })
+                .set("views", Path.join(__dirname, "view"))
+                .set("view engine", "hbs")
+                .init()
+
+            return Supertest(app)
+                .get("/user/expressmiddlewareasync")
+                .expect((result: Supertest.Response) => {
+                    Chai.expect(result.header["custom-header"]).eq("hello")
+                    Chai.expect(result.text).eq("Hello")
+                })
+                .expect(200)
+
+        })
+
+        it("Should be able to use asynchronous express middleware which doesn't call next function", () => {
+            let app = new KambojaApplication({ rootPath: __dirname, showLog: "None" })
+                .set("views", Path.join(__dirname, "view"))
+                .set("view engine", "hbs")
+                .init()
+
+            return Supertest(app)
+                .get("/user/expressmiddlewareasyncbypassaction")
+                .expect((result: Supertest.Response) => {
+                    Chai.expect(result.header["custom-header"]).eq("hello")
+                    Chai.expect(result.text).eq("Not Hello")
+                })
+                .expect(200)
+
+        })
+
         it("Should be able to add middleware in global scope", async () => {
             let app = new KambojaApplication({ rootPath: __dirname, showLog: "None" })
                 .set("views", Path.join(__dirname, "view"))

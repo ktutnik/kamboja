@@ -28,7 +28,7 @@ export abstract class TransformerBase {
                 let exit = false;
                 switch (tempResult.status) {
                     case "ExitWithResult":
-                        result.push(...tempResult.info);
+                        result = result.concat(tempResult.info);
                         exit = true;
                         break;
                     case "Next":

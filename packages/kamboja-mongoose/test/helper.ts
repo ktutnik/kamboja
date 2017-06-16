@@ -16,7 +16,7 @@ function flatten(metaList: Kecubung.MetaData[], fileName: string): Core.Qualifie
                     clazz.forEach(cls => {
                         cls.qualifiedClassName = file.name + "." + cls.qualifiedClassName
                     })
-                    result.push(...clazz)
+                    result = result.concat(clazz)
                 }
                 break;
             case "Class":

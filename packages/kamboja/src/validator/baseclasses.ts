@@ -57,7 +57,7 @@ export class ValidatorBase implements ValidatorCommand {
             let result: ValidationError[] = []
             for (let property of arg.classInfo.properties) {
                 if (arg.isArray) {
-                    if(!Array.isArray(arg.classInstance))
+                    if (!Array.isArray(arg.classInstance))
                         return [{
                             field: arg.parentField,
                             message: `[${arg.parentField}] must be a type of Array`
@@ -70,10 +70,10 @@ export class ValidatorBase implements ValidatorCommand {
                             decorators: property.decorators,
                             value: value,
                             field: property.name,
-                            parentField: `${arg.parentField}[${i}]` ,
+                            parentField: `${arg.parentField}[${i}]`,
                             classInfo: arg.classInfo
                         })
-                        result.push(...valResult)
+                        result = result.concat(valResult)
                     }
                 }
                 else {
@@ -85,7 +85,7 @@ export class ValidatorBase implements ValidatorCommand {
                         parentField: arg.parentField,
                         classInfo: arg.classInfo
                     })
-                    result.push(...valResult)
+                    result = result.concat(valResult)
                 }
 
             }
@@ -104,7 +104,7 @@ export class ValidatorBase implements ValidatorCommand {
                     parentField: arg.parentField,
                     value: value
                 })
-                result.push(...valResult)
+                if (valResult) result = result.concat(valResult)
             }
             return result.length == 0 ? undefined : result;
         }
@@ -129,7 +129,7 @@ export class ValidatorBase implements ValidatorCommand {
                     parentField: arg.parentField ? `${arg.parentField}` : arg.parentField,
                     value: arg.value
                 })
-                result.push(...validationResult)
+                if (validationResult) result = result.concat(validationResult)
             }
         }
         return result
