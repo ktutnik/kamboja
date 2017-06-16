@@ -1,11 +1,10 @@
 # KambojaJs
 
+[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/KambojaJS/lobby)
 [![npm version](https://badge.fury.io/js/kamboja.svg)](https://badge.fury.io/js/kamboja)
 [![Build Status](https://travis-ci.org/kambojajs/kamboja.svg?branch=master)](https://travis-ci.org/kambojajs/kamboja)
 [![Coverage Status](https://coveralls.io/repos/github/kambojajs/kamboja/badge.svg?branch=master)](https://coveralls.io/github/kambojajs/kamboja?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/github/kambojajs/kamboja/badge.svg)](https://snyk.io/test/github/kambojajs/kamboja)
-[![dependencies Status](https://david-dm.org/kambojajs/kamboja/status.svg)](https://david-dm.org/kambojajs/kamboja)
-[![devDependencies Status](https://david-dm.org/kambojajs/kamboja/dev-status.svg)](https://david-dm.org/kambojajs/kamboja?type=dev)
 
 KambojaJS aims to fix some problems occurs when using the [old guy](https://expressjs.com/), like increase testability, add convention over configuration and use modern language feature like async/await decorator etc, read more http://kambojajs.com/
 
